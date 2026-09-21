@@ -80,7 +80,6 @@
        77 CENT-ACUMULADOR          PIC   9(11).
 
        77 CON                      PIC   X(35) VALUE "Ingreso".
-       77 PRESSED-KEY              PIC    9(4).
 
        LINKAGE SECTION.
        77 TNUM                     PIC  9(16).

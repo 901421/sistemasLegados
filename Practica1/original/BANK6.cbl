@@ -81,7 +81,6 @@
            88 DOWN-ARROW-PRESSED VALUE  2004.
            88 ESC-PRESSED        VALUE  2005.
 
-       77 PRESSED-KEY              PIC   S9(4).
 
        77 LAST-MOV-NUM             PIC  S9(35).
        77 LAST-USER-ORD-MOV-NUM    PIC  S9(35).
@@ -256,7 +255,7 @@
            DISPLAY "ESC - Cancelar" AT 2466.
 
        ENTER-VERIFICACION.
-           ACCEPT PRESSED-KEY AT 2480 ON EXCEPTION
+           ACCEPT omitted AT 2480 ON EXCEPTION
            IF ESC-PRESSED THEN
                EXIT PROGRAM
            ELSE
@@ -371,7 +370,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT omitted AT 2480
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE

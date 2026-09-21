@@ -71,7 +71,6 @@
            88 DOWN-ARROW-PRESSED  VALUE 2004.
            88 ESC-PRESSED         VALUE 2005.
 
-       77 PRESSED-KEY              PIC  9(4).
        77 PIN-INTRODUCIDO          PIC  9(4).
        77 CHOICE                   PIC  9(1).
 
