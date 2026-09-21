@@ -117,7 +117,8 @@
            DISPLAY "Enter - Aceptar" LINE 24 COL 33.
 
        P1-ENTER.
-           ACCEPT OMITTED ON EXCEPTION
+           ACCEPT OMITTED AT 2480
+           ON EXCEPTION
            IF ENTER-PRESSED
                GO TO P2
            ELSE
@@ -175,7 +176,7 @@
            DISPLAY "ESC - Salir" LINE 24 COL 34.
 
        PMENUA1.
-           ACCEPT CHOICE
+           ACCEPT CHOICE AT 2480
                WITH AUTO
                NO-ECHO
                SIZE 1

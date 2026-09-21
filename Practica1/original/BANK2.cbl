@@ -167,7 +167,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT omitted AT 2480
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE
