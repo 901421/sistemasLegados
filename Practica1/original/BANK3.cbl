@@ -290,7 +290,7 @@
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
 
            OPEN INPUT F-MOVIMIENTOS.
-               IF FSM <> 30
+               IF FSM <> "00"
                    GO TO PSYS-ERR.
 
        POSICIONAR-FINAL.
@@ -335,7 +335,7 @@
 
        WAIT-ORDER.
 
-           ACCEPT PRESSED-KEY AT 2480 ON EXCEPTION
+           ACCEPT omitted AT 2480 ON EXCEPTION
 
               IF ESC-PRESSED THEN
                   CLOSE F-MOVIMIENTOS
@@ -470,7 +470,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT omitted AT 2480
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE
