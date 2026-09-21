@@ -316,7 +316,7 @@
            DISPLAY "Enter - Aceptar" LINE 24 COL 33.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY LINE 24 COL 80
+           ACCEPT omitted LINE 24 COL 80
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE
