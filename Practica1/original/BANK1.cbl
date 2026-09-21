@@ -111,14 +111,13 @@
            DISPLAY MINUTOS LINE 4 COL 47.
 
 
-       P1.
+       P1.           
            DISPLAY "Bienvenido a UnizarBank" LINE 8 COL 28.
-           DISPLAY "Por favor, introduzca la tarjeta para operar" LINE 10 COL 18.
 
            DISPLAY "Enter - Aceptar" LINE 24 COL 33.
 
        P1-ENTER.
-           ACCEPT CHOICE LINE 24 COL 80 ON EXCEPTION
+           ACCEPT OMITTED ON EXCEPTION
            IF ENTER-PRESSED
                GO TO P2
            ELSE
@@ -130,7 +129,9 @@
            DISPLAY "ESC - Salir" LINE 24 COL 33.
            INITIALIZE TNUM.
            INITIALIZE PIN-INTRODUCIDO.
-           INITIALIZE TPIN.
+           INITIALIZE TPIN.           
+           DISPLAY "Por favor, introduzca la tarjeta para operar"
+               LINE 6 COL 15.
            DISPLAY "Numero de tarjeta:" LINE 8 COL 15.
            DISPLAY "Inserte el pin de tarjeta:" LINE 9 COL 15.
            ACCEPT DATA-ACCEPT ON EXCEPTION
@@ -174,11 +175,15 @@
            DISPLAY "ESC - Salir" LINE 24 COL 34.
 
        PMENUA1.
-           ACCEPT CHOICE LINE 24 COL 80 ON EXCEPTION
-               IF ESC-PRESSED
-                   GO TO IMPRIMIR-CABECERA
-               ELSE
-                   GO TO PMENUA1.
+           ACCEPT CHOICE
+               WITH AUTO
+               NO-ECHO
+               SIZE 1
+               ON EXCEPTION
+                   IF ESC-PRESSED
+                       GO TO IMPRIMIR-CABECERA
+                   ELSE
+                       GO TO PMENUA1.
 
 
            IF CHOICE = 1
