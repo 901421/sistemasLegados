@@ -27,25 +27,25 @@
            LABEL RECORD STANDARD
            VALUE OF FILE-ID IS "tarjetas.ubd".
        01 TAJETAREG.
-           02 TNUM-E      PIC 9(16).
-           02 TPIN-E      PIC  9(4).
+           02 TNUM-E      PIC S9(16).
+           02 TPIN-E      PIC  S9(4).
        FD F-MOVIMIENTOS
            LABEL RECORD STANDARD
            VALUE OF FILE-ID IS "movimientos.ubd".
        01 MOVIMIENTO-REG.
-           02 MOV-NUM              PIC  9(35).
-           02 MOV-TARJETA          PIC  9(16).
-           02 MOV-ANO              PIC   9(4).
-           02 MOV-MES              PIC   9(2).
-           02 MOV-DIA              PIC   9(2).
-           02 MOV-HOR              PIC   9(2).
-           02 MOV-MIN              PIC   9(2).
-           02 MOV-SEG              PIC   9(2).
+           02 MOV-NUM              PIC  S9(35).
+           02 MOV-TARJETA          PIC  S9(16).
+           02 MOV-ANO              PIC   S9(4).
+           02 MOV-MES              PIC   S9(2).
+           02 MOV-DIA              PIC   S9(2).
+           02 MOV-HOR              PIC   S9(2).
+           02 MOV-MIN              PIC   S9(2).
+           02 MOV-SEG              PIC   S9(2).
            02 MOV-IMPORTE-ENT      PIC  S9(7).
-           02 MOV-IMPORTE-DEC      PIC   9(2).
+           02 MOV-IMPORTE-DEC      PIC   S9(2).
            02 MOV-CONCEPTO         PIC  X(35).
            02 MOV-SALDOPOS-ENT     PIC  S9(9).
-           02 MOV-SALDOPOS-DEC     PIC   9(2).
+           02 MOV-SALDOPOS-DEC     PIC   S9(2).
 
 
        WORKING-STORAGE SECTION.
@@ -63,17 +63,17 @@
 
        01 CAMPOS-FECHA.
            05 FECHA.
-               10 ANO              PIC   9(4).
-               10 MES              PIC   9(2).
-               10 DIA              PIC   9(2).
+               10 ANO              PIC   S9(4).
+               10 MES              PIC   S9(2).
+               10 DIA              PIC   S9(2).
            05 HORA.
-               10 HORAS            PIC   9(2).
-               10 MINUTOS          PIC   9(2).
-               10 SEGUNDOS         PIC   9(2).
-               10 MILISEGUNDOS     PIC   9(2).
+               10 HORAS            PIC   S9(2).
+               10 MINUTOS          PIC   S9(2).
+               10 SEGUNDOS         PIC   S9(2).
+               10 MILISEGUNDOS     PIC   S9(2).
            05 DIF-GMT              PIC  S9(4).
 
-       01 KEYBOARD-STATUS          PIC  9(4).
+       01 KEYBOARD-STATUS          PIC  S9(4).
            88 ENTER-PRESSED      VALUE     0.
            88 PGUP-PRESSED       VALUE  2001.
            88 PGDN-PRESSED       VALUE  2002.
@@ -81,14 +81,14 @@
            88 DOWN-ARROW-PRESSED VALUE  2004.
            88 ESC-PRESSED        VALUE  2005.
 
-       77 PRESSED-KEY              PIC   9(4).
+       77 PRESSED-KEY              PIC   S9(4).
 
-       77 LAST-MOV-NUM             PIC  9(35).
-       77 LAST-USER-ORD-MOV-NUM    PIC  9(35).
-       77 LAST-USER-DST-MOV-NUM    PIC  9(35).
+       77 LAST-MOV-NUM             PIC  S9(35).
+       77 LAST-USER-ORD-MOV-NUM    PIC  S9(35).
+       77 LAST-USER-DST-MOV-NUM    PIC  S9(35).
 
-       77 EURENT-USUARIO           PIC  S9(7).
-       77 EURDEC-USUARIO           PIC   9(2).
+       77 EURENT-USUARIO           PIC  9(7).
+       77 EURDEC-USUARIO           PIC   S9(2).
        77 CUENTA-DESTINO           PIC  9(16).
        77 NOMBRE-DESTINO           PIC  X(35).
 
@@ -100,28 +100,28 @@
        77 MSJ-DST                  PIC  X(35) VALUE "Nos transfieren".
 
        LINKAGE SECTION.
-       77 TNUM                     PIC  9(16).
+       77 TNUM                     PIC  S9(16).
 
        SCREEN SECTION.
        01 BLANK-SCREEN.
            05 FILLER LINE 1 BLANK SCREEN BACKGROUND-COLOR BLACK.
 
        01 FILTRO-CUENTA.
-           05 FILLER BLANK WHEN ZERO AUTO UNDERLINE
-               LINE 12 COL 54 PIC 9(16) USING CUENTA-DESTINO.
+           05 FILLER AUTO UNDERLINE
+               LINE 12 COL 54 PIC S9(16) USING CUENTA-DESTINO.
            05 FILLER AUTO UNDERLINE
                LINE 14 COL 54 PIC X(15) USING NOMBRE-DESTINO.
-           05 FILLER BLANK ZERO AUTO UNDERLINE
+           05 FILLER AUTO UNDERLINE
                SIGN IS LEADING SEPARATE
-               LINE 16 COL 54 PIC 9(7) USING EURENT-USUARIO.
-           05 FILLER BLANK ZERO UNDERLINE
-               LINE 16 COL 63 PIC 9(2) USING EURDEC-USUARIO.
+               LINE 16 COL 54 PIC S9(7) USING EURENT-USUARIO.
+           05 FILLER UNDERLINE
+               LINE 16 COL 63 PIC S9(2) USING EURDEC-USUARIO.
 
        01 SALDO-DISPLAY.
            05 FILLER SIGN IS LEADING SEPARATE
-               LINE 10 COL 33 PIC -9(7) FROM MOV-SALDOPOS-ENT.
+               LINE 10 COL 33 PIC S9(7) FROM MOV-SALDOPOS-ENT.
            05 FILLER LINE 10 COL 41 VALUE ",".
-           05 FILLER LINE 10 COL 42 PIC 99 FROM MOV-SALDOPOS-DEC.
+           05 FILLER LINE 10 COL 42 PIC S99 FROM MOV-SALDOPOS-DEC.
            05 FILLER LINE 10 COL 45 VALUE "EUR".
 
 
@@ -139,19 +139,19 @@
 
        IMPRIMIR-CABECERA.
            DISPLAY BLANK-SCREEN.
-           DISPLAY(2 26) "Cajero Automatico UnizarBank"
+           DISPLAY "Cajero Automatico UnizarBank" AT 0226
                WITH FOREGROUND-COLOR IS 1.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
-           DISPLAY(4 32) DIA.
-           DISPLAY(4 34) "-".
-           DISPLAY(4 35) MES.
-           DISPLAY(4 37) "-".
-           DISPLAY(4 38) ANO.
-           DISPLAY(4 44) HORAS.
-           DISPLAY(4 46) ":".
-           DISPLAY(4 47) MINUTOS.
+           DISPLAY DIA AT 0432.
+           DISPLAY "-" AT 0434.
+           DISPLAY MES AT 0435.
+           DISPLAY "-" AT 0437.
+           DISPLAY ANO AT 0438.
+           DISPLAY HORAS AT 0444.
+           DISPLAY ":" AT 0446.
+           DISPLAY MINUTOS AT 0447.
 
        MOVIMIENTOS-OPEN.
            OPEN I-O F-MOVIMIENTOS.
@@ -174,11 +174,11 @@
        ORDENACION-TRF.
            CLOSE F-MOVIMIENTOS.
 
-           DISPLAY(8 30) "Ordenar Transferencia".
-           DISPLAY(10 19) "Saldo Actual:".
+           DISPLAY "Ordenar Transferencia" AT 0830.
+           DISPLAY "Saldo Actual:" AT 1019.
 
-           DISPLAY(24 2) "Enter - Confirmar".
-           DISPLAY(24 66) "ESC - Cancelar".
+           DISPLAY "Enter - Confirmar" 2402.
+           DISPLAY "ESC - Cancelar" 2466.
 
            IF LAST-USER-ORD-MOV-NUM = 0 THEN
                GO TO NO-MOVIMIENTOS
@@ -192,11 +192,11 @@
            CLOSE F-MOVIMIENTOS.
 
        INDICAR-CTA-DST.
-           DISPLAY(12 19) "Indica la cuenta destino".
-           DISPLAY(14 19) "y nombre del titular".
-           DISPLAY(16 19) "Indique la cantidad a transferir".
-           DISPLAY(16 61) ",".
-           DISPLAY(16 66) "EUR".
+           DISPLAY "Indica la cuenta destino" AT 1219.
+           DISPLAY "y nombre del titular" AT 1419.
+           DISPLAY "Indique la cantidad a transferir" AT 1619.
+           DISPLAY "," AT 1661.
+           DISPLAY "EUR" AT 1666.
 
            COMPUTE CENT-SALDO-ORD-USER = (MOV-SALDOPOS-ENT * 100)
                                          + MOV-SALDOPOS-DEC.
@@ -212,7 +212,7 @@
                                      + EURDEC-USUARIO.
 
            IF CENT-IMPOR-USER > CENT-SALDO-ORD-USER THEN
-                   DISPLAY(20 19) "Indique una cantidad menor!!"
+                   DISPLAY "Indique una cantidad menor!!" AT 2019
                     WITH BACKGROUND-COLOR RED
                    GO TO INDICAR-CTA-DST
            END-IF.
@@ -220,43 +220,43 @@
            GO TO REALIZAR-TRF-VERIFICACION.
 
        NO-MOVIMIENTOS.
-           DISPLAY(10 51) "0".
-           DISPLAY(10 52) ".".
-           DISPLAY(10 53) "00".
-           DISPLAY(10 54) "EUR".
+           DISPLAY "0" AT 1051.
+           DISPLAY "." AT 1052.
+           DISPLAY "00" AT 1053.
+           DISPLAY "EUR" AT 1054.
 
-           DISPLAY(12 19) "Indica la cuenta destino ".
-           DISPLAY(14 19) "y nombre del titular".
-           DISPLAY(16 19) "Indique la cantidad a transferir".
-           DISPLAY(16 61) ",".
-           DISPLAY(16 66) "EUR".
+           DISPLAY "Indica la cuenta destino " AT 1219.
+           DISPLAY "y nombre del titular" AT 1419.
+           DISPLAY "Indique la cantidad a transferir" AT 1619.
+           DISPLAY "," AT 1661.
+           DISPLAY "EUR" AT 1666.
 
            ACCEPT FILTRO-CUENTA ON EXCEPTION
            IF ESC-PRESSED THEN
                EXIT PROGRAM
            END-IF.
 
-           DISPLAY(20 19) "Indique una cantidad menor!!"
+           DISPLAY "Indique una cantidad menor!!" AT 2019
             WITH BACKGROUND-COLOR RED.
 
            GO TO NO-MOVIMIENTOS.
 
        REALIZAR-TRF-VERIFICACION.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
-           DISPLAY(08 30) "Ordenar Transferencia".
-           DISPLAY(11 19) "Va a transferir:".
-           DISPLAY(11 38) EURENT-USUARIO.
-           DISPLAY(11 45) ".".
-           DISPLAY(11 46) EURDEC-USUARIO.
-           DISPLAY(11 49) "EUR de su cuenta".
-           DISPLAY(12 19) "a la cuenta cuyo titular es".
-           DISPLAY(12 48) NOMBRE-DESTINO.
+           DISPLAY "Ordenar Transferencia" AT 0830.
+           DISPLAY "Va a transferir:" AT 1119.
+           DISPLAY EURENT-USUARIO AT 1138.
+           DISPLAY "." AT 1145.
+           DISPLAY EURDEC-USUARIO AT 1146.
+           DISPLAY "EUR de su cuenta" AT 1149.
+           DISPLAY "a la cuenta cuyo titular es" AT 1219.
+           DISPLAY NOMBRE-DESTINO AT 1248.
 
-           DISPLAY(24 2) "Enter - Confirmar".
-           DISPLAY(24 66) "ESC - Cancelar".
+           DISPLAY "Enter - Confirmar" AT 2402.
+           DISPLAY "ESC - Cancelar" AT 2466.
 
        ENTER-VERIFICACION.
-           ACCEPT(24 80) PRESSED-KEY ON EXCEPTION
+           ACCEPT PRESSED-KEY AT 2480 ON EXCEPTION
            IF ESC-PRESSED THEN
                EXIT PROGRAM
            ELSE
@@ -351,9 +351,9 @@
        P-EXITO.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
 
-           DISPLAY(8 30) "Ordenar transferencia".
-           DISPLAY(11 19) "Transferencia realizada correctamente!".
-           DISPLAY(24 33) "Enter - Aceptar".
+           DISPLAY "Ordenar transferencia" AT 0830.
+           DISPLAY "Transferencia realizada correctamente!" AT 1119.
+           DISPLAY "Enter - Aceptar" AT 2433.
 
            GO TO EXIT-ENTER.
 
@@ -362,16 +362,16 @@
            CLOSE F-MOVIMIENTOS.
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
-           DISPLAY(09 25) "Ha ocurrido un error interno"
+           DISPLAY "Ha ocurrido un error interno" AT 0925
                WITH FOREGROUND-COLOR IS BLACK
                     BACKGROUND-COLOR IS RED.
-           DISPLAY(11 32) "Vuelva mas tarde"
+           DISPLAY "Vuelva mas tarde" AT 1132
                WITH FOREGROUND-COLOR IS BLACK
                     BACKGROUND-COLOR IS RED.
-           DISPLAY(24 33) "Enter - Aceptar".
+           DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT(24 80) PRESSED-KEY
+           ACCEPT PRESSED-KEY AT 2480
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE
@@ -380,8 +380,8 @@
        USER-BAD.
            CLOSE TARJETAS.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
-           DISPLAY(9 22) "La cuenta introducida es incorrecta"
+           DISPLAY "La cuenta introducida es incorrecta" AT 0922
                WITH FOREGROUND-COLOR IS BLACK
                     BACKGROUND-COLOR IS RED.
-           DISPLAY(24 33) "Enter - Salir".
+           DISPLAY "Enter - Salir" AT 2433.
            GO TO EXIT-ENTER.
