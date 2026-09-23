@@ -20,6 +20,12 @@
            RECORD KEY IS MOV-NUM
            FILE STATUS IS FSM.
 
+           SELECT F-TRANSFERENCIAS ASSIGN TO DISK
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS DYNAMIC
+           RECORD KEY IS TRANS-NUM
+           FILE STATUS IS FSTR.
+
 
        DATA DIVISION.
        FILE SECTION.
@@ -46,11 +52,27 @@
            02 MOV-CONCEPTO         PIC  X(35).
            02 MOV-SALDOPOS-ENT     PIC  S9(9).
            02 MOV-SALDOPOS-DEC     PIC   S9(2).
+       
+       FD F-TRANSFERENCIAS
+           LABEL RECORD STANDARD
+           VALUE OF FILE-ID IS "transferencias.ubd".
+       01 TRANSFERENCIA-REG.
+           02 TRANS-NUM              PIC 9(35).
+           02 TRANS-ORIGEN           PIC 9(16).
+           02 TRANS-DESTINO          PIC 9(16).
+           02 TRANS-IMPORTE-ENT      PIC S9(7).
+           02 TRANS-IMPORTE-DEC      PIC 9(2).
+           02 TRANS-TIPO             PIC 9(1).
+           02 TRANS-ANO              PIC 9(4).
+           02 TRANS-MES              PIC 9(2).
+           02 TRANS-DIA              PIC 9(2).
+           02 TRANS-ESTADO           PIC 9(1).
 
 
        WORKING-STORAGE SECTION.
        77 FST                      PIC   X(2).
        77 FSM                      PIC   X(2).
+       77 FSTR                     PIC   X(2).
 
        78 BLACK                  VALUE      0.
        78 BLUE                   VALUE      1.
@@ -152,9 +174,14 @@
            DISPLAY ":" AT 0446.
            DISPLAY MINUTOS AT 0447.
 
-       MOVIMIENTOS-OPEN.
+       FICHEROS-OPEN.
            OPEN I-O F-MOVIMIENTOS.
            IF FSM <> "00" THEN
+               GO TO PSYS-ERR
+           END-IF.
+
+           OPEN I-O F-TRANSFERENCIAS.
+           IF FSTR <> "00" THEN
                GO TO PSYS-ERR
            END-IF.
 
@@ -185,7 +212,7 @@
 
            MOVE LAST-USER-ORD-MOV-NUM TO MOV-NUM.
 
-           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
+           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
            READ F-MOVIMIENTOS INVALID KEY GO PSYS-ERR.
            DISPLAY SALDO-DISPLAY.
            CLOSE F-MOVIMIENTOS.
@@ -271,7 +298,7 @@
            READ TARJETAS INVALID KEY GO TO USER-BAD.
            CLOSE TARJETAS.
 
-           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
+           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
            MOVE 0 TO MOV-NUM.
            MOVE 0 TO LAST-USER-DST-MOV-NUM.
 
@@ -288,7 +315,7 @@
        GUARDAR-TRF.
            CLOSE F-MOVIMIENTOS.
            MOVE LAST-USER-DST-MOV-NUM TO MOV-NUM.
-           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
+           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
            READ F-MOVIMIENTOS INVALID KEY GO PSYS-ERR.
 
            COMPUTE CENT-SALDO-DST-USER = (MOV-SALDOPOS-ENT * 100)

@@ -55,7 +55,7 @@
 
            OPEN OUTPUT F-MOVIMIENTOS.
 
-           IF FSM NOT = "00"
+           IF FSM <> "00"
                DISPLAY "ERROR AL CREAR MOVIMIENTOS.UBD"
                DISPLAY "FILE STATUS: " FSM
                STOP RUN
@@ -79,7 +79,7 @@
 
            WRITE MOVIMIENTO-REG.
 
-           IF FSM NOT = "00"
+           IF FSM <> "00"
                DISPLAY "ERROR ESCRIBIENDO MOVIMIENTO 1"
                DISPLAY "FILE STATUS: " FSM
                CLOSE F-MOVIMIENTOS
@@ -104,7 +104,7 @@
 
            WRITE MOVIMIENTO-REG.
 
-           IF FSM NOT = "00"
+           IF FSM <> "00"
                DISPLAY "ERROR ESCRIBIENDO MOVIMIENTO 2"
                DISPLAY "FILE STATUS: " FSM
                CLOSE F-MOVIMIENTOS
@@ -129,7 +129,7 @@
 
            WRITE MOVIMIENTO-REG.
 
-           IF FSM NOT = "00"
+           IF FSM <> "00"
                DISPLAY "ERROR ESCRIBIENDO MOVIMIENTO 3"
                DISPLAY "FILE STATUS: " FSM
                CLOSE F-MOVIMIENTOS
@@ -154,7 +154,7 @@
 
            WRITE MOVIMIENTO-REG.
 
-           IF FSM NOT = "00"
+           IF FSM <> "00"
                DISPLAY "ERROR ESCRIBIENDO MOVIMIENTO 4"
                DISPLAY "FILE STATUS: " FSM
                CLOSE F-MOVIMIENTOS
