@@ -73,6 +73,11 @@
        77 FST                      PIC   X(2).
        77 FSM                      PIC   X(2).
        77 FSTR                     PIC   X(2).
+       77 TIPO-TRANSFERENCIA       PIC   9(1).
+       77 LAST-TRANS-NUM           PIC  9(35).
+       77 ANO-TRANSFERENCIA         PIC  9(4).
+       77 MES-TRANSFERENCIA         PIC  9(2).
+       77 DIA-TRANSFERENCIA         PIC  9(2).
 
        78 BLACK                  VALUE      0.
        78 BLUE                   VALUE      1.
@@ -135,7 +140,8 @@
            05 FILLER AUTO UNDERLINE
                SIGN IS LEADING SEPARATE
                LINE 16 COL 54 PIC S9(7) USING EURENT-USUARIO.
-           05 FILLER UNDERLINE
+           05 FILLER LINE 16 COL 62 VALUE ",".
+           05 FILLER AUTO UNDERLINE
                LINE 16 COL 63 PIC S9(2) USING EURDEC-USUARIO.
 
        01 SALDO-DISPLAY.
@@ -174,14 +180,9 @@
            DISPLAY ":" AT 0446.
            DISPLAY MINUTOS AT 0447.
 
-       FICHEROS-OPEN.
+       MOVIMIENTOS-OPEN.
            OPEN I-O F-MOVIMIENTOS.
            IF FSM <> "00" THEN
-               GO TO PSYS-ERR
-           END-IF.
-
-           OPEN I-O F-TRANSFERENCIAS.
-           IF FSTR <> "00" THEN
                GO TO PSYS-ERR
            END-IF.
 
@@ -203,8 +204,14 @@
            DISPLAY "Ordenar Transferencia" AT 0830.
            DISPLAY "Saldo Actual:" AT 1019.
 
-           DISPLAY "Enter - Confirmar" 2402.
-           DISPLAY "ESC - Cancelar" 2466.
+           DISPLAY "1 - Transferencia inmediata" AT 1219.
+           DISPLAY "2 - Transferencia puntual" AT 1319.
+           DISPLAY "3 - Transferencia mensual" AT 1419.
+
+           DISPLAY "Seleccione el tipo de transferencia" AT 1619.
+
+           DISPLAY "Enter - Confirmar" AT 2402.
+           DISPLAY "ESC - Cancelar" AT 2466.
 
            IF LAST-USER-ORD-MOV-NUM = 0 THEN
                GO TO NO-MOVIMIENTOS
@@ -212,27 +219,51 @@
 
            MOVE LAST-USER-ORD-MOV-NUM TO MOV-NUM.
 
-           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
+           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
            READ F-MOVIMIENTOS INVALID KEY GO PSYS-ERR.
            DISPLAY SALDO-DISPLAY.
            CLOSE F-MOVIMIENTOS.
 
+           ACCEPT TIPO-TRANSFERENCIA AT 1660
+              WITH AUTO NO-ECHO SIZE 1
+              ON EXCEPTION
+               IF ESC-PRESSED THEN
+                   EXIT PROGRAM
+               ELSE
+                   GO TO ORDENACION-TRF
+               END-IF.
+
+           IF TIPO-TRANSFERENCIA < 1 OR
+                TIPO-TRANSFERENCIA > 3 THEN
+                 GO TO ORDENACION-TRF
+           END-IF.
+
+           GO TO INDICAR-CTA-DST.
+
        INDICAR-CTA-DST.
+           PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+
+           DISPLAY "Ordenar Transferencia" AT 0830.
+           DISPLAY "Saldo Actual:" AT 1019.
+           DISPLAY SALDO-DISPLAY.
+
            DISPLAY "Indica la cuenta destino" AT 1219.
            DISPLAY "y nombre del titular" AT 1419.
            DISPLAY "Indique la cantidad a transferir" AT 1619.
-           DISPLAY "," AT 1661.
            DISPLAY "EUR" AT 1666.
+
+           DISPLAY "Enter - Confirmar" AT 2402.
+           DISPLAY "ESC - Cancelar" AT 2466.
 
            COMPUTE CENT-SALDO-ORD-USER = (MOV-SALDOPOS-ENT * 100)
                                          + MOV-SALDOPOS-DEC.
 
            ACCEPT FILTRO-CUENTA ON EXCEPTION
-           IF ESC-PRESSED THEN
-               EXIT PROGRAM
-           ELSE
-               GO TO INDICAR-CTA-DST
-           END-IF.
+               IF ESC-PRESSED THEN
+                   EXIT PROGRAM
+               ELSE
+                   GO TO INDICAR-CTA-DST
+               END-IF.
 
            COMPUTE CENT-IMPOR-USER = (EURENT-USUARIO * 100)
                                      + EURDEC-USUARIO.
@@ -243,9 +274,101 @@
                    GO TO INDICAR-CTA-DST
            END-IF.
 
+           IF TIPO-TRANSFERENCIA = 1 THEN
+               GO TO REALIZAR-TRF-VERIFICACION
+           ELSE
+               IF TIPO-TRANSFERENCIA = 2 THEN
+                   GO TO INDICAR-FECHA-TRF
+               ELSE
+                   IF TIPO-TRANSFERENCIA = 3 THEN
+                       GO TO INDICAR-DIA-MENSUAL
+                   END-IF
+               END-IF
+           END-IF.
+
+       INDICAR-FECHA-TRF.
+           PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+
+           DISPLAY "Transferencia puntual" AT 0830.
+           DISPLAY "Indique la fecha de la transferencia" AT 1219.
+           DISPLAY "Dia:" AT 1419.
+           DISPLAY "Mes:" AT 1519.
+           DISPLAY "Ano:" AT 1619.
+
+           DISPLAY "Enter - Confirmar" AT 2402.
+           DISPLAY "ESC - Cancelar" AT 2466.
+
+           ACCEPT DIA-TRANSFERENCIA AT 1424
+               WITH AUTO SIZE 2
+               ON EXCEPTION
+                 IF ESC-PRESSED THEN
+                     EXIT PROGRAM
+                 ELSE
+                     GO TO INDICAR-FECHA-TRF
+                 END-IF.
+           
+           ACCEPT MES-TRANSFERENCIA AT 1524
+               WITH AUTO SIZE 2
+               ON EXCEPTION
+                 IF ESC-PRESSED THEN
+                     EXIT PROGRAM
+                 ELSE
+                     GO TO INDICAR-FECHA-TRF
+                 END-IF.
+
+           ACCEPT ANO-TRANSFERENCIA AT 1624
+                WITH AUTO SIZE 4
+                ON EXCEPTION
+                  IF ESC-PRESSED THEN
+                        EXIT PROGRAM
+                  ELSE
+                        GO TO INDICAR-FECHA-TRF
+                  END-IF.
+                
+           IF DIA-TRANSFERENCIA < 1 OR
+               DIA-TRANSFERENCIA > 31 THEN
+                  GO TO INDICAR-FECHA-TRF
+           END-IF.
+
+           IF MES-TRANSFERENCIA < 1 OR
+               MES-TRANSFERENCIA > 12 THEN
+                  GO TO INDICAR-FECHA-TRF
+           END-IF.
+
+           GO TO REALIZAR-TRF-VERIFICACION.
+
+
+       INDICAR-DIA-MENSUAL.
+           PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+
+           DISPLAY "Transferencia mensual" AT 0830.
+           DISPLAY "Indique el dia del mes:" AT 1219.
+
+           DISPLAY "Enter - Confirmar" AT 2402.
+           DISPLAY "ESC - Cancelar" AT 2466.
+
+           ACCEPT DIA-TRANSFERENCIA AT 1244
+               WITH AUTO SIZE 2
+               ON EXCEPTION
+                 IF ESC-PRESSED THEN
+                     EXIT PROGRAM
+                 ELSE
+                     GO TO INDICAR-DIA-MENSUAL
+                 END-IF.
+
+           IF DIA-TRANSFERENCIA < 1 OR
+               DIA-TRANSFERENCIA > 31 THEN
+                  GO TO INDICAR-DIA-MENSUAL
+           END-IF.
+
+           MOVE 0 TO ANO-TRANSFERENCIA.
+           MOVE 0 TO MES-TRANSFERENCIA.
+
            GO TO REALIZAR-TRF-VERIFICACION.
 
        NO-MOVIMIENTOS.
+           PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+           
            DISPLAY "0" AT 1051.
            DISPLAY "." AT 1052.
            DISPLAY "00" AT 1053.
@@ -254,7 +377,6 @@
            DISPLAY "Indica la cuenta destino " AT 1219.
            DISPLAY "y nombre del titular" AT 1419.
            DISPLAY "Indique la cantidad a transferir" AT 1619.
-           DISPLAY "," AT 1661.
            DISPLAY "EUR" AT 1666.
 
            ACCEPT FILTRO-CUENTA ON EXCEPTION
@@ -269,14 +391,30 @@
 
        REALIZAR-TRF-VERIFICACION.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+
            DISPLAY "Ordenar Transferencia" AT 0830.
            DISPLAY "Va a transferir:" AT 1119.
            DISPLAY EURENT-USUARIO AT 1138.
-           DISPLAY "." AT 1145.
+           DISPLAY "," AT 1145.
            DISPLAY EURDEC-USUARIO AT 1146.
            DISPLAY "EUR de su cuenta" AT 1149.
            DISPLAY "a la cuenta cuyo titular es" AT 1219.
            DISPLAY NOMBRE-DESTINO AT 1248.
+
+           IF TIPO-TRANSFERENCIA = 2 THEN
+               DISPLAY "Fecha de transferencia:" AT 1419
+               DISPLAY DIA-TRANSFERENCIA AT 1444
+               DISPLAY "-" AT 1446
+               DISPLAY MES-TRANSFERENCIA AT 1447
+               DISPLAY "-" AT 1449
+               DISPLAY ANO-TRANSFERENCIA AT 1450
+           ELSE
+               IF TIPO-TRANSFERENCIA = 3 THEN
+                   DISPLAY "Transferencia mensual: dia" AT 1419
+                   DISPLAY DIA-TRANSFERENCIA AT 1446
+                   DISPLAY "de cada mes" AT 1449
+               END-IF
+           END-IF.
 
            DISPLAY "Enter - Confirmar" AT 2402.
            DISPLAY "ESC - Cancelar" AT 2466.
@@ -298,7 +436,7 @@
            READ TARJETAS INVALID KEY GO TO USER-BAD.
            CLOSE TARJETAS.
 
-           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
+           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
            MOVE 0 TO MOV-NUM.
            MOVE 0 TO LAST-USER-DST-MOV-NUM.
 
@@ -314,8 +452,73 @@
 
        GUARDAR-TRF.
            CLOSE F-MOVIMIENTOS.
+
+           OPEN I-O F-TRANSFERENCIAS.
+           IF FSTR <> "00" THEN
+               GO TO PSYS-ERR
+           END-IF.
+ 
+           MOVE 0 TO TRANS-NUM.
+           MOVE 0 TO LAST-TRANS-NUM.
+
+       LECTURA-TRANSFERENCIAS.
+           READ F-TRANSFERENCIAS NEXT RECORD
+               AT END GO TO CREAR-TRANSFERENCIA
+           END-READ.
+
+           IF LAST-TRANS-NUM < TRANS-NUM THEN
+               MOVE TRANS-NUM TO LAST-TRANS-NUM
+           END-IF.
+
+           GO TO LECTURA-TRANSFERENCIAS.
+
+       CREAR-TRANSFERENCIA.
+           ADD 1 TO LAST-TRANS-NUM.
+           
+           MOVE LAST-TRANS-NUM TO TRANS-NUM.
+           MOVE TNUM TO TRANS-ORIGEN.
+           MOVE CUENTA-DESTINO TO TRANS-DESTINO.
+           MOVE EURENT-USUARIO TO TRANS-IMPORTE-ENT.
+           MOVE EURDEC-USUARIO TO TRANS-IMPORTE-DEC.
+           MOVE TIPO-TRANSFERENCIA TO TRANS-TIPO.
+
+           IF TIPO-TRANSFERENCIA = 1 THEN
+               MOVE ANO TO TRANS-ANO
+               MOVE MES TO TRANS-MES
+               MOVE DIA TO TRANS-DIA
+               MOVE 2 TO TRANS-ESTADO
+           ELSE
+               IF TIPO-TRANSFERENCIA = 2 THEN
+                   MOVE ANO-TRANSFERENCIA TO TRANS-ANO
+                   MOVE MES-TRANSFERENCIA TO TRANS-MES
+                   MOVE DIA-TRANSFERENCIA TO TRANS-DIA
+                   MOVE 1 TO TRANS-ESTADO
+               ELSE
+                   IF TIPO-TRANSFERENCIA = 3 THEN
+                       MOVE 0 TO TRANS-ANO
+                       MOVE 0 TO TRANS-MES
+                       MOVE DIA-TRANSFERENCIA TO TRANS-DIA
+                       MOVE 3 TO TRANS-ESTADO
+                   END-IF
+               END-IF
+           END-IF.
+
+           WRITE TRANSFERENCIA-REG
+              INVALID KEY GO TO PSYS-ERR.
+           
+           IF TIPO-TRANSFERENCIA = 1 THEN
+               GO TO REALIZAR-MOVIMIENTOS
+           END-IF.
+
+           CLOSE F-TRANSFERENCIAS.
+           GO TO P-EXITO.
+
+       REALIZAR-MOVIMIENTOS.
+           CLOSE F-TRANSFERENCIAS.
+
            MOVE LAST-USER-DST-MOV-NUM TO MOV-NUM.
-           PERFORM FICHEROS-OPEN THRU FICHEROS-OPEN.
+
+           PERFORM MOVIMIENTOS-OPEN THRU MOVIMIENTOS-OPEN.
            READ F-MOVIMIENTOS INVALID KEY GO PSYS-ERR.
 
            COMPUTE CENT-SALDO-DST-USER = (MOV-SALDOPOS-ENT * 100)
@@ -374,11 +577,19 @@
 
            CLOSE F-MOVIMIENTOS.
 
+           GO TO P-EXITO.
+
        P-EXITO.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
 
            DISPLAY "Ordenar transferencia" AT 0830.
-           DISPLAY "Transferencia realizada correctamente!" AT 1119.
+
+           IF TIPO-TRANSFERENCIA = 1 THEN
+               DISPLAY "Transferencia realizada correctamente!" AT 1119
+           ELSE
+               DISPLAY "Transferencia programada correctamente!" AT 1119
+           END-IF.
+
            DISPLAY "Enter - Aceptar" AT 2433.
 
            GO TO EXIT-ENTER.
@@ -386,6 +597,7 @@
        PSYS-ERR.
            CLOSE TARJETAS.
            CLOSE F-MOVIMIENTOS.
+           CLOSE F-TRANSFERENCIAS.
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "Ha ocurrido un error interno" AT 0925
