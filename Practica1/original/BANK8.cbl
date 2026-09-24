@@ -27,44 +27,44 @@
        FD TARJETAS
            LABEL RECORD STANDARD.
        01 TAJETAREG.
-           02 TNUM                   PIC 9(16).
-           02 TPIN                   PIC 9(4).
+           02 TNUM                    PIC 9(16).
+           02 TPIN                    PIC 9(4).
 
        FD INTENTOS
            LABEL RECORD STANDARD.
        01 INTENTOSREG.
-           02 INUM                   PIC 9(16).
-           02 IINTENTOS              PIC 9(1).
+           02 INUM                    PIC 9(16).
+           02 IINTENTOS               PIC 9(1).
 
        WORKING-STORAGE SECTION.
 
-       77 FST                        PIC X(2).
-       77 FSI                        PIC X(2).
+       77 FST                         PIC X(2).
+       77 FSI                         PIC X(2).
 
        01 CAMPOS-FECHA.
            05 FECHA.
-               10 ANO                PIC 9(4).
-               10 MES                PIC 9(2).
-               10 DIA                PIC 9(2).
+               10 ANO                 PIC 9(4).
+               10 MES                 PIC 9(2).
+               10 DIA                 PIC 9(2).
            05 HORA.
-               10 HORAS              PIC 9(2).
-               10 MINUTOS            PIC 9(2).
-               10 SEGUNDOS           PIC 9(2).
-               10 MILISEGUNDOS       PIC 9(2).
-           05 DIF-GMT                PIC S9(4).
+               10 HORAS               PIC 9(2).
+               10 MINUTOS             PIC 9(2).
+               10 SEGUNDOS            PIC 9(2).
+               10 MILISEGUNDOS        PIC 9(2).
+           05 DIF-GMT                 PIC S9(4).
 
-       01 KEYBOARD-STATUS            PIC 9(4).
-           88 ENTER-PRESSED          VALUE 0.
-           88 ESC-PRESSED            VALUE 2005.
+       01 KEYBOARD-STATUS             PIC 9(4).
+           88 ENTER-PRESSED           VALUE 0.
+           88 ESC-PRESSED             VALUE 2005.
 
-       77 PIN-ACTUAL-USER            PIC 9(4).
-       77 PIN-NUEVO-1                PIC 9(4).
-       77 PIN-NUEVO-2                PIC 9(4).
-       77 CHOICE                     PIC X(1).
+       77 PIN-ACTUAL-USER             PIC 9(4).
+       77 PIN-NUEVO-1                 PIC 9(4).
+       77 PIN-NUEVO-2                 PIC 9(4).
+       77 CHOICE                      PIC X(1).
 
        LINKAGE SECTION.
 
-       77 TNUM-LINK                  PIC 9(16).
+       77 TNUM-LINK                   PIC 9(16).
 
        SCREEN SECTION.
 
@@ -99,18 +99,18 @@
        IMPRIMIR-CABECERA.
            DISPLAY BLANK-SCREEN.
            DISPLAY "Cajero Automatico UnizarBank"
-               LINE 2 COL 26.
+               AT 0226.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
-           DISPLAY DIA LINE 4 COL 32.
-           DISPLAY "-" LINE 4 COL 34.
-           DISPLAY MES LINE 4 COL 35.
-           DISPLAY "-" LINE 4 COL 37.
-           DISPLAY ANO LINE 4 COL 38.
-           DISPLAY HORAS LINE 4 COL 44.
-           DISPLAY ":" LINE 4 COL 46.
-           DISPLAY MINUTOS LINE 4 COL 47.
+           DISPLAY DIA AT 0432.
+           DISPLAY "-" AT 0434.
+           DISPLAY MES AT 0435.
+           DISPLAY "-" AT 0437.
+           DISPLAY ANO AT 0438.
+           DISPLAY HORAS AT 0444.
+           DISPLAY ":" AT 0446.
+           DISPLAY MINUTOS AT 0447.
 
        SOLICITAR-DATOS.
            PERFORM IMPRIMIR-CABECERA.
@@ -120,18 +120,18 @@
            INITIALIZE PIN-NUEVO-2.
 
            DISPLAY "Cambio de clave personal"
-               LINE 8 COL 20.
+               AT 0820.
            DISPLAY "Introduzca clave actual:"
-               LINE 10 COL 15.
+               AT 1015.
            DISPLAY "Introduzca nueva clave:"
-               LINE 11 COL 15.
+               AT 1115.
            DISPLAY "Repita la nueva clave:"
-               LINE 12 COL 15.
+               AT 1215.
 
            DISPLAY "Enter - Confirmar"
-               LINE 24 COL 2.
+               AT 2402.
            DISPLAY "ESC - Cancelar"
-               LINE 24 COL 65.
+               AT 2465.
 
            ACCEPT FORMULARIO-CLAVE
                ON EXCEPTION
@@ -217,16 +217,16 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "Cambio de clave personal"
-               LINE 8 COL 20.
+               AT 0820.
            DISPLAY "La clave se ha cambiado correctamente"
-               LINE 12 COL 20.
+               AT 1220.
            DISPLAY "Enter - Aceptar"
-               LINE 24 COL 33.
-			   
+               AT 2433.
+           
            GO TO EXITO-ENTER.
-		   
+           
        EXITO-ENTER.
-           ACCEPT OMITTED LINE 24 COL 80
+           ACCEPT OMITTED AT 2480
                ON EXCEPTION
                    IF ESC-PRESSED
                        EXIT PROGRAM
@@ -238,7 +238,7 @@
            ELSE
                GO TO EXITO-ENTER
            END-IF.
-		   
+           
        PPIN-ERR.
            SUBTRACT 1 FROM IINTENTOS.
 
@@ -259,22 +259,22 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "La clave actual es incorrecta"
-               LINE 9 COL 25.
+               AT 0925.
            DISPLAY "Le quedan"
-               LINE 11 COL 30.
+               AT 1130.
            DISPLAY IINTENTOS
-               LINE 11 COL 40.
+               AT 1140.
            DISPLAY " intentos"
-               LINE 11 COL 42.
-			   
+               AT 1142.
+           
            DISPLAY "Enter - Reintentar"
-               LINE 24 COL 2.
+               AT 2402.
            DISPLAY "ESC - Cancelar"
-               LINE 24 COL 65.
+               AT 2465.
 
        PPIN-ERR-ENTER.
-           ACCEPT OMITTED LINE 24 COL 80
-		   ON EXCEPTION
+           ACCEPT OMITTED AT 2480
+           ON EXCEPTION
            IF ENTER-PRESSED
                GO TO SOLICITAR-DATOS
            ELSE
@@ -290,15 +290,15 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "Las nuevas claves introducidas no coinciden"
-               LINE 10 COL 18.
+               AT 1018.
 
            DISPLAY "Enter - Reintentar"
-               LINE 24 COL 2.
+               AT 2402.
            DISPLAY "ESC - Cancelar"
-               LINE 24 COL 65.
+               AT 2465.
 
        PCOINCIDENCIA-ENTER.
-           ACCEPT CHOICE LINE 24 COL 80
+           ACCEPT CHOICE AT 2480
                ON EXCEPTION
                    IF ENTER-PRESSED
                        GO TO SOLICITAR-DATOS
@@ -315,16 +315,16 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "Se ha sobrepasado el numero de intentos"
-               LINE 9 COL 20.
+               AT 0920.
            DISPLAY "Por su seguridad se ha bloqueado la tarjeta"
-               LINE 11 COL 18.
+               AT 1118.
            DISPLAY "Acuda a una sucursal"
-               LINE 12 COL 30.
+               AT 1230.
            DISPLAY "Enter - Aceptar"
-               LINE 24 COL 33.
+               AT 2433.
 
        PINT-ERR-ENTER.
-           ACCEPT CHOICE LINE 24 COL 80
+           ACCEPT CHOICE AT 2480
                ON EXCEPTION
                    IF ENTER-PRESSED
                        EXIT PROGRAM
@@ -337,14 +337,14 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "Ha ocurrido un error interno"
-               LINE 9 COL 25.
+               AT 0925.
            DISPLAY "Vuelva mas tarde"
-               LINE 11 COL 32.
+               AT 1132.
            DISPLAY "Enter - Aceptar"
-               LINE 24 COL 33.
+               AT 2433.
 
        PSYS-ERR-ENTER.
-           ACCEPT CHOICE LINE 24 COL 80
+           ACCEPT CHOICE AT 2480
                ON EXCEPTION
                    IF ENTER-PRESSED
                        EXIT PROGRAM
@@ -353,6 +353,6 @@
                    END-IF
            END-ACCEPT.
            
-	   FIN-BANK8.
-	       EXIT PROGRAM.
+       FIN-BANK8.
+           EXIT PROGRAM.
 		   
