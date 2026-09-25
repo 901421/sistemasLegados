@@ -39,9 +39,9 @@ echo Preparando los ficheros de datos...
 copy /y original\tarjetas.ubd "%OUT%" >NUL || goto :error
 copy /y original\intentos.ubd "%OUT%" >NUL || goto :error
 pushd "%OUT%"
-CREAR-MOVIMIENTOS.exe || goto :error_pop
-CREAR-ESPECTACULOS.exe || goto :error_pop
-CREAR-TRANSFERENCIAS.exe || goto :error_pop
+for %%P in (CREAR-MOVIMIENTOS CREAR-ESPECTACULOS CREAR-TRANSFERENCIAS) do (
+    call :ejecutar %%P || goto :error_pop
+)
 del CREAR-MOVIMIENTOS.exe CREAR-ESPECTACULOS.exe CREAR-TRANSFERENCIAS.exe
 popd
 
@@ -56,3 +56,19 @@ popd
 echo.
 echo ERROR durante la compilacion.
 exit /b 1
+
+rem Ejecuta %1.exe. En Windows 11 con el Control inteligente de
+rem aplicaciones, un programa recien compilado y sin firmar puede ser
+rem bloqueado ("bloqueado por la directiva de Device Guard"). Windows
+rem recuerda la decision para ese fichero, asi que se vuelve a compilar
+rem (fichero nuevo) y se reintenta, hasta 5 veces.
+:ejecutar
+set /a INTENTO=0
+:ejecutar_otra
+set /a INTENTO+=1
+"%~1.exe" && exit /b 0
+if %INTENTO% GEQ 5 exit /b 1
+echo Windows ha bloqueado %~1.exe (intento %INTENTO% de 5): se recompila y se reintenta...
+del "%~1.exe"
+cobc -x -o "%~1.exe" "%~dp0src\%~1.cbl" || exit /b 1
+goto :ejecutar_otra
