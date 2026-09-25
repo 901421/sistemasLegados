@@ -5,3 +5,8 @@ Practica1/docs/uso-ia.md
 Practica1/docs/fuente/
 Practica1/REGISTRO.md
 Practica1/CORRECCIONES.md
+
+# Compilados (se generan con el script de compilación)
+Practica1/**/*.dll
+Practica1/**/*.exe
+Practica1/**/*.so
