@@ -186,7 +186,7 @@ Hipótesis de `guia-cobol.pdf` contrastadas: **H1** (275 usos), **H2** (`BANK6:1
 | AMB-13 | `lanzar.bat` con `mode con cols=80 lines=25` y pantallas diseñadas dentro de 80x25 | Usuario | Cerrada |
 | AMB-14 | "Tres pasos" = Objetivos 1, 2 y 3; memoria en PDF dentro del zip | Usuario | Cerrada |
 | AMB-15 | Zip autocontenido (ejecutable, runtime, datos, lanzador) e instrucciones en la memoria | Usuario | Cerrada |
-| AMB-16 | `movimientos.ubd` se crea con un programa COBOL de inicialización (saldos iniciales de 100 a 500 €, uno por tarjeta); reiniciar `intentos.ubd` | Usuario | Cerrada |
+| AMB-16 | `movimientos.ubd` se crea con un programa COBOL de inicialización (saldos iniciales de 100 a 500 €, uno por tarjeta); `tarjetas.ubd` e `intentos.ubd` se entregan tal cual del backup, sin tocar los datos originales (la tarjeta 5 conserva 2 intentos; revisado el 2026-09-26) | Usuario | Cerrada |
 
 ## Decisiones provisionales y pendientes de preguntar al profesor
 
