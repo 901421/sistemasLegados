@@ -418,7 +418,7 @@
        NO-MOVIMIENTOS.
            DISPLAY "Enter - Confirmar" AT 2402.
            DISPLAY "0" AT 1051.
-           DISPLAY "." AT 1052.
+           DISPLAY "," AT 1052.
            DISPLAY "00" AT 1053.
            DISPLAY "EUR" AT 1054.
 
@@ -444,7 +444,7 @@
            DISPLAY "Ordenar Transferencia" AT 0830.
            DISPLAY "Va a transferir:" AT 1119.
            DISPLAY EURENT-USUARIO AT 1138.
-           DISPLAY "." AT 1145.
+           DISPLAY "," AT 1145.
            DISPLAY EURDEC-USUARIO AT 1146.
            DISPLAY "EUR de su cuenta" AT 1149.
            DISPLAY "a la cuenta cuyo titular es" AT 1219.

@@ -259,7 +259,7 @@
            DISPLAY "de fechas y/o cantidades." AT 1047.
 
            DISPLAY "Entre las fechas   /  /     y   /  /    " AT 1320.
-           DISPLAY "Cantidad entre         .   EUR y         .   EUR"
+           DISPLAY "Cantidad entre         ,   EUR y         ,   EUR"
                AT 1515.
 
            DISPLAY "Enter - Aceptar" AT 2401.

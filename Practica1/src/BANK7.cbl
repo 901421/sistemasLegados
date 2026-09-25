@@ -132,7 +132,7 @@
            05 FILLER LINE 07 COL 26 VALUE IS "Saldo actual:".
            05 FILLER SIGN IS LEADING SEPARATE LINE 07 COL 40
                PIC S9(9) FROM SALDO-USER-ENT.
-           05 FILLER LINE 07 COL 50 VALUE IS ".".
+           05 FILLER LINE 07 COL 50 VALUE IS ",".
            05 FILLER LINE 07 COL 51 PIC 99 FROM SALDO-USER-DEC.
            05 FILLER LINE 07 COL 54 VALUE IS "EUR".
 
@@ -170,7 +170,7 @@
            05 FILLER LINE LINEA-ESP-ACTUAL COL 73
                FOREGROUND-COLOR YELLOW PIC 9(4) FROM ESP-PRECIO-ENT.
            05 FILLER LINE LINEA-ESP-ACTUAL COL 77
-               FOREGROUND-COLOR YELLOW VALUE ".".
+               FOREGROUND-COLOR YELLOW VALUE ",".
            05 FILLER LINE LINEA-ESP-ACTUAL COL 78
                FOREGROUND-COLOR YELLOW PIC 9(2) FROM ESP-PRECIO-DEC.
 
@@ -208,7 +208,7 @@
            05 FILLER LINE LINEA-ESP-ACTUAL COL 73
                PIC 9(4) FROM ESP-PRECIO-ENT.
            05 FILLER LINE LINEA-ESP-ACTUAL COL 77
-               VALUE ".".
+               VALUE ",".
            05 FILLER LINE LINEA-ESP-ACTUAL COL 78
                PIC 9(2) FROM ESP-PRECIO-DEC.
 
@@ -432,7 +432,7 @@
 
            DISPLAY "Importe total: " AT 1415.
            DISPLAY IMPORTE-ENTRADAS-ENT AT 1430.
-           DISPLAY "." AT 1436.
+           DISPLAY "," AT 1436.
            DISPLAY IMPORTE-ENTRADAS-DEC AT 1437.
            DISPLAY "EUR" AT 1440.
 
@@ -493,7 +493,7 @@
            DISPLAY "Por favor, retire las entradas" AT 0925.
            DISPLAY "El saldo resultante es de" AT 1221.
            DISPLAY SALDOPOSTERIOR.
-           DISPLAY "." AT 1257.
+           DISPLAY "," AT 1257.
            DISPLAY SALDO-POST-DEC AT 1258.
 
            DISPLAY "Enter - Aceptar" AT 2433.

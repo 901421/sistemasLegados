@@ -146,7 +146,7 @@
 
        NO-MOVIMIENTOS.
            DISPLAY "0" AT 1234.
-           DISPLAY "." AT 1235.
+           DISPLAY "," AT 1235.
            DISPLAY "00" AT 1236.
            DISPLAY "EUR" AT 1239.
 
