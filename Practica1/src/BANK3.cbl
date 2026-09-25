@@ -67,7 +67,7 @@
            88 UP-ARROW-PRESSED      VALUE 2003.
            88 DOWN-ARROW-PRESSED    VALUE 2004.
            88 ESC-PRESSED           VALUE 2005.
-       77 PRESSED-KEY               PIC   9(4).
+       77 TECLA                   PIC   X(1).
 
        77 DIA1-USUARIO              PIC   9(2).
        77 MES1-USUARIO              PIC   9(2).
@@ -335,7 +335,7 @@
 
        WAIT-ORDER.
 
-           ACCEPT PRESSED-KEY AT 2480 ON EXCEPTION
+           ACCEPT TECLA AT 2480 WITH NO-ECHO ON EXCEPTION
 
               IF ESC-PRESSED THEN
                   CLOSE F-MOVIMIENTOS
@@ -470,7 +470,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE

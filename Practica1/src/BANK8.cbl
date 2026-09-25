@@ -238,7 +238,7 @@
            GO TO EXITO-ENTER.
            
        EXITO-ENTER.
-           ACCEPT OMITTED AT 2480
+           ACCEPT CHOICE AT 2480 WITH NO-ECHO
                ON EXCEPTION
                    IF ESC-PRESSED
                        EXIT PROGRAM
@@ -293,11 +293,12 @@
                AT 2465.
 
        PPIN-ERR-ENTER.
-           ACCEPT OMITTED AT 2480
+           ACCEPT CHOICE AT 2480 WITH NO-ECHO
                ON EXCEPTION
                    IF ESC-PRESSED
                        EXIT PROGRAM
-                   ELSE
+                   END-IF
+                   IF NOT ENTER-PRESSED
                        GO TO PPIN-ERR-ENTER
                    END-IF
            END-ACCEPT.
@@ -318,7 +319,7 @@
                AT 2465.
 
        PCOINCIDENCIA-ENTER.
-           ACCEPT CHOICE AT 2480
+           ACCEPT CHOICE AT 2480 WITH NO-ECHO
                ON EXCEPTION
                    IF ENTER-PRESSED
                        GO TO SOLICITAR-DATOS
@@ -350,7 +351,7 @@
                AT 2433.
 
        PINT-ERR-ENTER.
-           ACCEPT CHOICE AT 2480
+           ACCEPT CHOICE AT 2480 WITH NO-ECHO
                ON EXCEPTION
                    IF ENTER-PRESSED
                        EXIT PROGRAM
@@ -374,7 +375,7 @@
                AT 2433.
 
        PSYS-ERR-ENTER.
-           ACCEPT CHOICE AT 2480
+           ACCEPT CHOICE AT 2480 WITH NO-ECHO
                ON EXCEPTION
                    IF ENTER-PRESSED
                        EXIT PROGRAM

@@ -108,7 +108,7 @@
            88 DOWN-ARROW-PRESSED VALUE  2004.
            88 ESC-PRESSED        VALUE  2005.
 
-       77 PRESSED-KEY              PIC   9(4).
+       77 TECLA                  PIC   X(1).
 
        77 LAST-MOV-NUM             PIC  9(35).
        77 LAST-USER-ORD-MOV-NUM    PIC  9(35).
@@ -447,10 +447,12 @@
            DISPLAY "ESC - Cancelar" AT 2466.
 
        ENTER-VERIFICACION.
-           ACCEPT OMITTED AT 2480 ON EXCEPTION
+      *    CON UN CAMPO, ENTER TAMBIEN LLEGA COMO EXCEPCION (3.C).
+           ACCEPT TECLA AT 2480 WITH NO-ECHO ON EXCEPTION
            IF ESC-PRESSED THEN
                EXIT PROGRAM
-           ELSE
+           END-IF
+           IF NOT ENTER-PRESSED THEN
                GO TO ENTER-VERIFICACION
            END-IF.
 
@@ -624,7 +626,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE

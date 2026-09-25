@@ -89,7 +89,7 @@
            88 UP-ARROW-PRESSED      VALUE 2003.
            88 DOWN-ARROW-PRESSED    VALUE 2004.
            88 ESC-PRESSED           VALUE 2005.
-       77 PRESSED-KEY               PIC   9(4).
+       77 TECLA                   PIC   X(1).
 
        77 USER-NUM-ENTRADAS         PIC   9(2).
        77 USER-NUM-ESPECT           PIC   9(4).
@@ -431,7 +431,7 @@
            DISPLAY "ESC - Cancelar" AT 2466.
 
        SALDO-SUF-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED THEN
                GO TO GUARDAR-VENTA
            ELSE
@@ -490,7 +490,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        RECOGER-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE
@@ -524,7 +524,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        VENTA-ERR-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                CLOSE F-MOVIMIENTOS
                CLOSE F-ESPECTACULOS
@@ -649,7 +649,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE

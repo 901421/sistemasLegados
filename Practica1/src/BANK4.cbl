@@ -79,7 +79,7 @@
        77 CENT-IMPOR-USER          PIC    9(9).
 
        77 CON                      PIC   X(35) VALUE "Retirada".
-       77 PRESSED-KEY              PIC    9(4).
+       77 TECLA                  PIC   X(1).
 
        LINKAGE SECTION.
        77 TNUM                     PIC  9(16).
@@ -307,7 +307,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        EXIT-ENTER.
-           ACCEPT PRESSED-KEY AT 2480
+           ACCEPT TECLA AT 2480 WITH NO-ECHO
            IF ENTER-PRESSED
                EXIT PROGRAM
            ELSE

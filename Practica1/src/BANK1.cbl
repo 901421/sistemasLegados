@@ -74,6 +74,7 @@
        77 PRESSED-KEY              PIC  9(4).
        77 PIN-INTRODUCIDO          PIC  9(4).
        77 CHOICE                   PIC  9(1).
+       77 TECLA                    PIC  X(1).
 
 
        SCREEN SECTION.
@@ -119,7 +120,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        P1-ENTER.
-           ACCEPT CHOICE AT 2480 ON EXCEPTION
+           ACCEPT TECLA AT 2480 WITH NO-ECHO ON EXCEPTION
            IF ENTER-PRESSED
                GO TO P2
            ELSE
@@ -273,7 +274,7 @@
            DISPLAY "Enter - Aceptar" AT 2433.
 
        PINT-ERR-ENTER.
-           ACCEPT CHOICE AT 2480 ON EXCEPTION
+           ACCEPT TECLA AT 2480 WITH NO-ECHO ON EXCEPTION
            IF ENTER-PRESSED
                GO TO IMPRIMIR-CABECERA
            ELSE
@@ -306,7 +307,7 @@
            DISPLAY "ESC - Cancelar" AT 2465.
 
        PPIN-ERR-ENTER.
-           ACCEPT CHOICE AT 2480 ON EXCEPTION
+           ACCEPT TECLA AT 2480 WITH NO-ECHO ON EXCEPTION
            IF ENTER-PRESSED
                GO TO P2
            ELSE
