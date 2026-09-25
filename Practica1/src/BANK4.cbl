@@ -239,6 +239,17 @@
                GO TO PANTALLA-RETIRADA
            END-IF.
 
+      *    MINIMO 1 EUR: EL IMPORTE SE GUARDA COMO PARTE ENTERA CON
+      *    SIGNO Y CENTIMOS SIN SIGNO; CON PARTE ENTERA 0 EL CARGO
+      *    QUEDARIA EN POSITIVO EN LOS MOVIMIENTOS.
+           IF CENT-IMPOR-USER < 100 THEN
+               DISPLAY " " AT 1501 WITH ERASE EOL
+               DISPLAY "El importe minimo es 1 EUR" AT 1519
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               GO TO PANTALLA-RETIRADA
+           END-IF.
+
            IF CENT-IMPOR-USER > CENT-SALDO-USER THEN
                DISPLAY " " AT 1501 WITH ERASE EOL
                DISPLAY "Indique una cantidad menor!!" AT 1519

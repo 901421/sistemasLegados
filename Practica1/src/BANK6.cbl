@@ -303,6 +303,16 @@
                GO TO INDICAR-CTA-DST
            END-IF.
 
+      *    MINIMO 1 EUR (VER BANK4): CON PARTE ENTERA 0 EL CARGO
+      *    QUEDARIA EN POSITIVO EN LOS MOVIMIENTOS.
+           IF CENT-IMPOR-USER < 100 THEN
+               DISPLAY " " AT 2001 WITH ERASE EOL
+               DISPLAY "El importe minimo es 1 EUR" AT 2019
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               GO TO INDICAR-CTA-DST
+           END-IF.
+
            IF CENT-IMPOR-USER > CENT-SALDO-ORD-USER THEN
                    DISPLAY " " AT 2001 WITH ERASE EOL
                    DISPLAY "Indique una cantidad menor!!" AT 2019
