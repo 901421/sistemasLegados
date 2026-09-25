@@ -420,7 +420,7 @@
            DISPLAY "0" AT 1051.
            DISPLAY "," AT 1052.
            DISPLAY "00" AT 1053.
-           DISPLAY "EUR" AT 1054.
+           DISPLAY "EUR" AT 1056.
 
            DISPLAY "Indica la cuenta destino " AT 1219.
            DISPLAY "y nombre del titular" AT 1419.
