@@ -97,7 +97,7 @@
            DISPLAY BLANK-SCREEN.
 
            DISPLAY "Cajero Automatico UnizarBank" AT 0226
-               WITH FOREGROUND-COLOR IS BLUE.
+               WITH FOREGROUND-COLOR IS BLUE HIGHLIGHT.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
@@ -246,10 +246,10 @@
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "Ha ocurrido un error interno" AT 0925
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Vuelva mas tarde" AT 1132
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Enter - Aceptar" AT 2433.
            GO TO PINT-ERR-ENTER.
@@ -262,13 +262,13 @@
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "Se ha sobrepasado el numero de intentos" AT 0920
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Por su seguridad se ha bloqueado la tarjeta" AT 1118
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Acuda a una sucursal" AT 1230
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Enter - Aceptar" AT 2433.
 
@@ -289,17 +289,17 @@
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "El codigo PIN es incorrecto" AT 0926
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Le quedan " AT 1130
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY IINTENTOS AT 1140
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
-           DISPLAY " intentos" AT 1142
+           DISPLAY " intentos" AT 1141
 
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
 
            DISPLAY "Enter - Aceptar" AT 2401.

@@ -257,7 +257,7 @@
        IMPRIMIR-CABECERA.
            DISPLAY BLANK-SCREEN.
            DISPLAY "Cajero Automatico UnizarBank" AT 0226
-               WITH FOREGROUND-COLOR IS BLUE.
+               WITH FOREGROUND-COLOR IS BLUE HIGHLIGHT.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
@@ -297,14 +297,16 @@
               OR FUNCTION TEST-DATE-YYYYMMDD(FECHA-FIN) NOT = 0
                DISPLAY " " AT 1601 WITH ERASE EOL
                DISPLAY "Fecha incorrecta" AT 1632
-                   WITH BACKGROUND-COLOR RED
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO PFILTRO-ACEPTAR
            END-IF.
 
            IF FECHA-INI > FECHA-FIN
                DISPLAY " " AT 1601 WITH ERASE EOL
                DISPLAY "La fecha inicial es posterior a la final"
-                   AT 1620 WITH BACKGROUND-COLOR RED
+                   AT 1620 WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO PFILTRO-ACEPTAR
            END-IF.
 
@@ -573,10 +575,10 @@
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "Ha ocurrido un error interno" AT 0925
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Vuelva mas tarde" AT 1132
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "ESC - Salir" AT 2434.
            GO TO ESPERAR-SALIR.
@@ -593,4 +595,6 @@
                MOVE "Demasiadas transferencias: listado incompleto"
                    TO AVISO-CORTE
            END-IF.
-           DISPLAY AVISO-CORTE AT 2330 WITH BACKGROUND-COLOR RED.
+           DISPLAY AVISO-CORTE AT 2330
+           WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                BACKGROUND-COLOR IS RED.

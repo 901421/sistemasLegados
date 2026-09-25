@@ -192,7 +192,7 @@
        IMPRIMIR-CABECERA.
            DISPLAY BLANK-SCREEN.
            DISPLAY "Cajero Automatico UnizarBank" AT 0226
-               WITH FOREGROUND-COLOR IS 1.
+               WITH FOREGROUND-COLOR IS BLUE HIGHLIGHT.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
@@ -298,7 +298,8 @@
            IF CENT-IMPOR-USER > CENT-SALDO-ORD-USER THEN
                    DISPLAY " " AT 2001 WITH ERASE EOL
                    DISPLAY "Indique una cantidad menor!!" AT 2019
-                    WITH BACKGROUND-COLOR RED
+                    WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                         BACKGROUND-COLOR IS RED
                    GO TO INDICAR-CTA-DST
            END-IF.
 
@@ -307,7 +308,8 @@
            IF CUENTA-DESTINO = TNUM THEN
                DISPLAY " " AT 2001 WITH ERASE EOL
                DISPLAY "La cuenta destino debe ser distinta de la suya"
-                   AT 2019 WITH BACKGROUND-COLOR RED
+                   AT 2019 WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO INDICAR-CTA-DST
            END-IF.
 
@@ -349,14 +351,16 @@
            IF FUNCTION TEST-DATE-YYYYMMDD(FECHA-TRF-N) NOT = 0
                DISPLAY " " AT 1801 WITH ERASE EOL
                DISPLAY "Fecha incorrecta" AT 1819
-                   WITH BACKGROUND-COLOR RED
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO ACEPTAR-FECHA-TRF
            END-IF.
 
            IF FECHA-TRF-N < FECHA-HOY-N
                DISPLAY " " AT 1801 WITH ERASE EOL
                DISPLAY "La fecha no puede ser anterior a hoy" AT 1819
-                   WITH BACKGROUND-COLOR RED
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO ACEPTAR-FECHA-TRF
            END-IF.
 
@@ -384,7 +388,8 @@
 
            IF DIA-MENSUAL < 1 OR DIA-MENSUAL > 31
                DISPLAY "Dia incorrecto" AT 1819
-                   WITH BACKGROUND-COLOR RED
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
                GO TO ACEPTAR-DIA-MENSUAL
            END-IF.
 
@@ -409,7 +414,8 @@
            END-IF.
 
            DISPLAY "Indique una cantidad menor!!" AT 2019
-            WITH BACKGROUND-COLOR RED.
+            WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                 BACKGROUND-COLOR IS RED.
 
            GO TO NO-MOVIMIENTOS.
 
@@ -610,10 +616,10 @@
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "Ha ocurrido un error interno" AT 0925
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Vuelva mas tarde" AT 1132
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Enter - Aceptar" AT 2433.
 
@@ -628,7 +634,7 @@
            CLOSE TARJETAS.
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
            DISPLAY "La cuenta introducida es incorrecta" AT 0922
-               WITH FOREGROUND-COLOR IS BLACK
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
            DISPLAY "Enter - Salir" AT 2433.
            GO TO EXIT-ENTER.
