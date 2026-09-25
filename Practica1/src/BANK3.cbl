@@ -278,14 +278,17 @@
                        MOVE 99   TO MES2-USUARIO
                        MOVE 9999 TO ANO2-USUARIO.
 
-           IF EURENT2-USUARIO = 0
-               IF EURDEC2-USUARIO = 0
-                   IF EURENT1-USUARIO = 0
-                       IF EURDEC1-USUARIO = 0
-                           MOVE 9999999  TO EURENT2-USUARIO
-                           MOVE 99       TO EURDEC2-USUARIO
-                           MOVE -9999999  TO EURENT1-USUARIO
-                           MOVE 99        TO EURDEC1-USUARIO.
+      *    CADA EXTREMO DE LA CANTIDAD VACIO = SIN LIMITE POR ESE LADO
+      *    (ANTES SOLO SI LOS DOS ESTABAN VACIOS: CON UNO SOLO RELLENO
+      *    EL OTRO QUEDABA EN 0 Y EL LISTADO SALIA VACIO).
+           IF EURENT2-USUARIO = 0 AND EURDEC2-USUARIO = 0
+               MOVE 9999999  TO EURENT2-USUARIO
+               MOVE 99       TO EURDEC2-USUARIO
+           END-IF.
+           IF EURENT1-USUARIO = 0 AND EURDEC1-USUARIO = 0
+               MOVE -9999999 TO EURENT1-USUARIO
+               MOVE 99       TO EURDEC1-USUARIO
+           END-IF.
 
            PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
 
@@ -499,14 +502,32 @@
            IF FECHA-MAX < FECHA-MOV
                MOVE 0 TO MOV-VALIDO.
 
-           COMPUTE CENT-MIN = (EURENT1-USUARIO * 100)
-                              + (EURDEC1-USUARIO).
+      *    EL IMPORTE ES PARTE ENTERA CON SIGNO Y CENTIMOS SIN SIGNO:
+      *    SI LA PARTE ENTERA ES NEGATIVA LOS CENTIMOS SE RESTAN
+      *    (-10,50 = -1050 CENTIMOS, NO -950).
+           IF EURENT1-USUARIO < 0
+               COMPUTE CENT-MIN = (EURENT1-USUARIO * 100)
+                                  - EURDEC1-USUARIO
+           ELSE
+               COMPUTE CENT-MIN = (EURENT1-USUARIO * 100)
+                                  + EURDEC1-USUARIO
+           END-IF.
 
-           COMPUTE CENT-MOV = (MOV-IMPORTE-ENT * 100)
-                              + (MOV-IMPORTE-DEC).
+           IF MOV-IMPORTE-ENT < 0
+               COMPUTE CENT-MOV = (MOV-IMPORTE-ENT * 100)
+                                  - MOV-IMPORTE-DEC
+           ELSE
+               COMPUTE CENT-MOV = (MOV-IMPORTE-ENT * 100)
+                                  + MOV-IMPORTE-DEC
+           END-IF.
 
-           COMPUTE CENT-MAX = (EURENT2-USUARIO * 100)
-                              + (EURDEC2-USUARIO).
+           IF EURENT2-USUARIO < 0
+               COMPUTE CENT-MAX = (EURENT2-USUARIO * 100)
+                                  - EURDEC2-USUARIO
+           ELSE
+               COMPUTE CENT-MAX = (EURENT2-USUARIO * 100)
+                                  + EURDEC2-USUARIO
+           END-IF.
 
            IF CENT-MIN > CENT-MOV
                MOVE 0 TO MOV-VALIDO.
