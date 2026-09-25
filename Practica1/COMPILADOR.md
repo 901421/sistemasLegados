@@ -69,7 +69,7 @@ Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs200
 
 ## 6. Limitaciones (no ocultar en la memoria)
 - **Microsoft COBOL 5.0 y PowerCOBOL 3 (Fujitsu) no se han ejecutado.** Puede que alguno acepte `DISPLAY (fila col)` y necesite menos cambios de sintaxis. Aun así, MS COBOL 5 no daría un ejecutable de Windows y Fujitsu obligaría a migrar los datos.
-- **El compilador elegido no procede de [2]**, que es lo que el guion pide literalmente. Es la caída prevista cuando [2] no ofrece un compilador utilizable. **Hay que preguntar al profesor** si es aceptable.
+- **El compilador elegido no procede de [2]**, que es lo que el guion pide literalmente. Es la caída prevista cuando [2] no ofrece un compilador utilizable. **Confirmado el 2026-09-26: GnuCOBOL es válido para la práctica.**
 - Los binarios de Windows de GnuCOBOL son de terceros (Arnold Trembley), no de la FSF.
 - El ejecutable **no está firmado**: en Windows 11 con el Control inteligente de aplicaciones activo puede bloquearse (§7.4).
 

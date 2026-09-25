@@ -60,7 +60,7 @@ Estado: Pendiente salvo que se indique; nada se marca Cumplido sin evidencia (fi
 | ID | Apartado | Requisito | Cita | Ubicación | Tipo | Estado | Evidencia |
 |---|---|---|---|---|---|---|---|
 | R16 | Obj. 1 | Descargar los fuentes COBOL de [1] | "Descarga los ficheros fuente COBOL [1]" | p.2, Objetivos, 1 | E | Cumplido | `ATM Cobol_backup.zip` en `Practica1/` (SHA-256 `ce361871…8171`); la página [1] `webdiis.unizar.es/asignaturas/SL/` lo lista como `Practicas/ATM Cobol_backup.zip` (consultada 2026-09-21); el usuario confirma que es el original |
-| R17 | Obj. 1 | Compilarlos con algún compilador COBOL de [2] | "consigue compilarlos utilizando algún compilador de COBOL [2]" | p.2, Objetivos, 1 | A (AMB-3) | Cumplido (D12) | GnuCOBOL 3.2 (no procede de [2]: caída documentada en D12 y `COMPILADOR.md`). **Pendiente de confirmar con el profesor** |
+| R17 | Obj. 1 | Compilarlos con algún compilador COBOL de [2] | "consigue compilarlos utilizando algún compilador de COBOL [2]" | p.2, Objetivos, 1 | A (AMB-3) | Cumplido | GnuCOBOL 3.2 con Berkeley DB: [2] no ofrece un compilador utilizable (análisis en `COMPILADOR.md` §3-4) y GnuCOBOL es válido para la práctica (confirmado el 2026-09-26, D12). Compila los 9 programas en `BANK1.exe` (`build.bat`/`build.sh`) |
 | R18 | Obj. 1 | Obtener un ejecutable para Windows | "para obtener un ejecutable para Windows" | p.2, Objetivos, 1 | E (forma exacta: A, AMB-3) | Cumplido | `BANK1.exe` que crea `build.bat` en Windows 11; doble clic en `ejecutable\lanzar.bat` verificado por el usuario (commits `a2750b8`, `a8ab4cb`) |
 | R19 | Obj. 1 | Usar la aplicación y comprobar que funcionan correctamente TODAS las funcionalidades del menú principal (subrayado en el guion) | "utiliza la aplicación para asegurarte que funcionan correctamente todas las funcionalidades que se presentan en el menú principal" | p.2, Objetivos, 1 | E (alcance: A, AMB-4) | Cumplido | Las 7 opciones usadas en Windows: 17 capturas en `img/obj1-menu-7-opciones/` (commit `ed76c0e`) y repetición con el ejecutable único. Regresión con el menú de 8 opciones: `obj2-20` a `obj2-23` (2026-09-25) |
 | R20 | Obj. 2 | Nueva opción 6 del menú: "Listado de transferencias" | "nueva funcionalidad 'Listado de transferencias' que debe estar disponible como nueva opción 6 del menú principal" | p.2, Obj. 2 | E | Cumplido | Opción 6 "Listado de transferencias" (`src/BANK9.cbl`, commit `ad3a585`): `obj2-01`, `obj2-15` a `obj2-19` |
@@ -173,13 +173,13 @@ Hipótesis de `guia-cobol.pdf` contrastadas: **H1** (275 usos), **H2** (`BANK6:1
 |---|---|---|---|
 | AMB-1 | Entrega el lunes 28-sep a las 23:59 **por email** | Usuario | Cerrada |
 | AMB-2 | Grupo 02, dos cifras: `SL-P1-02.zip` | Usuario | Cerrada |
-| AMB-3 | GnuCOBOL 3.2 con Berkeley DB; [2] no ofrece compilador utilizable; MS COBOL 5 y PowerCOBOL 3 sin ejecutar | D12 | **Provisional: preguntar al profesor** |
+| AMB-3 | GnuCOBOL 3.2 con Berkeley DB; [2] no ofrece compilador utilizable; MS COBOL 5 y PowerCOBOL 3 sin ejecutar. GnuCOBOL confirmado como válido el 2026-09-26 | D12 | Cerrada |
 | AMB-4 | Obj. 1 verifica las 7 opciones base (incluye reconstruir `BANK8`); las 8 finales son regresión al cerrar Obj. 2 y 3 | Usuario | Cerrada |
 | AMB-5 | Nueva ≠ repetida: error y reintento sin gastar intento, se comprueba primero la clave actual; nueva clave de 4 dígitos (D2); ESC vuelve al menú sin cambios | Usuario | Cerrada |
 | AMB-6 | Contador compartido `intentos.ubd`; tras el bloqueo se cierra sesión (D1) | Usuario | Cerrada |
 | AMB-7 | Ejecución al iniciar sesión con cualquier tarjeta (D3); fecha pasada se rechaza (D4); fecha de hoy se ejecuta en el acto (D5) | Usuario | Cerrada |
 | AMB-8 | Día 29-31: último día del mes (D6); sin fecha de fin (D7); primera ejecución este mes si el día no ha pasado, si no el siguiente (D8) | Usuario | Cerrada |
-| AMB-9 | Solo las ordenadas por quien hace login, inmediatas como "Puntual, ejecutada" (D10); rango inclusivo, inicio > fin es error; paginación estilo `BANK3`; sin saldo: "Fallida por saldo" (D9); ficheros `ordenes.ubd` y `ejecuciones.ubd` (D13) | Usuario | Cerrada; **alcance (D10) y sin saldo (D9): preguntar al profesor** |
+| AMB-9 | Enviadas por quien hace login en todos los estados y recibidas solo ya ejecutadas, con columna de sentido (D10, revisada 2026-09-26); inmediatas como "Puntual, ejecutada"; estado por fecha (D14); rango inclusivo, inicio > fin es error; 15 filas por página; un solo fichero `transferencias.ubd` (D13). D9 anulada por el correo del docente (el cajero no ejecuta las programadas) | Usuario | Cerrada |
 | AMB-10 | Una operación por visita; 0 parcial permitido y total 0 da error; un movimiento con el total; ESC cancela (D11) | Usuario | Cerrada |
 | AMB-11 | Azul más claro: `BLUE`+`HIGHLIGHT` en todos los títulos, elegido viendo en la consola de Windows las opciones azul, azul brillante, cian y cian brillante (2026-09-25) | Usuario | Cerrada |
 | AMB-12 | Se descubre ejecutando; sospecha: 16 `ACCEPT (24 80)` | — | **Abierta** |
@@ -190,15 +190,11 @@ Hipótesis de `guia-cobol.pdf` contrastadas: **H1** (275 usos), **H2** (`BANK6:1
 
 ## Decisiones provisionales y pendientes de preguntar al profesor
 
-**Provisionales (se aplican hasta que responda):**
-- D12: GnuCOBOL 3.2 en lugar de un compilador de [2].
-- D10: el listado solo incluye las transferencias ordenadas por quien hace login.
-- D9: sin saldo el día de ejecución, "Fallida por saldo" sin reintentos.
+Actualizado el 2026-09-26: ya no queda ninguna decisión provisional.
+- D12: GnuCOBOL es válido (confirmado el 2026-09-26).
+- D10: el listado incluye las enviadas y las recibidas ya ejecutadas (decidido el 2026-09-26, como un banco normal).
+- D9: anulada; según el correo del docente, el cajero solo registra y consulta las transferencias programadas.
 
-**Preguntar al profesor:**
-1. ¿Es aceptable GnuCOBOL en lugar de un compilador de escobol.com? (D12)
-2. ¿"Todas las transferencias" incluye las recibidas? (D10)
-3. ¿Qué hacer si no hay saldo el día de ejecución? (D9)
-4. Defensa oral o demostración: formato, fecha y qué se pide (el usuario indica que existe).
+**Pendiente de conocer:** formato y fecha de la defensa oral o demostración.
 
 **Otras condiciones de trabajo acordadas:** matriz de pruebas de casos límite con capturas; `build.sh`, `build.bat` y `lanzar.bat`.

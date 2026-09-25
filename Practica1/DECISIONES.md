@@ -217,7 +217,9 @@ No aparecen los 20 € que A recibió de B el 10-09 (A ya los ve en "Consultar m
 
 ---
 
-## D12 — Compilador: GnuCOBOL 3.2 con Berkeley DB (2026-09-21) — **preguntar al docente**
+## D12 — Compilador: GnuCOBOL 3.2 con Berkeley DB (2026-09-21) — **confirmada el 2026-09-26**
+
+**Revisión (2026-09-26).** **Resuelto: GnuCOBOL es un compilador válido para la práctica** (confirmado el 2026-09-26), así que se quita el "preguntar al docente". Además, lo que figuraba como pendiente ya está comprobado: GnuCOBOL 3.2.0 para Windows (paquete GC32-BDB-SP1) lee los `.ubd` y el cajero arranca con doble clic en `lanzar.bat` en Windows 11 (`COMPILADOR.md` §7). La conversión final usa `AT llcc` en formato fijo en lugar de `LINE/COL` con `-free`. Se conserva abajo el texto original como parte del proceso seguido.
 
 **Problema.** El guion pide compilar con *"algún compilador de COBOL [2]"* (`escobol.com` en archive.org) y obtener un ejecutable para Windows, y avisa de que *"cada compilador acepta su propia versión y sintaxis"* y de que no se sabe cuál se usó (R17, R18, AMB3). El código original **no compila** con `cobc`, y el 97% de los errores es un solo problema: la sintaxis posicional `DISPLAY (l c)` / `ACCEPT (l c)` (275 usos: 259 + 16).
 
@@ -243,7 +245,7 @@ No aparecen los 20 € que A recibió de B el 10-09 (A ya los ve en "Consultar m
 - **Sin verificar aún:** que el binario de Windows de la 3.2 lea los `.ubd` originales (la versión de Berkeley DB puede variar) y que el ejecutable arranque con doble clic. Se comprobará en un Windows real al final.
 - El guion pide un compilador de [2] y aquí se usa uno que **no** procede de [2]. Es la caída prevista en B3.
 
-**Pendiente.** **Preguntar al docente** si es aceptable usar GnuCOBOL en lugar de un compilador de [2]. Hasta que responda, se aplica esta decisión provisional.
+**Pendiente (resuelto el 2026-09-26).** Se iba a preguntar al docente si es aceptable usar GnuCOBOL en lugar de un compilador de [2]: confirmado que es válido.
 
 **Descartado.** OpenCOBOL 1.1 y GnuCOBOL 2.2 (mismo cambio, sin ventaja). GnuCOBOL 4.0-early (sin ficheros indexados). Los compiladores DOS (no dan ejecutable de Windows).
 
