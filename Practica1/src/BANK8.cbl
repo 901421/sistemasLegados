@@ -110,7 +110,8 @@
        IMPRIMIR-CABECERA.
            DISPLAY BLANK-SCREEN.
            DISPLAY "Cajero Automatico UnizarBank"
-               AT 0226.
+               AT 0226
+               WITH FOREGROUND-COLOR IS BLUE.
 
            MOVE FUNCTION CURRENT-DATE TO CAMPOS-FECHA.
 
