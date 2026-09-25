@@ -201,4 +201,4 @@ Hipótesis de `guia-cobol.pdf` contrastadas: **H1** (275 usos), **H2** (`BANK6:1
 3. ¿Qué hacer si no hay saldo el día de ejecución? (D9)
 4. Defensa oral o demostración: formato, fecha y qué se pide (el usuario indica que existe).
 
-**Otras condiciones de trabajo acordadas:** matriz de pruebas de casos límite con capturas; `docs/bitacora.md`; `build.sh`, `build.bat` y `lanzar.bat`.
+**Otras condiciones de trabajo acordadas:** matriz de pruebas de casos límite con capturas; `build.sh`, `build.bat` y `lanzar.bat`.

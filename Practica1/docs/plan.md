@@ -1,7 +1,6 @@
 # Plan — calcado al guion (Práctica 1, Sistemas Legados 2026-27)
 
 Mismos apartados, mismo orden y mismos nombres que `Practica_1_2026_2027.pdf`. No se agrupa, no se reordena, no se renombra.
-El orden de trabajo del equipo (lógico, con dueños y revisores) está en `TAREAS.md`.
 Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`). Decisiones `Dn` en `DECISIONES.md`; ambigüedades `AMBn` y requisitos `Rn` en `docs/requisitos.md`.
 
 ---
@@ -88,7 +87,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Tareas:**
   - Redactar la memoria en PDF (Obj. 1, 2 y 3), cada uno la parte de sus tareas.
   - Incluir la comparativa de compiladores (D12) y la limitación de los no ejecutados.
-  - Reparto y cronograma a partir de `docs/bitacora.md`.
+  - Reparto y cronograma a partir del historial de git.
   - Instrucciones de doble clic.
 - **Verificación:** 4-5 páginas; contiene los 8 elementos pedidos; PDF dentro del zip.
 - **Estado:** Pendiente.

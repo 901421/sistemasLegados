@@ -67,7 +67,7 @@ Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs200
 
 ## 6. Limitaciones (no ocultar en la memoria)
 - **Microsoft COBOL 5.0 y PowerCOBOL 3 (Fujitsu) no se han ejecutado.** Puede que alguno acepte `DISPLAY (fila col)` y necesite menos cambios de sintaxis. Aun así, MS COBOL 5 no daría un ejecutable de Windows y Fujitsu obligaría a migrar los datos.
-- **No se ha comprobado en Windows real** que el binario de GnuCOBOL 3.2 lea los `.ubd` (la versión de Berkeley DB puede variar) ni que el ejecutable arranque con doble clic. Es la tarea T1.2 de `TAREAS.md`.
+- **No se ha comprobado en Windows real** que el binario de GnuCOBOL 3.2 lea los `.ubd` (la versión de Berkeley DB puede variar) ni que el ejecutable arranque con doble clic. Queda pendiente para el Objetivo 1.
 - **El compilador elegido no procede de [2]**, que es lo que el guion pide literalmente. Es la caída prevista cuando [2] no ofrece un compilador utilizable. **Hay que preguntar al profesor** si es aceptable.
 - Los binarios de Windows de GnuCOBOL son de terceros y no los hemos descargado ni probado todavía.
 
