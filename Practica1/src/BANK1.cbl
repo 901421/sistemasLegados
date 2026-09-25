@@ -171,7 +171,7 @@
            OPEN I-O TARJETAS.
            IF FST NOT = 00
                GO TO PSYS-ERR.
-           READ TARJETAS INVALID KEY GO TO PSYS-ERR.
+           READ TARJETAS INVALID KEY GO TO PTARJETA-ERR.
 
            OPEN I-O INTENTOS.
            IF FSI NOT = 00
@@ -306,6 +306,20 @@
                GO TO IMPRIMIR-CABECERA
            ELSE
                GO TO PINT-ERR-ENTER.
+
+
+      *    TARJETA INEXISTENTE: AVISO PROPIO (NO "ERROR INTERNO"). NO SE
+      *    CUENTA NINGUN INTENTO PORQUE LA TARJETA NO EXISTE.
+       PTARJETA-ERR.
+           CLOSE TARJETAS.
+
+           PERFORM IMPRIMIR-CABECERA THRU IMPRIMIR-CABECERA.
+           DISPLAY "La tarjeta introducida no es valida" AT 0923
+               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                    BACKGROUND-COLOR IS RED.
+           DISPLAY "Enter - Aceptar" AT 2401.
+           DISPLAY "ESC - Cancelar" AT 2465.
+           GO TO PPIN-ERR-ENTER.
 
 
        PPIN-ERR.
