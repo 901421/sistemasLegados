@@ -48,9 +48,9 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Fichero `transferencias.ubd` con una fila por transferencia y fecha de alta, creado por `CREAR-TRANSFERENCIAS` (D13).
   - `BANK6`: ordenar inmediata, puntual o mensual con reglas D4-D8; la inmediata mueve el dinero y todas se anotan (D10).
   - `BANK1`: menú de 8 opciones.
-  - `BANK9`: listado con formulario de fechas, ocurrencias de las mensuales, estado por fecha (D14) y paginación.
-- **Verificación:** casos de prueba con capturas en `img/obj2-transferencias/` (inmediata, puntual pasada/inexistente/válida, mensual día 31, cuenta propia, listado en dos páginas, inicio > fin, rango vacío) y regresión de las 8 opciones.
-- **Estado:** Cumplido (2026-09-25).
+  - `BANK9`: listado con formulario de fechas, ocurrencias de las mensuales, estado por fecha (D14) y paginación; enviadas en todos los estados y recibidas ya ejecutadas, con columna de sentido (D10, revisada el 2026-09-26).
+- **Verificación:** casos de prueba con capturas en `img/obj2-transferencias/` (inmediata, puntual pasada/inexistente/válida, mensual día 31, cuenta propia, listado en dos páginas con una transferencia recibida, inicio > fin, rango vacío) y regresión de las 8 opciones.
+- **Estado:** Cumplido (2026-09-25; listado ampliado con las recibidas y capturas rehechas el 2026-09-26).
 
 ### 3. Cambios en la aplicación
 
