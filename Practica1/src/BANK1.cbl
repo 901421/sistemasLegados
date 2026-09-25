@@ -312,6 +312,12 @@
            SUBTRACT 1 FROM IINTENTOS.
            REWRITE INTENTOSREG INVALID KEY GO TO PSYS-ERR.
 
+      *    TERCER FALLO: SE AVISA YA DE QUE LA TARJETA QUEDA BLOQUEADA
+      *    (COMO EN CAMBIAR CLAVE), NO "LE QUEDAN 0 INTENTOS".
+           IF IINTENTOS = 0
+               GO TO PINT-ERR
+           END-IF.
+
            CLOSE TARJETAS.
            CLOSE INTENTOS.
 
@@ -319,16 +325,21 @@
            DISPLAY "El codigo PIN es incorrecto" AT 0926
                WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
-           DISPLAY "Le quedan " AT 1130
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
-           DISPLAY IINTENTOS AT 1140
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
-           DISPLAY " intentos" AT 1141
-
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
+           IF IINTENTOS = 1
+               DISPLAY "Le queda 1 intento" AT 1130
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+           ELSE
+               DISPLAY "Le quedan " AT 1130
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               DISPLAY IINTENTOS AT 1140
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               DISPLAY " intentos" AT 1141
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+           END-IF.
 
            DISPLAY "Enter - Aceptar" AT 2401.
            DISPLAY "ESC - Cancelar" AT 2465.

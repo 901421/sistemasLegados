@@ -288,18 +288,25 @@
                AT 0925
                WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                     BACKGROUND-COLOR IS RED.
-           DISPLAY "Le quedan "
-               AT 1130
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
-           DISPLAY IINTENTOS
-               AT 1140
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
-           DISPLAY " intentos"
-               AT 1141
-               WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
-                    BACKGROUND-COLOR IS RED.
+           IF IINTENTOS = 1
+               DISPLAY "Le queda 1 intento"
+                   AT 1130
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+           ELSE
+               DISPLAY "Le quedan "
+                   AT 1130
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               DISPLAY IINTENTOS
+                   AT 1140
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               DISPLAY " intentos"
+                   AT 1141
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+           END-IF.
            
            DISPLAY "Enter - Reintentar"
                AT 2402.
