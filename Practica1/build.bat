@@ -28,6 +28,7 @@ cobc -x -o "%OUT%\BANK1.exe" src\BANK1.cbl src\BANK2.cbl src\BANK3.cbl ^
     || goto :error
 cobc -x -o "%OUT%\CREAR-MOVIMIENTOS.exe" src\CREAR-MOVIMIENTOS.cbl || goto :error
 cobc -x -o "%OUT%\CREAR-ESPECTACULOS.exe" src\CREAR-ESPECTACULOS.cbl || goto :error
+cobc -x -o "%OUT%\CREAR-TRANSFERENCIAS.exe" src\CREAR-TRANSFERENCIAS.cbl || goto :error
 
 echo Copiando las DLL de GnuCOBOL...
 for %%D in (libcob-4.dll libdb-18.1.dll libgcc_s_dw2-1.dll libgmp-10.dll libiconv-2.dll libintl-8.dll pdcurses.dll) do (
@@ -40,7 +41,8 @@ copy /y original\intentos.ubd "%OUT%" >NUL || goto :error
 pushd "%OUT%"
 CREAR-MOVIMIENTOS.exe || goto :error_pop
 CREAR-ESPECTACULOS.exe || goto :error_pop
-del CREAR-MOVIMIENTOS.exe CREAR-ESPECTACULOS.exe
+CREAR-TRANSFERENCIAS.exe || goto :error_pop
+del CREAR-MOVIMIENTOS.exe CREAR-ESPECTACULOS.exe CREAR-TRANSFERENCIAS.exe
 popd
 
 copy /y lanzar.bat "%OUT%" >NUL || goto :error

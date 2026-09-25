@@ -14,10 +14,12 @@ cobc -x -o "$OUT/BANK1" src/BANK1.cbl src/BANK2.cbl src/BANK3.cbl \
     src/BANK9.cbl
 cobc -x -o "$OUT/CREAR-MOVIMIENTOS" src/CREAR-MOVIMIENTOS.cbl
 cobc -x -o "$OUT/CREAR-ESPECTACULOS" src/CREAR-ESPECTACULOS.cbl
+cobc -x -o "$OUT/CREAR-TRANSFERENCIAS" src/CREAR-TRANSFERENCIAS.cbl
 
 echo "Preparando los ficheros de datos..."
 cp original/tarjetas.ubd original/intentos.ubd "$OUT/"
 (cd "$OUT" && ./CREAR-MOVIMIENTOS && ./CREAR-ESPECTACULOS \
-    && rm CREAR-MOVIMIENTOS CREAR-ESPECTACULOS)
+    && ./CREAR-TRANSFERENCIAS \
+    && rm CREAR-MOVIMIENTOS CREAR-ESPECTACULOS CREAR-TRANSFERENCIAS)
 
 echo "Listo. Para usar el cajero: cd $OUT && ./BANK1"
