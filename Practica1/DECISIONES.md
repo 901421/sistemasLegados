@@ -38,7 +38,9 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D3 — Las transferencias programadas se ejecutan al iniciar sesión con cualquier tarjeta (2026-09-21)
+## D3 — Las transferencias programadas se ejecutan al iniciar sesión con cualquier tarjeta (2026-09-21) — **anulada el 2026-09-25**
+
+**Revisión (2026-09-25).** Queda **anulada**: el docente indicó por correo que las transferencias puntuales y mensuales solo se **registran** en los ficheros y se **consultan** desde el cajero; el mecanismo que detecta la fecha y las ejecuta no forma parte del cajero (lo hacen otros programas de UnizarBank) y no hay que programarlo. El cajero no ejecuta las programadas; solo las registra (`BANK6`) y las consulta (listado, D14). Se conserva abajo el texto original como parte del proceso seguido.
 
 **Problema.** El guion pide transferencias que "se ejecuten" en una fecha dada o mensualmente, y un listado de las "ejecutadas o pendientes" (R22, R23, R25, AMB7). Pero un cajero es un programa interactivo, sin proceso nocturno, y el guion no dice cuándo se dispara la ejecución.
 
@@ -66,7 +68,9 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D5 — Una transferencia puntual con la fecha de hoy se ejecuta en el acto (2026-09-21)
+## D5 — Una transferencia puntual con la fecha de hoy se ejecuta en el acto (2026-09-21) — **revisada el 2026-09-25**
+
+**Revisión (2026-09-25).** Como el cajero no ejecuta las programadas (D3 anulada), una puntual con la fecha de hoy **se admite y se registra como las demás**; en el listado aparece como **pendiente** (la ejecutará el banco ese día, D14). Las fechas pasadas se siguen rechazando (D4). Texto original:
 
 **Problema.** Una transferencia puntual programada para hoy no es pasada ni futura (R22, AMB7).
 
@@ -100,7 +104,9 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D8 — Primera ejecución de una mensual: este mes si el día no ha pasado, si no el siguiente (2026-09-21)
+## D8 — Primera ejecución de una mensual: este mes si el día no ha pasado, si no el siguiente (2026-09-21) — **revisada el 2026-09-25**
+
+**Revisión (2026-09-25).** Se mantiene la regla salvo el caso "día indicado = hoy": ya no se ejecuta en el acto (D3 anulada), sino que **la primera ocurrencia es hoy** y aparece como pendiente en el listado. Queda así: día indicado igual o posterior a hoy → primera ocurrencia este mes; día ya pasado → el mes siguiente. Para aplicarla se guarda la **fecha de alta** de la orden (D13). Texto original:
 
 **Problema.** Si el día indicado ya pasó este mes (hoy es día 15 y se ordena "día 3"), el guion no dice cuándo empieza la periodicidad (R23, AMB8).
 
@@ -113,7 +119,9 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D9 — Sin saldo el día de ejecución: no se ejecuta y queda "Fallida por saldo" (2026-09-21) — **preguntar al docente**
+## D9 — Sin saldo el día de ejecución: no se ejecuta y queda "Fallida por saldo" (2026-09-21) — **anulada el 2026-09-25**
+
+**Revisión (2026-09-25).** Queda **anulada**: el docente indicó por correo que las transferencias puntuales y mensuales solo se **registran** en los ficheros y se **consultan** desde el cajero; el mecanismo que detecta la fecha y las ejecuta no forma parte del cajero (lo hacen otros programas de UnizarBank) y no hay que programarlo. Quien comprueba el saldo el día de la ejecución es el programa del banco que la ejecuta, y no deja ningún resultado que el cajero pueda leer, así que el listado no puede mostrar "Fallida por saldo" (ver D14, limitación). Al ordenar la transferencia se sigue comprobando que el importe no supera el saldo actual, como ya hacía `BANK6`. Texto original:
 
 **Problema.** Si el día en que toca ejecutar una transferencia programada el origen no tiene saldo suficiente, el guion no dice qué hacer (R22, R23, R25, AMB9).
 
@@ -127,7 +135,9 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D10 — Qué muestra el "Listado de transferencias": alcance e inmediatas (2026-09-21)
+## D10 — Qué muestra el "Listado de transferencias": alcance e inmediatas (2026-09-21) — **ajustada el 2026-09-25**
+
+**Ajuste (2026-09-25).** Se mantiene el alcance y el registro de las inmediatas. Cambia lo que dependía de D3, D9 y D13: los estados posibles son solo **ejecutada** y **pendiente** (según D14; ya no hay "fallida por saldo") y las transferencias se anotan en `transferencias.ubd` (D13), no en un fichero de órdenes aparte.
 
 **Problema.** El guion dice: *"se mostrarán todas las transferencias (indicando si son puntuales o periódicas) que se han ejecutado o están pendientes de hacerse entre dos fechas indicadas por el usuario"* (R25, R26, AMB9). Deja abiertas dos cosas:
 1. Qué significa "todas": ¿solo las que ordena quien hace login, o también las que recibe?
@@ -230,7 +240,20 @@ No aparecen los 20 € que A recibió de B el 10-09 (A ya los ve en "Consultar m
 
 ---
 
-## D13 — Las transferencias se guardan en dos ficheros: `ordenes.ubd` y `ejecuciones.ubd` (2026-09-21)
+## D13 — Las transferencias se guardan en dos ficheros: `ordenes.ubd` y `ejecuciones.ubd` (2026-09-21) — **revisada el 2026-09-25**
+
+**Revisión (2026-09-25).** Como el cajero no ejecuta las programadas (D3 anulada), no hay ejecuciones que guardar y **basta un solo fichero, `transferencias.ubd`**, con una fila por transferencia ordenada. Se toma el diseño que ya había hecho Ainhoa (commits `6ce57e0`, `9320811`) y se le añade la fecha de alta, necesaria para saber desde cuándo vale una mensual (D8):
+
+| Campo | Contenido |
+|---|---|
+| número (clave) | correlativo |
+| tarjeta origen, cuenta destino | 16 dígitos cada una |
+| importe | entero y decimales |
+| tipo | 1 inmediata, 2 puntual, 3 mensual |
+| fecha | inmediata: hoy; puntual: la fecha indicada; mensual: solo el día del mes |
+| fecha de alta | día en que se ordenó |
+
+El estado (ejecutada o pendiente) no se guarda: se deduce al listar (D14). El fichero se crea vacío en la instalación (`build.bat`/`build.sh`), como `movimientos.ubd`. Texto original:
 
 **Problema.** Para las transferencias puntuales y mensuales hay que guardar dos cosas distintas (R22, R23, R25, R26; D3, D9, D10):
 - **La orden:** "de A a B, 30 €, mensual, día 3". Vive mientras esté vigente.
@@ -256,3 +279,22 @@ El listado de la opción 6 mezcla ambas: los hechos guardados dentro del rango d
 **Descartado.** Un solo fichero con dos tipos de fila (obliga a `REDEFINES`). Guardar solo órdenes con "última ejecución" (no permite mostrar fallidas ni historial de mensuales, rompe D9).
 
 **Nota.** Los campos son provisionales: se fijan al implementar el apartado 2 y se actualiza esta entrada si cambian.
+
+---
+
+## D14 — Estado de cada transferencia en el listado: se deduce de la fecha (2026-09-25)
+
+**Problema.** El listado debe mostrar las transferencias *"que se han ejecutado o están pendientes de hacerse"* (R25). Pero el cajero no ejecuta las programadas (D3 anulada por el correo del docente): las ejecutan otros programas del banco, que no dejan ningún resultado que el cajero pueda leer.
+
+**Decisión.**
+- Inmediata: **ejecutada** (el cajero la hace en el acto).
+- Puntual y cada ocurrencia de una mensual: fecha **anterior a hoy → ejecutada**; fecha de **hoy o posterior → pendiente**.
+
+**Por qué es lógico.** Según el correo, las programadas se ejecutan en su fecha por los programas del banco; si la fecha ya pasó, el banco ya la ha procesado. Es la única información de la que dispone el cajero, y no obliga a escribir nada por adelantado.
+
+**Descartado.**
+- Marcar todas las programadas como pendientes aunque su fecha haya pasado (el listado diría que nunca se ejecuta nada).
+- Buscar en `movimientos.ubd` el movimiento de cada ocurrencia para saber si se ejecutó: no hay programa ejecutor en esta práctica, así que nunca aparecería, y habría que identificar las transferencias por el texto del concepto.
+- Recalcular el saldo en cada fecha pasada para marcar "fallida por saldo": sería simular una ejecución que no ha ocurrido (el saldo no se ha reducido por ella).
+
+**Limitación.** "Ejecutada" significa "su fecha ya pasó y la procesó el banco"; si el programa del banco no pudo ejecutarla (por ejemplo, por saldo insuficiente), el cajero no lo sabe. Mejora posible, fuera de lo pedido: que el programa ejecutor anote el resultado de cada ocurrencia en un fichero que el listado consulte para mostrar también "fallida".
