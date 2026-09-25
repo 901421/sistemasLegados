@@ -212,7 +212,24 @@
 
            IF CHOICE = 7
                CALL "BANK8" USING TNUM
-               GO TO PMENU.
+               GO TO PCOMPROBAR-BLOQUEO.
+
+           GO TO PMENU.
+
+
+      *    TRAS CAMBIAR CLAVE: SI BANK8 HA BLOQUEADO LA TARJETA
+      *    (INTENTOS = 0) SE CIERRA LA SESION Y SE VUELVE A LA
+      *    PANTALLA DE BIENVENIDA.
+       PCOMPROBAR-BLOQUEO.
+           OPEN INPUT INTENTOS.
+           IF FSI NOT = 00
+               GO TO PSYS-ERR.
+           MOVE TNUM TO INUM.
+           READ INTENTOS INVALID KEY GO TO PSYS-ERR.
+           CLOSE INTENTOS.
+
+           IF IINTENTOS = 0
+               GO TO IMPRIMIR-CABECERA.
 
            GO TO PMENU.
 
