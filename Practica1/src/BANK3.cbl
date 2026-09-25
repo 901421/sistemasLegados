@@ -309,9 +309,9 @@
            DISPLAY "|" AT 0766.
            DISPLAY "SALDO" AT 0771.
 
-           DISPLAY "Re. pag - Esp. anteriores" AT 2402.
+           DISPLAY "Re. pag - Mov. anteriores" AT 2402.
            DISPLAY "ESC - Salir" AT 2433.
-           DISPLAY "Av. pag - Esp. posteriores" AT 2454.
+           DISPLAY "Av. pag - Mov. posteriores" AT 2454.
 
            MOVE 0 TO MOV-EN-PANTALLA.
            MOVE 7 TO LINEA-MOV-ACTUAL.
