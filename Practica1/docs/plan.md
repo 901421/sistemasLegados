@@ -59,28 +59,28 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Requisitos:** R27, R28, R29, R30.
 - **Tareas:** reescribir la entrada de `BANK5` a tres campos; una operación por visita, un único movimiento con el total, ESC cancela (D11).
 - **Verificación:** ingreso de 2×10 + 1×20 + 1×50 = 90 € y saldo correcto; total 0 da error; ESC no ingresa.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (2026-09-25; capturas en `img/obj3-cambios/`).
 
 #### b. A la vista de los pantallazos recuperados, asegurarse que los mensajes sean fáciles de leer
 - **Qué pide:** texto blanco en vez de negro sobre fondo rojo (errores) y un azul más claro cuando se use el azul.
 - **Requisitos:** R31, R32.
 - **Tareas:** cambiar `BLACK` sobre `RED` a `WHITE` sobre `RED` en todos los `BANK` (`BANK1.cbl:222-276`, etc.); probar `BLUE`+`HIGHLIGHT` y cian en la consola de Windows y elegir el más legible (decisión diferida).
 - **Verificación:** captura de una pantalla de error y del título antes y después.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (2026-09-25; capturas en `img/obj3-cambios/`).
 
 #### c. En algunas pantallas aparecen en la esquina inferior derecha unos ceros que no tienen ninguna utilidad, se deberán eliminar
 - **Qué pide:** eliminar los ceros de la esquina inferior derecha.
 - **Requisitos:** R33.
 - **Tareas:** localizar en qué pantallas aparecen al ejecutar (sospecha: los 16 `ACCEPT (24 80)`); ocultarlos.
 - **Verificación:** captura de cada pantalla afectada antes y después.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (2026-09-25; capturas en `img/obj3-cambios/`).
 
 #### d. La ventana de ejecución debería ser siempre de 80x25 caracteres
 - **Qué pide:** ventana de 80x25 siempre.
 - **Requisitos:** R34.
 - **Tareas:** `lanzar.bat` con `mode con cols=80 lines=25` y todas las pantallas diseñadas dentro de 80x25.
 - **Verificación:** doble clic en Windows abre la consola a 80x25; ninguna pantalla se sale.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (2026-09-25; capturas en `img/obj3-cambios/`).
 
 ## Documentación
 - **Qué pide:** unas 4-5 páginas con el proceso de cada uno de los tres pasos (problemas e intentos de solución), información gráfica, herramientas usadas (con énfasis en los compiladores), tarea de cada miembro, cronograma, otra información relevante y todo lo necesario para ejecutar en Windows con doble clic.
