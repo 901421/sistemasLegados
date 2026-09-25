@@ -318,7 +318,7 @@
 
 
        LEER-PRIMEROS.
-           READ F-MOVIMIENTOS PREVIOUS RECORD AT END GO WAIT-ORDER.
+           READ F-MOVIMIENTOS PREVIOUS RECORD AT END GO FIN-PRIMEROS.
                MOVE 1 TO MOV-VALIDO.
 
                PERFORM FILTRADO THRU FILTRADO.
@@ -335,6 +335,13 @@
                    GO TO WAIT-ORDER.
 
                GO TO LEER-PRIMEROS.
+
+      *    SIN NINGUNA FILA: SE AVISA EN LUGAR DE DEJAR LA TABLA VACIA.
+       FIN-PRIMEROS.
+           IF MOV-EN-PANTALLA = 0
+               DISPLAY "No hay movimientos que cumplan el filtro"
+                   AT 1021
+           END-IF.
 
        WAIT-ORDER.
 
