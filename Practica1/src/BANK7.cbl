@@ -229,9 +229,12 @@
                FOREGROUND-COLOR WHITE HIGHLIGHT VALUE
                "Por favor, rellene los campos con valores correctos".
 
+      *    MISMO FORMATO QUE EL SALDO RESULTANTE DE BANK4 Y BANK5.
        01 SALDOPOSTERIOR.
-           05 FILLER SIGN IS LEADING SEPARATE LINE 12 COL 47
-               PIC S9(9) FROM SALDO-POST-ENT.
+           05 FILLER LINE 12 COL 47 PIC -9(9) FROM SALDO-POST-ENT.
+           05 FILLER LINE 12 COL 57 VALUE ",".
+           05 FILLER LINE 12 COL 58 PIC 99 FROM SALDO-POST-DEC.
+           05 FILLER LINE 12 COL 61 VALUE "EUR".
 
 
        PROCEDURE DIVISION USING TNUM.
@@ -506,8 +509,6 @@
            DISPLAY "Por favor, retire las entradas" AT 0925.
            DISPLAY "El saldo resultante es de" AT 1221.
            DISPLAY SALDOPOSTERIOR.
-           DISPLAY "," AT 1257.
-           DISPLAY SALDO-POST-DEC AT 1258.
 
            DISPLAY "Enter - Aceptar" AT 2433.
 
