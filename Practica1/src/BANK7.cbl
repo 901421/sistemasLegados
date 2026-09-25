@@ -369,6 +369,15 @@
                DISPLAY FORM-ERR
                GO TO WAIT-ORDER.
 
+      *    UN ESPECTACULO YA CELEBRADO NO SE LISTA NI SE PUEDE COMPRAR
+      *    AUNQUE SE TECLEE SU CODIGO (MISMO FILTRO QUE LA LISTA).
+           MOVE 1 TO ESP-VALIDO.
+           PERFORM FILTRADO THRU FILTRADO.
+           IF ESP-VALIDO = 0
+               DISPLAY FORM-ERR
+               GO TO WAIT-ORDER
+           END-IF.
+
            COMPUTE SALDO-USER-CENT = (SALDO-USER-ENT * 100)
                                      + SALDO-USER-DEC.
 
