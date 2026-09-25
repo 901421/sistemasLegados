@@ -231,7 +231,16 @@
            COMPUTE CENT-IMPOR-USER = (EURENT-USUARIO * 100)
                                      + EURDEC-USUARIO.
 
+           IF CENT-IMPOR-USER = 0 THEN
+               DISPLAY " " AT 1501 WITH ERASE EOL
+               DISPLAY "Indique una cantidad mayor que cero" AT 1519
+                   WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
+                        BACKGROUND-COLOR IS RED
+               GO TO PANTALLA-RETIRADA
+           END-IF.
+
            IF CENT-IMPOR-USER > CENT-SALDO-USER THEN
+               DISPLAY " " AT 1501 WITH ERASE EOL
                DISPLAY "Indique una cantidad menor!!" AT 1519
                    WITH FOREGROUND-COLOR IS WHITE HIGHLIGHT
                         BACKGROUND-COLOR IS RED
