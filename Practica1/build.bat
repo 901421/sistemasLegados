@@ -10,11 +10,13 @@ rem ------------------------------------------------------------------
 setlocal
 cd /d "%~dp0"
 if "%COB_DIR%"=="" set "COB_DIR=C:\GnuCOBOL"
-if not exist "%COB_DIR%\set_env.cmd" (
-    echo No se encuentra GnuCOBOL en "%COB_DIR%".
-    echo Instale GnuCOBOL 3.2 con BDB o indique su ruta en COB_DIR.
-    exit /b 1
-)
+rem Sin bloques ( ... ) con rutas dentro: una ruta con parentesis,
+rem como "SL-P1-02 (1)", los romperia.
+if exist "%COB_DIR%\set_env.cmd" goto :cob_ok
+echo No se encuentra GnuCOBOL en "%COB_DIR%".
+echo Instale GnuCOBOL 3.2 con BDB o indique su ruta en COB_DIR.
+exit /b 1
+:cob_ok
 call "%COB_DIR%\set_env.cmd" >NUL
 
 set "OUT=%~dp0ejecutable"
@@ -31,17 +33,13 @@ cobc -x -o "%OUT%\CREAR-ESPECTACULOS.exe" src\CREAR-ESPECTACULOS.cbl || goto :er
 cobc -x -o "%OUT%\CREAR-TRANSFERENCIAS.exe" src\CREAR-TRANSFERENCIAS.cbl || goto :error
 
 echo Copiando las DLL de GnuCOBOL...
-for %%D in (libcob-4.dll libdb-18.1.dll libgcc_s_dw2-1.dll libgmp-10.dll libiconv-2.dll libintl-8.dll pdcurses.dll) do (
-    copy /y "%COB_DIR%\bin\%%D" "%OUT%" >NUL || goto :error
-)
+for %%D in (libcob-4.dll libdb-18.1.dll libgcc_s_dw2-1.dll libgmp-10.dll libiconv-2.dll libintl-8.dll pdcurses.dll) do call :copiar_dll %%D || goto :error
 
 echo Preparando los ficheros de datos...
 copy /y original\tarjetas.ubd "%OUT%" >NUL || goto :error
 copy /y original\intentos.ubd "%OUT%" >NUL || goto :error
 pushd "%OUT%"
-for %%P in (CREAR-MOVIMIENTOS CREAR-ESPECTACULOS CREAR-TRANSFERENCIAS) do (
-    call :ejecutar %%P || goto :error_pop
-)
+for %%P in (CREAR-MOVIMIENTOS CREAR-ESPECTACULOS CREAR-TRANSFERENCIAS) do call :ejecutar %%P || goto :error_pop
 del CREAR-MOVIMIENTOS.exe CREAR-ESPECTACULOS.exe CREAR-TRANSFERENCIAS.exe
 popd
 
@@ -72,3 +70,8 @@ echo Windows ha bloqueado %~1.exe (intento %INTENTO% de 5): se recompila y se re
 del "%~1.exe"
 cobc -x -o "%~1.exe" "%~dp0src\%~1.cbl" || exit /b 1
 goto :ejecutar_otra
+
+rem Copia una DLL de GnuCOBOL a la carpeta ejecutable.
+:copiar_dll
+copy /y "%COB_DIR%\bin\%~1" "%OUT%" >NUL
+exit /b %errorlevel%
