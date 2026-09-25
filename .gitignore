@@ -10,3 +10,7 @@ Practica1/CORRECCIONES.md
 Practica1/**/*.dll
 Practica1/**/*.exe
 Practica1/**/*.so
+
+# Carpetas generadas por build.bat / build.sh
+Practica1/ejecutable/
+Practica1/ejecutable-linux/
