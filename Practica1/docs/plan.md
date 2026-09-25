@@ -31,7 +31,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Qué pide:** obtener los fuentes de [1], compilarlos con un compilador de [2] y producir un ejecutable de Windows; usar la aplicación y comprobar que **todas** las opciones del menú funcionan.
 - **Requisitos:** R16, R17, R18, R19 (y R14, R15, R43 que se ejecutan aquí).
 - **Tareas:**
-  - Script de reescritura mecánica de `DISPLAY/ACCEPT (l c)` a `LINE/COL` (275 usos) y compilación en formato libre de los 7 `BANK`; arreglar `BANK6.cbl:114` (D12).
+  - Reescritura mecánica de `DISPLAY/ACCEPT (l c)` a `AT llcc` (275 usos) en formato fijo de los 7 `BANK` (fuentes en `src/`); arreglar `BANK6.cbl:114` (D12).
   - Scripts `build.sh`, `build.bat` y `lanzar.bat`.
   - Programa que crea `movimientos.ubd` (saldos iniciales de 100, 200, 300, 400 y 500 € para las tarjetas 1-5) y reinicio de `intentos.ubd`.
   - Programa que crea `espectaculos.ubd` de prueba con fechas futuras (los del backup son de 2015-2016 y la opción 6 los oculta por pasados).

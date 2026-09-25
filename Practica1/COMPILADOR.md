@@ -1,9 +1,9 @@
 # Elección del compilador — Práctica 1 (Sistemas Legados)
 
-**Elegido: GnuCOBOL 3.2 con Berkeley DB.** Desarrollo en WSL con `cobc` 3.1.2 (mismo resultado que la 3.2.0) y ejecutable final para Windows con los binarios de la 3.2.
+**Elegido: GnuCOBOL 3.2 con Berkeley DB.** Desarrollo en WSL con `cobc` 3.2.0 (antes 3.1.2, mismo resultado) y ejecutable final para Windows con GnuCOBOL 3.2.0 para Windows (paquete GC32-BDB-SP1 de Arnold Trembley: MinGW 9.2.0 y Berkeley DB 18.1).
 Este documento explica por qué, qué otros compiladores se probaron o se analizaron, y por qué se descartaron. La decisión resumida está en `DECISIONES.md` (D12).
 
-Todo lo que aquí se afirma como "probado" se ejecutó el 2026-09-21 en copias de los fuentes, sin tocar los originales. Lo que no se pudo ejecutar está marcado como tal.
+Todo lo que aquí se afirma como "probado" se ejecutó el 2026-09-21 en copias de los fuentes, sin tocar los originales. Lo que no se pudo ejecutar está marcado como tal. Actualizado el 2026-09-25 con el convenio `AT` y las pruebas en Windows real (§7).
 
 ---
 
@@ -53,25 +53,46 @@ Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs200
 
 ## 5. Por qué GnuCOBOL 3.2
 1. **Es el que menos cambia nuestro código de todos los que se pudieron probar.** El cambio necesario es el mismo en toda la familia GnuCOBOL, porque todas las versiones rechazan la misma sintaxis: una versión más antigua **no ahorra ninguna modificación**.
-2. **El cambio es mínimo y mecánico.** Un script sustituye las 275 sentencias:
+2. **El cambio es mínimo y mecánico.** Se sustituyen las 275 sentencias por la forma `AT fila-columna` (4 cifras), que GnuCOBOL acepta en el formato fijo de siempre:
 
    ```
    antes:   DISPLAY (11 18) "Por su seguridad se ha bloqueado la tarjeta"
-   después: DISPLAY "Por su seguridad se ha bloqueado la tarjeta" LINE 11 COL 18
+   después: DISPLAY "Por su seguridad se ha bloqueado la tarjeta" AT 1118
    ```
 
-   y se compila en formato libre (`cobc -m -free`). Con eso **6 de los 7 programas compilan con 0 errores** en la 3.1.2 y en la 3.2.0. El séptimo, `BANK6`, falla solo en `BANK6.cbl:114` (`SIGN IS LEADING SEPARATE` sobre un `PIC 9(7)` sin `S`), que se corrige a mano en una línea. La estructura del código no se toca.
+   El primer ensayo (2026-09-21) usó `LINE 11 COL 18` y formato libre (`-free`); el equipo adoptó después `AT`, que no obliga a cambiar de formato (fuentes de trabajo en `src/`). En ambos casos **6 de los 7 programas compilan con 0 errores** en la 3.1.2 y en la 3.2.0. El séptimo, `BANK6`, falla solo en `BANK6.cbl:114` (`SIGN IS LEADING SEPARATE` sobre un `PIC 9(7)` sin `S`); se corrige quitando esa línea. La estructura del código no se toca.
+
+   **Trampa del formato fijo:** `cobc` ignora sin avisar lo que pasa de la columna 72, así que un `AT` o un punto final más allá de esa columna se pierde y el programa compila igual. Comprobación: `awk 'length($0)>72' src/*.cbl` (debe salir vacío); las líneas largas se parten antes de `AT`.
 3. **No hay que migrar datos.** Los `.ubd` originales son Berkeley DB y `cobc` los lee sin conversión (5 tarjetas con PIN `000n`, como dice el guion). Es un indicio fuerte de que el original se ejecutó con la familia OpenCOBOL/GnuCOBOL, aunque no una prueba. Fujitsu y Microsoft COBOL usan formatos indexados propios.
-4. **Ejecutable de Windows:** existen compilaciones de GnuCOBOL 3.2 para Windows con Berkeley DB (página de Arnold Trembley, `https://www.arnoldtrembley.com/GnuCOBOL.htm`, p. ej. `GC32M-BDB-x64.7z`).
+4. **Ejecutable de Windows:** GnuCOBOL 3.2.0 para Windows con Berkeley DB, paquete **GC32-BDB-SP1** de la página de Arnold Trembley (`https://www.arnoldtrembley.com/GnuCOBOL.htm`), instalado en `C:\GnuCOBOL`. Probado en Windows 11: compila, lee los `.ubd` y el cajero funciona con doble clic (§7).
 5. **Libre, disponible y reproducible.** Cualquiera del grupo puede repetir las pruebas con los comandos de §7.
 
 ## 6. Limitaciones (no ocultar en la memoria)
 - **Microsoft COBOL 5.0 y PowerCOBOL 3 (Fujitsu) no se han ejecutado.** Puede que alguno acepte `DISPLAY (fila col)` y necesite menos cambios de sintaxis. Aun así, MS COBOL 5 no daría un ejecutable de Windows y Fujitsu obligaría a migrar los datos.
-- **No se ha comprobado en Windows real** que el binario de GnuCOBOL 3.2 lea los `.ubd` (la versión de Berkeley DB puede variar) ni que el ejecutable arranque con doble clic. Queda pendiente para el Objetivo 1.
 - **El compilador elegido no procede de [2]**, que es lo que el guion pide literalmente. Es la caída prevista cuando [2] no ofrece un compilador utilizable. **Hay que preguntar al profesor** si es aceptable.
-- Los binarios de Windows de GnuCOBOL son de terceros y no los hemos descargado ni probado todavía.
+- Los binarios de Windows de GnuCOBOL son de terceros (Arnold Trembley), no de la FSF.
+- El ejecutable **no está firmado**: en Windows 11 con el Control inteligente de aplicaciones activo puede bloquearse (§7.4).
 
-## 7. Cómo reproducirlo
+## 7. Ejecución en Windows (probado el 2026-09-25 en Windows 11)
+
+### 7.1 Compilar y ejecutar
+- `build.bat` (con GnuCOBOL en `C:\GnuCOBOL`, o la ruta en `COB_DIR`) genera la carpeta `ejecutable` autocontenida: `BANK1.exe`, las DLL de GnuCOBOL (`libcob-4.dll`, `libdb-18.1.dll`, `pdcurses.dll`…), los `.ubd` y `lanzar.bat`.
+- Para usar el cajero: **doble clic en `ejecutable\lanzar.bat`**. En Linux, `build.sh` genera `ejecutable-linux/` y se ejecuta con `./BANK1`.
+
+### 7.2 Un único ejecutable
+Los 8 programas se compilan juntos en un solo `BANK1.exe` (`cobc -x` con los 8 fuentes). Los `CALL "BANKn"` del menú encuentran los programas dentro del mismo ejecutable; no hacen falta `BANK2.dll`…`BANK8.dll` ni `COB_LIBRARY_PATH`. El comportamiento es el mismo que con módulos separados (cada programa queda cargado tras la primera llamada). Motivo: con DLL separadas, un bloqueo de Windows (§7.4) puede aparecer a mitad de sesión, al elegir una opción; con un único ejecutable, si lo hay, es al arrancar. Verificado en Linux y en Windows con las 7 opciones.
+
+### 7.3 Ventana de 80x25
+En Windows 11 la consola por defecto es **Windows Terminal, que ignora `mode con cols=80 lines=25`**. `lanzar.bat` se vuelve a abrir en la consola clásica (`conhost.exe`), donde `mode con` sí fija 80x25; si `conhost.exe` no existiera, sigue en la ventana actual.
+
+### 7.4 Bloqueos de Windows a ejecutables sin firmar
+- **Control inteligente de aplicaciones (Smart App Control).** En instalaciones limpias de Windows 11 puede estar activo; entonces Windows decide caso a caso si deja cargar programas recién compilados y sin firmar. Se vio dos veces: al elegir la opción 7 salió un diálogo "BANK1.exe…" y no se abrió la pantalla (cuando `BANK8` era una DLL aparte), y `build.bat` falló con *"bloqueado por la directiva de Device Guard"* en `CREAR-ESPECTACULOS.exe`. Queda registrado en el Visor de eventos, `Microsoft-Windows-CodeIntegrity/Operational`, eventos 3033/3077 (*"did not meet the Enterprise signing level"*). No es un fallo del programa COBOL. Se comprueba en *Seguridad de Windows → Control de aplicaciones y del explorador → Control inteligente de aplicaciones*.
+- **SmartScreen.** Al descargar el zip de Internet o del correo, Windows puede mostrar *"Windows protegió su PC"* al abrir `lanzar.bat` o `BANK1.exe`: *Más información → Ejecutar de todas formas*.
+
+### 7.5 Ficheros de datos y versiones de Berkeley DB
+La Berkeley DB de GnuCOBOL para Windows (18.1) crea los ficheros indexados en formato btree v10, que el `cobc` de Linux (libdb 5.3, v9) no lee; en sentido contrario sí funciona. Por eso `tarjetas.ubd` e `intentos.ubd` se copian de `original/` y `movimientos.ubd` y `espectaculos.ubd` los crean `build.bat`/`build.sh` en la propia máquina (programas `CREAR-MOVIMIENTOS` y `CREAR-ESPECTACULOS`).
+
+## 8. Cómo reproducirlo
 Compilar un `BANK` original (falla con `DISPLAY (l c)`):
 ```
 cobc -m original/BANK1.cbl -o /tmp/BANK1.so
@@ -90,7 +111,7 @@ grep -c -E 'DISPLAY *\(' original/BANK*.cbl     # 259 en total
 grep -c -E 'ACCEPT *\(' original/BANK*.cbl      # 16 en total
 ```
 
-## 8. Referencias
+## 9. Referencias
 - [1] `http://webdiis.unizar.es/asignaturas/SL/` (fuentes de la práctica).
 - [2] `escobol.com` en archive.org (captura del 17-ene-2021) y sus ficheros en `descargas.cabasc.com/ftp/`.
 - GnuCOBOL para Windows: `https://www.arnoldtrembley.com/GnuCOBOL.htm`.
