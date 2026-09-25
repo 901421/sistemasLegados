@@ -135,7 +135,16 @@ Referencias: `Rn` = requisito, `AMBn` = ambigüedad de `docs/requisitos.md`.
 
 ---
 
-## D10 — Qué muestra el "Listado de transferencias": alcance e inmediatas (2026-09-21) — **ajustada el 2026-09-25**
+## D10 — Qué muestra el "Listado de transferencias": alcance e inmediatas (2026-09-21) — **ajustada el 2026-09-25 y revisada el 2026-09-26**
+
+**Revisión (2026-09-26): el listado incluye también las transferencias recibidas ya ejecutadas.** Se toma como referencia lo que muestra un banco normal:
+- **Enviadas** (ordenadas por la tarjeta que hace login): todas, inmediatas, puntuales y mensuales, en cualquier estado (ejecutada o pendiente, D14), como hasta ahora.
+- **Recibidas** (la tarjeta es la cuenta destino): **solo las ya ejecutadas**, es decir, las inmediatas y las ocurrencias de puntuales y mensuales con fecha anterior a hoy (D14). Las recibidas **pendientes no se muestran**: son órdenes del que paga, que puede anularlas, y un banco no las enseña al receptor.
+- Una columna nueva indica el sentido de cada fila (**Enviada** o **Recibida**) y la columna de cuenta muestra la cuenta de la otra parte (destino si se envía, origen si se recibe).
+
+**Por qué.** Es la lectura más amplia razonable de "todas las transferencias" del guion y coincide con lo que un cliente ve en su banco: sus órdenes (con las programadas y periódicas) y lo que ya ha recibido. Mostrar las recibidas pendientes enseñaría órdenes privadas de otra persona que pueden no llegar a ejecutarse.
+
+**Descartado.** Solo enviadas (alcance anterior, más estrecho que "todas"). Enviadas y recibidas en todos los estados (muestra órdenes ajenas pendientes).
 
 **Ajuste (2026-09-25).** Se mantiene el alcance y el registro de las inmediatas. Cambia lo que dependía de D3, D9 y D13: los estados posibles son solo **ejecutada** y **pendiente** (según D14; ya no hay "fallida por saldo") y las transferencias se anotan en `transferencias.ubd` (D13), no en un fichero de órdenes aparte.
 
