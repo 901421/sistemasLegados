@@ -1,7 +1,7 @@
 @echo off
 rem ------------------------------------------------------------------
 rem  UnizarBank - compilacion para Windows (GnuCOBOL 3.2 con BDB)
-rem  Genera la carpeta "ejecutable" autocontenida: BANK1.exe (los 8
+rem  Genera la carpeta "ejecutable" autocontenida: BANK1.exe (los 9
 rem  programas en un solo ejecutable), las DLL de GnuCOBOL, los ficheros
 rem  de datos .ubd y lanzar.bat.
 rem  Uso: build.bat            (GnuCOBOL en C:\GnuCOBOL)
@@ -24,6 +24,7 @@ mkdir "%OUT%"
 echo Compilando...
 cobc -x -o "%OUT%\BANK1.exe" src\BANK1.cbl src\BANK2.cbl src\BANK3.cbl ^
     src\BANK4.cbl src\BANK5.cbl src\BANK6.cbl src\BANK7.cbl src\BANK8.cbl ^
+    src\BANK9.cbl ^
     || goto :error
 cobc -x -o "%OUT%\CREAR-MOVIMIENTOS.exe" src\CREAR-MOVIMIENTOS.cbl || goto :error
 cobc -x -o "%OUT%\CREAR-ESPECTACULOS.exe" src\CREAR-ESPECTACULOS.cbl || goto :error

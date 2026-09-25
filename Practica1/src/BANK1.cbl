@@ -170,8 +170,9 @@
            DISPLAY "3 - Retirar efectivo" AT 1015.
            DISPLAY "4 - Ingresar efectivo" AT 1115.
            DISPLAY "5 - Ordenar transferencia" AT 1215.
-           DISPLAY "6 - Comprar entradas de espectaculos" AT 1315.
-           DISPLAY "7 - Cambiar clave" AT 1515.
+           DISPLAY "6 - Listado de transferencias" AT 1315.
+           DISPLAY "7 - Comprar entradas de espectaculos" AT 1415.
+           DISPLAY "8 - Cambiar clave" AT 1615.
            DISPLAY "ESC - Salir" AT 2434.
 
        PMENUA1.
@@ -207,10 +208,14 @@
                GO TO PMENU.
 
            IF CHOICE = 6
-               CALL "BANK7" USING TNUM
+               CALL "BANK9" USING TNUM
                GO TO PMENU.
 
            IF CHOICE = 7
+               CALL "BANK7" USING TNUM
+               GO TO PMENU.
+
+           IF CHOICE = 8
                CALL "BANK8" USING TNUM
                GO TO PCOMPROBAR-BLOQUEO.
 
