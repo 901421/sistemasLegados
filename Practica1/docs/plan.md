@@ -39,18 +39,18 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Prueba de las 7 opciones base con capturas (línea base: cambios mínimos y trazables, con antes/después).
   - Comprobar las hipótesis H1-H9 de `guia-cobol.pdf` contra el código.
 - **Verificación:** `cobc` compila los 7 + `BANK8` con 0 errores; el ejecutable arranca con doble clic en Windows; captura de cada una de las 7 opciones funcionando.
-- **Estado:** En curso (análisis, spike de compilación y comparativa de compiladores hechos; falta implementar).
+- **Estado:** Cumplido (2026-09-25; capturas en `img/obj1-menu-7-opciones/`).
 
 ### 2. Implementa una nueva funcionalidad "Listado de transferencias" (opción 6 del menú; opción 5 con transferencia puntual y mensual)
 - **Qué pide:** nueva opción 6 "Listado de transferencias"; las opciones 6 y 7 pasan a 7 y 8; la opción 5 admite ejecución puntual en una fecha o mensual en un día; el listado muestra las ejecutadas o pendientes entre dos fechas indicando puntual o periódica.
 - **Requisitos:** R20, R21, R22, R23, R24, R25, R26.
-- **Tareas:**
-  - Ficheros `ordenes.ubd` y `ejecuciones.ubd` y copybook compartido (D13).
-  - `BANK6`: ordenar inmediata, puntual o mensual con reglas D4-D8, anotar la inmediata (D10).
-  - `BANK1`: menú de 8 opciones y módulo que procesa las vencidas al iniciar sesión (D3), con "Fallida por saldo" (D9).
-  - `BANK9`: listado con formulario de fechas, cálculo de pendientes y mensuales, y paginación estilo `BANK3` (D10).
-- **Verificación:** casos de prueba con capturas (inmediata, puntual futura, puntual hoy, mensual día 3, día 31, sin saldo, rango vacío, inicio > fin).
-- **Estado:** Pendiente.
+- **Tareas** (revisadas el 2026-09-25 tras el correo del docente: el cajero solo registra y consulta las programadas; D3 y D9 anuladas):
+  - Fichero `transferencias.ubd` con una fila por transferencia y fecha de alta, creado por `CREAR-TRANSFERENCIAS` (D13).
+  - `BANK6`: ordenar inmediata, puntual o mensual con reglas D4-D8; la inmediata mueve el dinero y todas se anotan (D10).
+  - `BANK1`: menú de 8 opciones.
+  - `BANK9`: listado con formulario de fechas, ocurrencias de las mensuales, estado por fecha (D14) y paginación.
+- **Verificación:** casos de prueba con capturas en `img/obj2-transferencias/` (inmediata, puntual pasada/inexistente/válida, mensual día 31, cuenta propia, listado en dos páginas, inicio > fin, rango vacío) y regresión de las 8 opciones.
+- **Estado:** Cumplido (2026-09-25).
 
 ### 3. Cambios en la aplicación
 
