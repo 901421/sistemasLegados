@@ -77,6 +77,18 @@
        77 TECLA                    PIC  X(1).
 
 
+      *    LECTURA DE CLAVES CIFRA A CIFRA ("____" -> "*___" -> ... ->
+      *    "****"). SIN RETROCESO (GNUCOBOL NO LO AVISA EN UN CAMPO DE
+      *    UNA POSICION): ENTER CON LA CLAVE INCOMPLETA LA BORRA.
+       77 FILA-CLAVE               PIC  9(2).
+       77 COL-CIFRA                PIC  9(2).
+       77 POS-CIFRA                PIC  9(4).
+       77 NUM-CIFRAS               PIC  9(1).
+       77 CIFRA-X                  PIC  X(1).
+       77 CIFRA                    PIC  9(1).
+       77 CLAVE-LEIDA              PIC  9(4).
+       77 CLAVE-CANCELADA          PIC  9(1).
+
        SCREEN SECTION.
        01 BLANK-SCREEN.
            05 FILLER LINE 1 BLANK SCREEN BACKGROUND-COLOR BLACK.
@@ -84,11 +96,11 @@
        01 DATA-ACCEPT.
            05 TARJETA-ACCEPT BLANK ZERO AUTO LINE 08 COL 50
                PIC 9(16) USING TNUM.
-      *    SIN ECO Y SUBRAYADO: VACIO SE VE "____" (SECURE PINTA
-      *    "****" AUNQUE NO SE HAYA TECLEADO NADA).
-           05 PIN-ACCEPT BLANK ZERO AUTO NO-ECHO UNDERLINE
-               LINE 09 COL 50
-               PIC 9(4) USING PIN-INTRODUCIDO.
+      *    EL PIN SE LEE CIFRA A CIFRA CON LEER-CLAVE.
+
+       01 CAMPO-CIFRA.
+           05 FILLER AUTO NO-ECHO UNDERLINE
+               LINE FILA-CLAVE COL COL-CIFRA PIC X(1) USING CIFRA-X.
 
 
 
@@ -138,11 +150,23 @@
            INITIALIZE TPIN.
            DISPLAY "Numero de tarjeta:" AT 0815.
            DISPLAY "Inserte el pin de tarjeta:" AT 0915.
+           DISPLAY "____" AT 0950.
            ACCEPT DATA-ACCEPT ON EXCEPTION
                IF ESC-PRESSED
                    GO TO IMPRIMIR-CABECERA
-               ELSE
-                   GO TO P2.
+               END-IF
+               IF NOT ENTER-PRESSED
+                   GO TO P2
+               END-IF
+           END-ACCEPT.
+
+      *    PIN CIFRA A CIFRA: "____" -> "*___" -> ... (LEER-CLAVE).
+           MOVE 9 TO FILA-CLAVE.
+           PERFORM LEER-CLAVE THRU LEER-CLAVE-FIN.
+           IF CLAVE-CANCELADA = 1
+               GO TO IMPRIMIR-CABECERA
+           END-IF.
+           MOVE CLAVE-LEIDA TO PIN-INTRODUCIDO.
 
            OPEN I-O TARJETAS.
            IF FST NOT = 00
@@ -323,3 +347,43 @@
        REINICIAR-INTENTOS.
            MOVE 3 TO IINTENTOS.
            REWRITE INTENTOSREG INVALID KEY GO TO PSYS-ERR.
+
+
+      *    LEE UNA CLAVE DE 4 CIFRAS EN LA FILA FILA-CLAVE, COLUMNAS
+      *    50-53. DEVUELVE CLAVE-LEIDA; CLAVE-CANCELADA = 1 SI ESC.
+       LEER-CLAVE.
+           MOVE 0 TO CLAVE-LEIDA.
+           MOVE 0 TO NUM-CIFRAS.
+           MOVE 0 TO CLAVE-CANCELADA.
+           COMPUTE POS-CIFRA = FILA-CLAVE * 100 + 50.
+           DISPLAY "____" AT POS-CIFRA.
+
+       LEER-CIFRA.
+           COMPUTE COL-CIFRA = 50 + NUM-CIFRAS.
+           COMPUTE POS-CIFRA = FILA-CLAVE * 100 + COL-CIFRA.
+           MOVE SPACE TO CIFRA-X.
+           ACCEPT CAMPO-CIFRA ON EXCEPTION
+               IF ESC-PRESSED
+                   MOVE 1 TO CLAVE-CANCELADA
+                   GO TO LEER-CLAVE-FIN
+               END-IF
+           END-ACCEPT.
+
+      *    ENTER (CAMPO VACIO): SE BORRA LA CLAVE Y SE EMPIEZA DE NUEVO.
+           IF CIFRA-X = SPACE
+               GO TO LEER-CLAVE
+           END-IF.
+           IF CIFRA-X IS NOT NUMERIC
+               GO TO LEER-CIFRA
+           END-IF.
+
+           MOVE CIFRA-X TO CIFRA.
+           COMPUTE CLAVE-LEIDA = CLAVE-LEIDA * 10 + CIFRA.
+           DISPLAY "*" AT POS-CIFRA.
+           ADD 1 TO NUM-CIFRAS.
+           IF NUM-CIFRAS < 4
+               GO TO LEER-CIFRA
+           END-IF.
+
+       LEER-CLAVE-FIN.
+           EXIT.

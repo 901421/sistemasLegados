@@ -73,6 +73,18 @@
        77 PIN-NUEVO-2                 PIC 9(4).
        77 CHOICE                      PIC X(1).
 
+      *    LECTURA DE CLAVES CIFRA A CIFRA ("____" -> "*___" -> ... ->
+      *    "****"). SIN RETROCESO (GNUCOBOL NO LO AVISA EN UN CAMPO DE
+      *    UNA POSICION): ENTER CON LA CLAVE INCOMPLETA LA BORRA.
+       77 FILA-CLAVE               PIC  9(2).
+       77 COL-CIFRA                PIC  9(2).
+       77 POS-CIFRA                PIC  9(4).
+       77 NUM-CIFRAS               PIC  9(1).
+       77 CIFRA-X                  PIC  X(1).
+       77 CIFRA                    PIC  9(1).
+       77 CLAVE-LEIDA              PIC  9(4).
+       77 CLAVE-CANCELADA          PIC  9(1).
+
        LINKAGE SECTION.
 
        77 TNUM-LINK                   PIC 9(16).
@@ -82,30 +94,9 @@
        01 BLANK-SCREEN.
            05 FILLER LINE 1 BLANK SCREEN.
 
-      *    COMO EN LOS PANTALLAZOS DEL GUION: CAMPO VACIO "____" Y
-      *    CLAVE TECLEADA "****". SECURE DE GNUCOBOL PINTA "****" AUN
-      *    VACIO, ASI QUE SE PIDE CADA CAMPO SIN ECO (NO-ECHO) Y AL
-      *    COMPLETARLO SE PINTA "****".
-       01 CLAVE-ACTUAL-ACCEPT.
-           05 FILLER
-               BLANK ZERO AUTO NO-ECHO UNDERLINE
-               LINE 08 COL 50
-               PIC 9(4)
-               USING PIN-ACTUAL-USER.
-
-       01 CLAVE-NUEVA-1-ACCEPT.
-           05 FILLER
-               BLANK ZERO AUTO NO-ECHO UNDERLINE
-               LINE 09 COL 50
-               PIC 9(4)
-               USING PIN-NUEVO-1.
-
-       01 CLAVE-NUEVA-2-ACCEPT.
-           05 FILLER
-               BLANK ZERO AUTO NO-ECHO UNDERLINE
-               LINE 10 COL 50
-               PIC 9(4)
-               USING PIN-NUEVO-2.
+       01 CAMPO-CIFRA.
+           05 FILLER AUTO NO-ECHO UNDERLINE
+               LINE FILA-CLAVE COL COL-CIFRA PIC X(1) USING CIFRA-X.
 
        PROCEDURE DIVISION USING TNUM-LINK.
 
@@ -154,42 +145,28 @@
            DISPLAY "ESC - Cancelar"
                AT 2465.
 
-      *    CON UN CAMPO, ENTER TAMBIEN LLEGA POR ON EXCEPTION.
-       PEDIR-CLAVE-ACTUAL.
-           ACCEPT CLAVE-ACTUAL-ACCEPT
-               ON EXCEPTION
-                   IF ESC-PRESSED
-                       EXIT PROGRAM
-                   END-IF
-                   IF NOT ENTER-PRESSED
-                       GO TO PEDIR-CLAVE-ACTUAL
-                   END-IF
-           END-ACCEPT.
-           DISPLAY "****" AT 0850.
+      *    COMO EN LOS PANTALLAZOS DEL GUION: CAMPO VACIO "____" Y
+      *    CLAVE TECLEADA "****", AQUI CIFRA A CIFRA (LEER-CLAVE).
+           MOVE 8 TO FILA-CLAVE.
+           PERFORM LEER-CLAVE THRU LEER-CLAVE-FIN.
+           IF CLAVE-CANCELADA = 1
+               EXIT PROGRAM
+           END-IF.
+           MOVE CLAVE-LEIDA TO PIN-ACTUAL-USER.
 
-       PEDIR-CLAVE-NUEVA-1.
-           ACCEPT CLAVE-NUEVA-1-ACCEPT
-               ON EXCEPTION
-                   IF ESC-PRESSED
-                       EXIT PROGRAM
-                   END-IF
-                   IF NOT ENTER-PRESSED
-                       GO TO PEDIR-CLAVE-NUEVA-1
-                   END-IF
-           END-ACCEPT.
-           DISPLAY "****" AT 0950.
+           MOVE 9 TO FILA-CLAVE.
+           PERFORM LEER-CLAVE THRU LEER-CLAVE-FIN.
+           IF CLAVE-CANCELADA = 1
+               EXIT PROGRAM
+           END-IF.
+           MOVE CLAVE-LEIDA TO PIN-NUEVO-1.
 
-       PEDIR-CLAVE-NUEVA-2.
-           ACCEPT CLAVE-NUEVA-2-ACCEPT
-               ON EXCEPTION
-                   IF ESC-PRESSED
-                       EXIT PROGRAM
-                   END-IF
-                   IF NOT ENTER-PRESSED
-                       GO TO PEDIR-CLAVE-NUEVA-2
-                   END-IF
-           END-ACCEPT.
-           DISPLAY "****" AT 1050.
+           MOVE 10 TO FILA-CLAVE.
+           PERFORM LEER-CLAVE THRU LEER-CLAVE-FIN.
+           IF CLAVE-CANCELADA = 1
+               EXIT PROGRAM
+           END-IF.
+           MOVE CLAVE-LEIDA TO PIN-NUEVO-2.
 
        VERIFICAR-DATOS.
            OPEN I-O TARJETAS.
@@ -423,4 +400,43 @@
            
        FIN-BANK8.
            EXIT PROGRAM.
-		   
+
+
+      *    LEE UNA CLAVE DE 4 CIFRAS EN LA FILA FILA-CLAVE, COLUMNAS
+      *    50-53. DEVUELVE CLAVE-LEIDA; CLAVE-CANCELADA = 1 SI ESC.
+       LEER-CLAVE.
+           MOVE 0 TO CLAVE-LEIDA.
+           MOVE 0 TO NUM-CIFRAS.
+           MOVE 0 TO CLAVE-CANCELADA.
+           COMPUTE POS-CIFRA = FILA-CLAVE * 100 + 50.
+           DISPLAY "____" AT POS-CIFRA.
+
+       LEER-CIFRA.
+           COMPUTE COL-CIFRA = 50 + NUM-CIFRAS.
+           COMPUTE POS-CIFRA = FILA-CLAVE * 100 + COL-CIFRA.
+           MOVE SPACE TO CIFRA-X.
+           ACCEPT CAMPO-CIFRA ON EXCEPTION
+               IF ESC-PRESSED
+                   MOVE 1 TO CLAVE-CANCELADA
+                   GO TO LEER-CLAVE-FIN
+               END-IF
+           END-ACCEPT.
+
+      *    ENTER (CAMPO VACIO): SE BORRA LA CLAVE Y SE EMPIEZA DE NUEVO.
+           IF CIFRA-X = SPACE
+               GO TO LEER-CLAVE
+           END-IF.
+           IF CIFRA-X IS NOT NUMERIC
+               GO TO LEER-CIFRA
+           END-IF.
+
+           MOVE CIFRA-X TO CIFRA.
+           COMPUTE CLAVE-LEIDA = CLAVE-LEIDA * 10 + CIFRA.
+           DISPLAY "*" AT POS-CIFRA.
+           ADD 1 TO NUM-CIFRAS.
+           IF NUM-CIFRAS < 4
+               GO TO LEER-CIFRA
+           END-IF.
+
+       LEER-CLAVE-FIN.
+           EXIT.
