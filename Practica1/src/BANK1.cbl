@@ -175,11 +175,15 @@
            DISPLAY "ESC - Salir" AT 2434.
 
        PMENUA1.
-           ACCEPT CHOICE AT 2480 ON EXCEPTION
-               IF ESC-PRESSED
-                   GO TO IMPRIMIR-CABECERA
-               ELSE
-                   GO TO PMENUA1.
+           ACCEPT CHOICE
+               WITH AUTO
+               NO-ECHO
+               SIZE 1
+               ON EXCEPTION
+                   IF ESC-PRESSED
+                       GO TO IMPRIMIR-CABECERA
+                   ELSE
+                       GO TO PMENUA1.
 
 
            IF CHOICE = 1

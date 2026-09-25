@@ -253,7 +253,7 @@
            DISPLAY MES AT 0435.
            DISPLAY "-" AT 0437.
            DISPLAY ANO AT 0438.
-           DISPLAY HORAS AT 0438.
+           DISPLAY HORAS AT 0444.
            DISPLAY ":" AT 0446.
            DISPLAY MINUTOS AT 0447.
 
@@ -261,7 +261,7 @@
 
        CONSULTA-SALDO.
            OPEN I-O F-MOVIMIENTOS.
-           IF FSM <> 30
+           IF FSM <> "00"
                GO TO PSYS-ERR.
 
            MOVE 0 TO LAST-USER-MOV-NUM.
@@ -310,7 +310,7 @@
            MOVE 9 TO LINEA-ESP-ACTUAL.
 
            OPEN I-O F-ESPECTACULOS.
-           IF FSE <> 30
+           IF FSE <> "00"
                GO TO PSYS-ERR.
 
 
@@ -336,7 +336,7 @@
 
        WAIT-ORDER.
 
-           ACCEPT ACCEPT-COMPRA-ENTRADAS AT 2480 ON EXCEPTION 
+           ACCEPT ACCEPT-COMPRA-ENTRADAS ON EXCEPTION 
 
               IF ESC-PRESSED THEN
                   CLOSE F-MOVIMIENTOS

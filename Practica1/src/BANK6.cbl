@@ -154,7 +154,7 @@
 
        MOVIMIENTOS-OPEN.
            OPEN I-O F-MOVIMIENTOS.
-           IF FSM <> 30 THEN
+           IF FSM <> "00" THEN
                GO TO PSYS-ERR
            END-IF.
 
@@ -255,7 +255,7 @@
            DISPLAY "ESC - Cancelar" AT 2466.
 
        ENTER-VERIFICACION.
-           ACCEPT PRESSED-KEY AT 2480 ON EXCEPTION
+           ACCEPT OMITTED AT 2480 ON EXCEPTION
            IF ESC-PRESSED THEN
                EXIT PROGRAM
            ELSE
@@ -264,7 +264,7 @@
 
        VERIFICACION-CTA-CORRECTA.
            OPEN I-O TARJETAS.
-           IF FST <> 30
+           IF FST <> "00"
               GO TO PSYS-ERR.
 
            MOVE CUENTA-DESTINO TO TNUM-E.

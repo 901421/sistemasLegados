@@ -33,7 +33,8 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Tareas:**
   - Script de reescritura mecánica de `DISPLAY/ACCEPT (l c)` a `LINE/COL` (275 usos) y compilación en formato libre de los 7 `BANK`; arreglar `BANK6.cbl:114` (D12).
   - Scripts `build.sh`, `build.bat` y `lanzar.bat`.
-  - Programa que crea `movimientos.ubd` (1.000 € por tarjeta) y reinicio de `intentos.ubd`.
+  - Programa que crea `movimientos.ubd` (saldos iniciales de 100, 200, 300, 400 y 500 € para las tarjetas 1-5) y reinicio de `intentos.ubd`.
+  - Programa que crea `espectaculos.ubd` de prueba con fechas futuras (los del backup son de 2015-2016 y la opción 6 los oculta por pasados).
   - Verificar en Windows real que GnuCOBOL 3.2 lee los `.ubd`.
   - Prueba de las 7 opciones base con capturas (línea base: cambios mínimos y trazables, con antes/después).
   - Comprobar las hipótesis H1-H9 de `guia-cobol.pdf` contra el código.
