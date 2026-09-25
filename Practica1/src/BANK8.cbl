@@ -82,22 +82,28 @@
        01 BLANK-SCREEN.
            05 FILLER LINE 1 BLANK SCREEN.
 
-       01 FORMULARIO-CLAVE.
-           05 CLAVE-ACTUAL-ACCEPT
-               BLANK ZERO AUTO SECURE
-               LINE 10 COL 40
+      *    COMO EN LOS PANTALLAZOS DEL GUION: CAMPO VACIO "____" Y
+      *    CLAVE TECLEADA "****". SECURE DE GNUCOBOL PINTA "****" AUN
+      *    VACIO, ASI QUE SE PIDE CADA CAMPO SIN ECO (NO-ECHO) Y AL
+      *    COMPLETARLO SE PINTA "****".
+       01 CLAVE-ACTUAL-ACCEPT.
+           05 FILLER
+               BLANK ZERO AUTO NO-ECHO UNDERLINE
+               LINE 08 COL 50
                PIC 9(4)
                USING PIN-ACTUAL-USER.
 
-           05 CLAVE-NUEVA-1-ACCEPT
-               BLANK ZERO AUTO SECURE
-               LINE 11 COL 40
+       01 CLAVE-NUEVA-1-ACCEPT.
+           05 FILLER
+               BLANK ZERO AUTO NO-ECHO UNDERLINE
+               LINE 09 COL 50
                PIC 9(4)
                USING PIN-NUEVO-1.
 
-           05 CLAVE-NUEVA-2-ACCEPT
-               BLANK ZERO AUTO SECURE
-               LINE 12 COL 40
+       01 CLAVE-NUEVA-2-ACCEPT.
+           05 FILLER
+               BLANK ZERO AUTO NO-ECHO UNDERLINE
+               LINE 10 COL 50
                PIC 9(4)
                USING PIN-NUEVO-2.
 
@@ -132,27 +138,58 @@
            INITIALIZE PIN-NUEVO-2.
 
            DISPLAY "Cambio de clave personal"
-               AT 0820.
+               AT 0615.
            DISPLAY "Introduzca clave actual:"
-               AT 1015.
+               AT 0815.
            DISPLAY "Introduzca nueva clave:"
-               AT 1115.
+               AT 0915.
            DISPLAY "Repita la nueva clave:"
-               AT 1215.
+               AT 1015.
+           DISPLAY "____" AT 0850.
+           DISPLAY "____" AT 0950.
+           DISPLAY "____" AT 1050.
 
            DISPLAY "Enter - Confirmar"
                AT 2402.
            DISPLAY "ESC - Cancelar"
                AT 2465.
 
-           ACCEPT FORMULARIO-CLAVE
+      *    CON UN CAMPO, ENTER TAMBIEN LLEGA POR ON EXCEPTION.
+       PEDIR-CLAVE-ACTUAL.
+           ACCEPT CLAVE-ACTUAL-ACCEPT
                ON EXCEPTION
                    IF ESC-PRESSED
                        EXIT PROGRAM
-                   ELSE
-                       GO TO SOLICITAR-DATOS
+                   END-IF
+                   IF NOT ENTER-PRESSED
+                       GO TO PEDIR-CLAVE-ACTUAL
                    END-IF
            END-ACCEPT.
+           DISPLAY "****" AT 0850.
+
+       PEDIR-CLAVE-NUEVA-1.
+           ACCEPT CLAVE-NUEVA-1-ACCEPT
+               ON EXCEPTION
+                   IF ESC-PRESSED
+                       EXIT PROGRAM
+                   END-IF
+                   IF NOT ENTER-PRESSED
+                       GO TO PEDIR-CLAVE-NUEVA-1
+                   END-IF
+           END-ACCEPT.
+           DISPLAY "****" AT 0950.
+
+       PEDIR-CLAVE-NUEVA-2.
+           ACCEPT CLAVE-NUEVA-2-ACCEPT
+               ON EXCEPTION
+                   IF ESC-PRESSED
+                       EXIT PROGRAM
+                   END-IF
+                   IF NOT ENTER-PRESSED
+                       GO TO PEDIR-CLAVE-NUEVA-2
+                   END-IF
+           END-ACCEPT.
+           DISPLAY "****" AT 1050.
 
        VERIFICAR-DATOS.
            OPEN I-O TARJETAS.
@@ -229,11 +266,11 @@
            PERFORM IMPRIMIR-CABECERA.
 
            DISPLAY "Cambio de clave personal"
-               AT 0820.
+               AT 0815.
            DISPLAY "La clave se ha cambiado correctamente"
-               AT 1220.
-           DISPLAY "Enter - Aceptar"
-               AT 2433.
+               AT 1115.
+           DISPLAY "Enter-Aceptar"
+               AT 2434.
            
            GO TO EXITO-ENTER.
            
