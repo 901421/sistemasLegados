@@ -1,0 +1,12 @@
+UnizarBank - Práctica 1 de Sistemas Legados (grupo 02)
+
+Para ejecutar: doble clic en ejecutable\lanzar.bat
+(abre la consola a 80x25; no hay que instalar nada).
+
+Tarjetas de prueba: 0000000000000001 a 0000000000000005,
+claves 0001 a 0005.
+
+Contenido: memoria-SL-P1-02.pdf (memoria), ejecutable\ (cajero listo
+para usar), src\ (fuentes modificados), original\ (copia recuperada,
+sin cambios), build.bat (recompilar; requiere GnuCOBOL 3.2 en
+C:\GnuCOBOL). Más detalles en el apartado 8 de la memoria.
