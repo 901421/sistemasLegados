@@ -12,7 +12,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Montar la estructura del zip `SL-P1-02.zip` (fuentes, ejecutable, runtime, datos, lanzador, memoria PDF).
   - Enviarlo por email el 28-sep antes de las 23:59.
 - **Verificación:** nombre exacto `SL-P1-02.zip`; descomprimir en carpeta limpia y ejecutar con doble clic; justificante del envío.
-- **Estado:** Pendiente.
+- **Estado:** En curso (zip `SL-P1-02.zip` montado y probado el 2026-09-26; falta el envío por email).
 
 ## Descripción del sistema legado
 - **Qué pide:** que la aplicación funcione como describe el guion: bienvenida, Enter, tarjeta y clave (`000n`), menú y cambio de clave con máximo 3 intentos y bloqueo. Hay que conseguir compilarla y reconstruir lo que falta (`BANK8`, `movimientos.ubd`).
@@ -91,7 +91,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Reparto y cronograma a partir del historial de git.
   - Instrucciones de doble clic.
 - **Verificación:** 4-5 páginas; contiene los 8 elementos pedidos; PDF dentro del zip.
-- **Estado:** En curso (memoria hecha, `docs/memoria-SL-P1-02.pdf`; falta §8 con la estructura real del zip).
+- **Estado:** Cumplido (2026-09-26; `docs/memoria-SL-P1-02.pdf`, §8 con la estructura del zip `SL-P1-02.zip`).
 
 ## Referencias
 - **Qué pide:** [1] `http://webdiis.unizar.es/asignaturas/SL/` y [2] `escobol.com (en archive.org)`.

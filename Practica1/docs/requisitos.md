@@ -36,7 +36,7 @@ Estado: Pendiente salvo que se indique; nada se marca Cumplido sin evidencia (fi
 |---|---|---|---|---|---|---|---|
 | R1 | Resumen | Modificar y ampliar un programa COBOL existente | "Modificar y añadir nuevas funcionalidades a un programa COBOL" | p.1, Resumen, viñeta 1 | E | Cumplido | Programa modificado (`src/BANK1-7`) y ampliado (`BANK8`, `BANK9`, `CREAR-*`); compila desde cero sin errores y las 8 opciones funcionan (auditoría 2026-09-26) |
 | R2 | Resumen | Entregar como máximo el lunes 28-sep-2026 | "Fecha límite: lunes 28 septiembre 2026" | p.1, Resumen, viñeta 2 | E (hora: A, ver AMB-1) | Pendiente | |
-| R3 | Resumen | El fichero de entrega se llama SL-P1-nn.zip o .rar, con nn = nº de grupo | "Fichero a enviar: SL-P1-nn.zip/rar (nn: número de grupo)" | p.1, Resumen, viñeta 2 | E (formato de nn: A, ver AMB-2) | Pendiente | |
+| R3 | Resumen | El fichero de entrega se llama SL-P1-nn.zip o .rar, con nn = nº de grupo | "Fichero a enviar: SL-P1-nn.zip/rar (nn: número de grupo)" | p.1, Resumen, viñeta 2 | E (formato de nn: A, ver AMB-2) | Cumplido | `SL-P1-02.zip` (grupo 02, dos cifras, AMB-2): memoria PDF, `LEEME.txt`, `ejecutable/`, `src/`, `original/`, `build.bat` y `lanzar.bat`; generado desde el commit `b505e6a` y compilado con `build.bat` en Windows 11 (2026-09-26) |
 
 ### Descripción del sistema legado (p.1-2)
 
@@ -90,7 +90,7 @@ Estado: Pendiente salvo que se indique; nada se marca Cumplido sin evidencia (fi
 | R39 | Documentación | Indicar qué tarea ha hecho cada miembro del grupo | "qué tarea ha realizado cada miembro del grupo" | p.2, ídem | E | Cumplido | Memoria §6 (tareas de cada miembro) |
 | R40 | Documentación | Incluir el cronograma de las tareas | "el cronograma de las mismas" | p.2, ídem | E | Cumplido | Memoria §7 (tabla 4, cronograma del 17 al 27 de septiembre) |
 | R41 | Documentación | Incluir cualquier otra información relevante para entender el esfuerzo | "cualquier otra información que se crea de importancia para entender el esfuerzo invertido" | p.2, ídem | E | Cumplido | Memoria §2.2 (tabla 2, fallos del programa recuperado corregidos) y §5 (cómo se probó) |
-| R42 | Documentación | Incluir todo lo necesario para ejecutar las prácticas desde Windows con doble clic en un fichero | "incluyendo todo lo necesario para poder ejecutar las practicas desde Windows haciendo doble click en un fichero" | p.2, ídem | A (AMB-15) | Pendiente | |
+| R42 | Documentación | Incluir todo lo necesario para ejecutar las prácticas desde Windows con doble clic en un fichero | "incluyendo todo lo necesario para poder ejecutar las practicas desde Windows haciendo doble click en un fichero" | p.2, ídem | A (AMB-15) | Cumplido | Zip descomprimido con el extractor de Windows en `...\prueba entrega (1)\`: doble clic en `ejecutable\lanzar.bat` abre la consola a 80x25 (capturas de 720x500) y los guiones obj2 y obj3 recorren el cajero sin errores (2026-09-26); instrucciones en la memoria §8 y en `LEEME.txt` |
 
 ### Referencias (p.2)
 
