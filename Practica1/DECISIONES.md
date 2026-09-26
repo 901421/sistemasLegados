@@ -229,11 +229,11 @@ No aparecen los 20 € que A recibió de B el 10-09 (A ya los ve en "Consultar m
   - `mscobol5.zip`: Microsoft COBOL 5.0 (1993) "para MS-DOS y Windows". Era DOS/Windows 3.x. **No ejecutado.**
   - `pcobol3.zip`: instalador InstallShield de PowerCOBOL 3 con Fujitsu COBOL85, Windows de 32 bits, gratuito según el propio `leeme` de escobol. **No ejecutado.**
   - Acucobol-GT, NetExpress, Objective COBOL y RM/COBOL solo aparecen como artículos, sin instalador.
-- **Ningún GnuCOBOL/OpenCOBOL acepta el código original.** Errores al compilar los 7 `BANK` originales: OpenCOBOL 1.1 = 62 (solo informa del primero por párrafo), GnuCOBOL 2.2 = 249, 3.1.2 = 251, 3.2.0 = 255, 4.0-early = 249 y sin soporte de ficheros indexados.
+- **Ningún GnuCOBOL/OpenCOBOL acepta el código original.** Errores al compilar los 7 `BANK` originales: OpenCOBOL 1.1 = 62 (solo informa del primero por párrafo), GnuCOBOL 2.2 = 249, 3.1.2 = 251, 3.2.0 = 250, 4.0-early = 249 y sin soporte de ficheros indexados.
 - **Con una reescritura mecánica de las 275 sentencias, en formato libre, 6 de 7 programas compilan con 0 errores** en la 3.1.2 y en la 3.2.0. Queda solo `BANK6.cbl:114` (`SIGN IS LEADING SEPARATE` sobre `PIC 9(7)` sin `S`), un arreglo de una línea.
 - Los `.ubd` originales son Berkeley DB y `cobc` los lee sin conversión: 5 tarjetas con PIN `000n`, como dice el guion.
 
-**Decisión.** Usar **GnuCOBOL 3.2 con Berkeley DB** (binarios de Windows de terceros). Desarrollo en WSL con `cobc` 3.1.2 y referencia de la 3.2.0 en Docker. Cambio de código: un script mecánico + una línea manual.
+**Decisión.** Usar **GnuCOBOL 3.2 con Berkeley DB** (binarios de Windows de terceros). Desarrollo con `cobc` 3.1.2 (después 3.2.0, la misma versión del entregable) y referencia de la 3.2.0 en Docker. Cambio de código: un script mecánico + una línea manual.
 
 **Por qué es lógico.**
 - **Es el que menos cambia vuestro código de los que se han podido probar.** El cambio necesario es idéntico en todas las versiones de la familia (todas rechazan la misma sintaxis), así que una versión más antigua **no ahorra ninguna modificación**.

@@ -1,6 +1,6 @@
 # Elección del compilador — Práctica 1 (Sistemas Legados)
 
-**Elegido: GnuCOBOL 3.2 con Berkeley DB.** Desarrollo en WSL con `cobc` 3.2.0 (antes 3.1.2, mismo resultado) y ejecutable final para Windows con GnuCOBOL 3.2.0 para Windows (paquete GC32-BDB-SP1 de Arnold Trembley: MinGW 9.2.0 y Berkeley DB 18.1).
+**Elegido: GnuCOBOL 3.2 con Berkeley DB.** Desarrollo con `cobc` 3.2.0 (antes 3.1.2, mismo resultado) y ejecutable final para Windows con GnuCOBOL 3.2.0 para Windows (paquete GC32-BDB-SP1 de Arnold Trembley: MinGW 9.2.0 y Berkeley DB 18.1).
 Este documento explica por qué, qué otros compiladores se probaron o se analizaron, y por qué se descartaron. La decisión resumida está en `DECISIONES.md` (D12).
 
 Todo lo que aquí se afirma como "probado" se ejecutó el 2026-09-21 en copias de los fuentes, sin tocar los originales. Lo que no se pudo ejecutar está marcado como tal. Actualizado el 2026-09-25 con el convenio `AT` y las pruebas en Windows real (§7).
@@ -10,7 +10,7 @@ Todo lo que aquí se afirma como "probado" se ejecutó el 2026-09-21 en copias d
 ## 1. El problema
 El guion pide compilar el programa con *"algún compilador de COBOL [2]"* (`escobol.com` en archive.org) y obtener un ejecutable para Windows. Avisa de que *"cada compilador acepta su propia versión y sintaxis de COBOL y desgraciadamente no sabemos qué compilador se usó"*.
 
-El código original **no compila** con `cobc`. De los 251 errores que da GnuCOBOL 3.1.2, **243 (97%) son el mismo**: la sintaxis posicional antigua de pantalla, `DISPLAY (fila col) "texto"` y `ACCEPT (fila col) variable`. Hay **275 usos** (259 `DISPLAY` + 16 `ACCEPT`) repartidos en los 7 programas.
+El código original **no compila** con `cobc`. De los 250 errores que da GnuCOBOL 3.2.0 (251 en la 3.1.2), **243 (97%) son el mismo**: la sintaxis posicional antigua de pantalla, `DISPLAY (fila col) "texto"` y `ACCEPT (fila col) variable`. Hay **275 usos** (259 `DISPLAY` + 16 `ACCEPT`) repartidos en los 7 programas.
 
 Criterio de elección, tal como lo planteamos: **el compilador que menos obligue a cambiar nuestro código**, no el más moderno.
 
@@ -36,11 +36,11 @@ Criterio de elección, tal como lo planteamos: **el compilador que menos obligue
 |---|---|---|---|---|
 | OpenCOBOL 1.1 | Docker `ubuntu:16.04` y `18.04` (paquete `open-cobol`) | 62 (solo informa del primero de cada párrafo; rechaza `(`) | No probado | **Descartado.** Rechaza la misma sintaxis: no ahorra ningún cambio |
 | GnuCOBOL 2.2 | Docker `ubuntu:20.04` | 249 | No probado | **Descartado.** Mismo problema, sin ventaja |
-| GnuCOBOL 3.1.2 | Docker `ubuntu:22.04` y `24.04`; también el `cobc` de WSL | 251 | **6 de 7 sin errores** | **Usado para desarrollar** en WSL |
-| **GnuCOBOL 3.2.0** | Docker `debian:trixie` (paquete `gnucobol3`) | 255 | **6 de 7 sin errores** | **ELEGIDO** para el entregable |
+| GnuCOBOL 3.1.2 | Docker `ubuntu:22.04` y `24.04` | 251 | **6 de 7 sin errores** | **Usado al principio del desarrollo** |
+| **GnuCOBOL 3.2.0** | Docker `debian:trixie` (paquete `gnucobol3`) | 250 | **6 de 7 sin errores** | **ELEGIDO** para el entregable |
 | GnuCOBOL 4.0-early | Docker `ubuntu:24.04` (paquete `gnucobol4`) | 249 | Falla: *"compiler is not configured to support ORGANIZATION INDEXED"* | **Descartado.** Esta compilación no admite ficheros indexados, así que no puede leer los `.ubd` |
 
-Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs2000, acu, ibm, mf, mvs, realia, rm, cobol85, cobol2002, cobol2014, xopen y sus variantes estrictas): **ninguno acepta el código original** (entre 14 y 50 errores solo en `BANK1`).
+Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs2000, acu, ibm, mf, mvs, realia, rm, cobol85, cobol2002, cobol2014, xopen y sus variantes estrictas): **ninguno acepta el código original** (entre 14 y 50 errores solo en `BANK1`). Repetido el 2026-09-26 con `cobc` 3.2.0 y sus 21 dialectos (los anteriores más gcos y las variantes estrictas que trae): ninguno lo acepta (entre 13 y 129 errores en `BANK1`).
 
 ### Solo analizados (sin poder ejecutarlos)
 
@@ -80,7 +80,7 @@ Además, en `cobc` 3.1.2 se probaron todos los dialectos que trae (`-std=` bs200
 - Para usar el cajero: **doble clic en `ejecutable\lanzar.bat`**. En Linux, `build.sh` genera `ejecutable-linux/` y se ejecuta con `./BANK1`.
 
 ### 7.2 Un único ejecutable
-Los 8 programas se compilan juntos en un solo `BANK1.exe` (`cobc -x` con los 8 fuentes). Los `CALL "BANKn"` del menú encuentran los programas dentro del mismo ejecutable; no hacen falta `BANK2.dll`…`BANK8.dll` ni `COB_LIBRARY_PATH`. El comportamiento es el mismo que con módulos separados (cada programa queda cargado tras la primera llamada). Motivo: con DLL separadas, un bloqueo de Windows (§7.4) puede aparecer a mitad de sesión, al elegir una opción; con un único ejecutable, si lo hay, es al arrancar. Verificado en Linux y en Windows con las 7 opciones.
+Los 9 programas (`BANK1` a `BANK9`) se compilan juntos en un solo `BANK1.exe` (`cobc -x` con los 9 fuentes). Los `CALL "BANKn"` del menú encuentran los programas dentro del mismo ejecutable; no hacen falta `BANK2.dll`…`BANK9.dll` ni `COB_LIBRARY_PATH`. El comportamiento es el mismo que con módulos separados (cada programa queda cargado tras la primera llamada). Motivo: con DLL separadas, un bloqueo de Windows (§7.4) puede aparecer a mitad de sesión, al elegir una opción; con un único ejecutable, si lo hay, es al arrancar. Verificado en Linux y en Windows con las 8 opciones del menú final.
 
 ### 7.3 Ventana de 80x25
 En Windows 11 la consola por defecto es **Windows Terminal, que ignora `mode con cols=80 lines=25`**. `lanzar.bat` se vuelve a abrir en la consola clásica (`conhost.exe`), donde `mode con` sí fija 80x25; si `conhost.exe` no existiera, sigue en la ventana actual. Funciona aunque la carpeta tenga espacios o paréntesis (por ejemplo `SL-P1-02 (1)`, que es como Windows guarda un zip descargado dos veces): el `.bat` no usa bloques `( ... )` con rutas y se relanza desde su carpeta solo con su nombre de fichero.
@@ -90,7 +90,7 @@ En Windows 11 la consola por defecto es **Windows Terminal, que ignora `mode con
 - **SmartScreen.** Al descargar el zip de Internet o del correo, Windows puede mostrar *"Windows protegió su PC"* al abrir `lanzar.bat` o `BANK1.exe`: *Más información → Ejecutar de todas formas*.
 
 ### 7.5 Ficheros de datos y versiones de Berkeley DB
-La Berkeley DB de GnuCOBOL para Windows (18.1) crea los ficheros indexados en formato btree v10, que el `cobc` de Linux (libdb 5.3, v9) no lee; en sentido contrario sí funciona. Por eso `tarjetas.ubd` e `intentos.ubd` se copian de `original/` y `movimientos.ubd` y `espectaculos.ubd` los crean `build.bat`/`build.sh` en la propia máquina (programas `CREAR-MOVIMIENTOS` y `CREAR-ESPECTACULOS`).
+La Berkeley DB de GnuCOBOL para Windows (18.1) crea los ficheros indexados en formato btree v10, que el `cobc` de Linux (libdb 5.3, v9) no lee; en sentido contrario sí funciona. Por eso `tarjetas.ubd` e `intentos.ubd` se copian de `original/` y `movimientos.ubd`, `espectaculos.ubd` y `transferencias.ubd` los crean `build.bat`/`build.sh` en la propia máquina (programas `CREAR-MOVIMIENTOS`, `CREAR-ESPECTACULOS` y `CREAR-TRANSFERENCIAS`).
 
 ## 8. Cómo reproducirlo
 Compilar un `BANK` original (falla con `DISPLAY (l c)`):

@@ -19,11 +19,11 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Requisitos:** R4 a R15.
 - **Tareas:**
   - Reconstruir `BANK8` (cambio de clave; D1, D2, B5 en `requisitos.md`).
-  - Crear `movimientos.ubd` con saldo inicial y reiniciar `intentos.ubd` (AMB16).
+  - Crear `movimientos.ubd` con saldo inicial; `tarjetas.ubd` e `intentos.ubd` se entregan tal cual del backup (AMB16).
   - Comprobar bienvenida, Enter, tarjeta, clave y menú según pantallazo.
   - Comprobar error de clave con intentos restantes y bloqueo tras 3 fallos, con cierre de sesión (D1).
 - **Verificación:** ejecución con capturas de cada pantalla; tarjeta 1 con clave 0001 entra; clave errónea 3 veces bloquea y el siguiente login lo rechaza.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (2026-09-25; R4-R15 con evidencia en `docs/requisitos.md`, auditados el 2026-09-26).
 
 ## Objetivos
 
@@ -87,15 +87,15 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
 - **Requisitos:** R35 a R42.
 - **Tareas:**
   - Redactar la memoria en PDF (Obj. 1, 2 y 3), cada uno la parte de sus tareas.
-  - Incluir la comparativa de compiladores (D12) y la limitación de los no ejecutados.
+  - Incluir la comparativa de compiladores (D12) y por qué se descartan los de [2].
   - Reparto y cronograma a partir del historial de git.
   - Instrucciones de doble clic.
 - **Verificación:** 4-5 páginas; contiene los 8 elementos pedidos; PDF dentro del zip.
-- **Estado:** Pendiente.
+- **Estado:** En curso (memoria hecha, `docs/memoria-SL-P1-02.pdf`; falta §8 con la estructura real del zip).
 
 ## Referencias
 - **Qué pide:** [1] `http://webdiis.unizar.es/asignaturas/SL/` y [2] `escobol.com (en archive.org)`.
 - **Requisitos:** R43.
 - **Tareas:** citar ambas en la memoria; documentar qué se encontró en [2] (D12).
 - **Verificación:** referencias presentes y coherentes con la memoria.
-- **Estado:** Pendiente.
+- **Estado:** Cumplido (R43; [1]-[3] citadas en la memoria con enlace).
