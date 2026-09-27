@@ -35,7 +35,7 @@ Estado: Pendiente salvo que se indique; nada se marca Cumplido sin evidencia (fi
 | ID | Apartado | Requisito | Cita | Ubicación | Tipo | Estado | Evidencia |
 |---|---|---|---|---|---|---|---|
 | R1 | Resumen | Modificar y ampliar un programa COBOL existente | "Modificar y añadir nuevas funcionalidades a un programa COBOL" | p.1, Resumen, viñeta 1 | E | Cumplido | Programa modificado (`src/BANK1-7`) y ampliado (`BANK8`, `BANK9`, `CREAR-*`); compila desde cero sin errores y las 8 opciones funcionan (auditoría 2026-09-26) |
-| R2 | Resumen | Entregar como máximo el lunes 28-sep-2026 | "Fecha límite: lunes 28 septiembre 2026" | p.1, Resumen, viñeta 2 | E (hora: A, ver AMB-1) | Pendiente | |
+| R2 | Resumen | Entregar como máximo el lunes 28-sep-2026 | "Fecha límite: lunes 28 septiembre 2026" | p.1, Resumen, viñeta 2 | E (hora: A, ver AMB-1) | Cumplido | Enviado por email el 2026-09-27, antes del plazo (28-09 23:59). El servidor de correo bloquea los adjuntos con ejecutables, así que `SL-P1-02.zip` se entregó sin cambios mediante un enlace de Google Drive abierto a cualquiera con el enlace |
 | R3 | Resumen | El fichero de entrega se llama SL-P1-nn.zip o .rar, con nn = nº de grupo | "Fichero a enviar: SL-P1-nn.zip/rar (nn: número de grupo)" | p.1, Resumen, viñeta 2 | E (formato de nn: A, ver AMB-2) | Cumplido | `SL-P1-02.zip` (grupo 02, dos cifras, AMB-2): memoria PDF, `LEEME.txt`, `ejecutable/`, `src/`, `original/`, `build.bat` y `lanzar.bat`; generado desde el commit `b505e6a` y compilado con `build.bat` en Windows 11 (2026-09-26) |
 
 ### Descripción del sistema legado (p.1-2)
