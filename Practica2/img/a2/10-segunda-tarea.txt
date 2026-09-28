@@ -1,0 +1,43 @@
+?                                                                               
+Prueba grupo 02                                                                 
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION: ENTER DATE(DDMM):                                                       
+?                                                                               
+2909                                                                            
+ENTER DESCRIPTION:                                                              
+?                                                                               
+Prueba grupo 02 b                                                               
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION: ENTER DATE(DDMM):                                                       
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      Reading   

@@ -24,6 +24,17 @@ Referencias: `Rn` = requisito y `AMB-n` = ambigüedad de `docs/requisitos.md`; `
 - **Puntos de unión:** A usa la conexión de B; C usa la lectura de pantallas de A y la conexión de B. Las firmas de estas clases se acuerdan entre los tres antes de programarlas (tarea T1).
 - **Entrega:** lunes 19-oct-2026, 23:59, por email, `SL-P2-02.zip`.
 
+## Tareas realizadas (para la memoria)
+
+Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para el reparto y el cronograma de la memoria (R26, R27).
+
+| Fecha | Tarea | Realizada por | Estado | Evidencia |
+|---|---|---|---|---|
+| 2026-09-28 | A1 — Instalar wc3270 y primer login | Imad, Paula y Ainhoa | Hecha | `ENTORNO.md`, `img/a1/` |
+| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | En curso | `docs/mapa-pantallas.md`, `img/a2/` |
+| 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
+| 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
+
 ---
 
 ## Lista detallada de tareas
