@@ -32,7 +32,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Primer login manual, dejando la sesión abierta unos segundos antes de salir (R15). Capturas de la bienvenida y del login.
   - Anotar versión de wc3270 en `ENTORNO.md`.
 - **Verificación:** captura de MUSIC/SP con sesión iniciada en `grupo_02`.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (2026-09-28): wc3270 v4.5ga6, acceso desde eduroam y desde casa sin VPN, login y `help` con capturas en `img/a1/`; versión en `ENTORNO.md`. R6 cumplido; R5 y R7 quedan en curso hasta que la GUI use ws3270 y haga el login.
 
 ## Aplicación legada
 - **Qué pide:** ejecutar `tasks.c` escribiéndolo en la línea de comandos, entender su funcionamiento definiendo y listando tareas; después encapsularla sin modificarla ni tocar su fichero de datos.

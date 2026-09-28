@@ -41,7 +41,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
 
 ### Paquete A — Aplicación legada y pantallas (≈14,5 h)
 
-- [ ] **A1 — Instalar wc3270 y primer login** (1 h) — R5, R6, R7
+- [x] **A1 — Instalar wc3270 y primer login** (1 h) — R5, R6, R7
   - Descargar wc3270 de x3270.bgp.nu e instalarlo con el *Session Wizard* (no hace falta administrador).
   - Sesión con host `155.210.152.51`, puerto `3270`.
   - Comprobar desde dónde se llega al mainframe: casa, VPN de Unizar o laboratorio.
