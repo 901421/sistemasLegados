@@ -1,0 +1,43 @@
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+3                                                                               
+MENU PRINCIPAL                                                                  
+1.ASSIGN TASKS  2.VIEW TASKS  3.EXIT                                            
+OPTION:                                                                         
+?                                                                               
+1                                                                               
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+2                                                                               
+ENTER DATE(DDMM):                                                               
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      Reading   

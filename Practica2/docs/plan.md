@@ -42,7 +42,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - **Mapa de pantallas**: por cada pantalla, textos, posición de campos, longitudes máximas, mensajes de error, paginación "More...", listado vacío, tildes/ñ (EBCDIC), cómo se sale y a qué pantalla se vuelve; qué hay que teclear y en qué orden (Enter, PF3, Clear…).
   - Decidir con Imad el alcance de la GUI según lo encontrado (AMB-5).
 - **Verificación:** mapa de pantallas completo con capturas; cada transición comprobada a mano.
-- **Estado:** Pendiente.
+- **Estado:** En curso (2026-09-28): `docs/mapa-pantallas.md` con menús, transiciones, formato del listado y fallos de `tareas.c` (el guion dice `tasks.c`: errata, AMB-9); capturas en `img/a2/`. Falta: casos de "Pendiente de probar" del mapa, respuesta a AMB-8 (persistencia) y acordar el alcance de la GUI.
 
 ## Acceso 3270 displayless
 - **Qué pide:** acceder al mainframe con s3270 (ws3270 en Windows) por *screen-scraping*: comandos de script por la entrada estándar y capturas de pantalla por la salida estándar; y (nota *i*) garantizar al menos 1 s entre conexión y desconexión, también ante errores.

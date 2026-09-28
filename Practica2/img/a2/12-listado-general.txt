@@ -1,0 +1,43 @@
+?                                                                               
+Prueba grupo 02                                                                 
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION: ENTER DATE(DDMM):                                                       
+?                                                                               
+2909                                                                            
+ENTER DESCRIPTION:                                                              
+?                                                                               
+Prueba grupo 02 b                                                               
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION: ENTER DATE(DDMM):                                                       
+?                                                                               
+3009                                                                            
+ENTER DESCRIPTION:                                                              
+?                                                                               
+Prueba3                                                                         
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+3                                                                               
+MENU PRINCIPAL                                                                  
+1.ASSIGN TASKS  2.VIEW TASKS  3.EXIT                                            
+OPTION:                                                                         
+?                                                                               
+2                                                                               
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+1                                                                               
+TASK 0: GENERAL 2809 ----- Prueba                                               
+TASK 1: GENERAL 2909 ----- Prueba                                               
+TASK 2: GENERAL 3009 ----- Prueba3                                              
+TOTAL TASK                                                                      
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      More...   
