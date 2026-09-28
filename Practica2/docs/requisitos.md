@@ -42,9 +42,21 @@ Estado: Pendiente salvo que se indique; nada se marca Cumplido sin evidencia (fi
 
 | ID | Apartado | Requisito | Cita | Ubicación | Tipo | Estado | Evidencia |
 |---|---|---|---|---|---|---|---|
-| R5 | Terminales IBM 3270 | Se usa la familia de emuladores x3270 | "En esta práctica vamos a utilizar x3270 [4], software libre con licencia BSD que puede funcionar tanto en Windows como en GNU/Linux" | p.1, Terminales IBM 3270, párr. 2 | E | Pendiente | |
-| R6 | Terminales IBM 3270 | Conexión al mainframe en 155.210.152.51, puerto 3270 | "nuestro mainframe está en la dirección IP 155.210.152.51 y es accesible a través del puerto 3270" | p.1, Terminales IBM 3270, párr. 3 | E | Pendiente | |
-| R7 | Terminales IBM 3270 | Login con la cuenta del grupo `grupo_XX` y clave inicial `secreto6` | "cada grupo de alumnos usará la cuenta "grupo_XX", donde XX es su número de grupo, y la clave inicial "secreto6" (se puede cambiar una vez conectado)" | p.1, Terminales IBM 3270, párr. 3 | E (cómo obtiene la GUI las credenciales: A, ver AMB-3) | Pendiente | |
+| R5 | Terminales IBM 3270 | Se usa la familia de emuladores x3270 | "En esta práctica vamos a utilizar x3270 [4], software libre con licencia BSD que puede funcionar tanto en Windows como en GNU/Linux" | p.1, Terminales IBM 3270, párr. 2 | E | En curso | Parte manual hecha: wc3270 v4.5ga6 instalado y usado para el login (`ENTORNO.md`, `img/a1/`). Falta que la GUI use ws3270 (R14). |
+| R6 | Terminales IBM 3270 | Conexión al mainframe en 155.210.152.51, puerto 3270 | "nuestro mainframe está en la dirección IP 155.210.152.51 y es accesible a través del puerto 3270" | p.1, Terminales IBM 3270, párr. 3 | E | Cumplido | Sesión `grupo02.wc3270` con `155.210.152.51:3270`; conexión real el 2026-09-28 que llega a MUSIC/SP (`img/a1/01-bienvenida.png`). |
+| R7 | Terminales IBM 3270 | Login con la cuenta del grupo `grupo_XX` y clave inicial `secreto6` | "cada grupo de alumnos usará la cuenta "grupo_XX", donde XX es su número de grupo, y la clave inicial "secreto6" (se puede cambiar una vez conectado)" | p.1, Terminales IBM 3270, párr. 3 | E (cómo obtiene la GUI las credenciales: A, ver AMB-3) | En curso | Login manual con `grupo_02` / `secreto6` correcto, clave sin cambiar (`img/a1/02-login.png`, `img/a1/04-menu-fsi.png`). Falta el login desde la GUI (D1, B4). |
+
+#### Observaciones del primer login (2026-09-28), para el mapa de pantallas
+
+Comprobado con wc3270 y `x3270if`; texto de cada pantalla en `img/a1/*.txt`.
+
+1. **Paginación de MUSIC:** la bienvenida y el mensaje tras el login terminan en `More...`; se avanza con Intro.
+2. **Modelo de terminal:** con el modelo 4 (43x80), MUSIC usa las 43 filas (la línea de separación y el `More...` salen en las filas 42-43). El modelo que use la GUI tiene que ser el mismo que el del mapa de pantallas: **decidir antes de A2**.
+3. **Pantalla de login:** `MUSIC Userid:` (fila 3, cursor en la columna 18) y `Password:` (fila 5, campo oculto); se pasa de uno a otro con Tab; F3 = Sign off.
+4. **Sesión ya abierta:** si la sesión anterior no se cerró con `off`, al hacer login sale `Userid is in use. Type OK to cancel previous session` (`img/a1/03-sesion-en-uso.png`). Hay que responder `OK` e Intro enseguida: si se tarda, MUSIC vuelve a la bienvenida y hay que repetir el login.
+5. **Tras el login:** mensajes de la cuenta (`Press ENTER to continue...`) y luego el menú FSI, con la línea `Command ===>` en la fila 3.
+6. **Salida correcta:** `off` en la línea de comandos cierra la sesión de MUSIC y vuelve a la bienvenida; la conexión sigue abierta hasta que se desconecta el emulador. Salir sin `off` deja la sesión colgada (caso 4).
+7. **`help`:** abre la ayuda del FSI (11 páginas, F7/F8; F3 vuelve).
 
 ### Aplicación legada (p.1-2)
 
