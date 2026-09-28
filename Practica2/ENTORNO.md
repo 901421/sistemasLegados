@@ -27,7 +27,21 @@ wc3270.codePage: bracket (EBCDIC 037, el que trae por defecto)
 - Esa misma mañana, un primer intento dio "tiempo de espera agotado" (error 10060 de Windows) a todos los grupos; más tarde conectó sin cambiar nada.
 - Cuenta `grupo_02`, clave `secreto6` sin cambiar (D1).
 
+## Emulador sin ventana (screen-scraping)
+
+| Elemento | Valor | Cómo se comprobó |
+|---|---|---|
+| Programa | `C:\Program Files\wc3270\ws3270.exe` (viene con wc3270) | listado de la carpeta |
+| Versión | v4.5ga6 (Jul 27 2026), 32 bits; se identifica como `s3270` | `ws3270.exe -v` |
+
+Durante el desarrollo, Java se ejecuta en WSL y lanza este mismo `ws3270.exe` de Windows (WSL puede ejecutar programas de Windows). Así se prueba el mismo emulador y la misma versión que van en la entrega. La ruta del emulador es configurable. No se usa s3270 de Linux.
+
+## Java
+
+| Elemento | Valor | Cómo se comprobó |
+|---|---|---|
+| JDK de desarrollo (WSL) | OpenJDK 25.0.4 LTS (SDKMAN) | `java -version` |
+
 ## Pendiente
 
-- s3270 para Linux/WSL.
 - JDK de Windows y runtime reducido con `jlink` (tarea B5).

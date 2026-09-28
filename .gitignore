@@ -13,3 +13,15 @@ Practica1/**/*.so
 # Carpetas generadas por build.bat / build.sh
 Practica1/ejecutable/
 Practica1/ejecutable-linux/
+
+# Práctica 2: compilados y ficheros locales del IDE (IntelliJ IDEA)
+Practica2/**/out/
+Practica2/**/*.class
+Practica2/**/.idea/workspace.xml
+Practica2/**/.idea/shelf/
+Practica2/**/.idea/httpRequests/
+Practica2/**/.idea/queries/
+Practica2/**/.idea/dataSources/
+Practica2/**/.idea/dataSources.local.xml
+.vscode/
+.DS_Store

@@ -35,6 +35,7 @@ Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para
 | 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
 | 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
 | 2026-09-28 | A2 — Alcance de la GUI acordado a partir del mapa (AMB-5) | Imad | Hecha | `DECISIONES.md` D2, `docs/requisitos.md` AMB-5 |
+| 2026-09-28 | B2 — Revisión y corrección de la prueba Java con ws3270: desconexión segura (1,5 s), UTF-8 y espera de pantalla | Imad | Hecha | `docs/correcciones-prueba-java.md`, `SL-P2-02/src/Main.java` |
 
 ---
 

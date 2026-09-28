@@ -11,9 +11,18 @@ public class Main {
     private static final String USER = "grupo_02";
     private static final String PASSWORD = "secreto6";
 
+    // El enunciado exige al menos 1 s entre conexión y desconexión,
+    // también si hay un error. Dejamos margen: 1,5 s.
+    private static final long MIN_CONEXION_MS = 1500;
+
+    // Instante en que se envió Connect (0 = todavía no se ha conectado).
+    private static long instanteConexion = 0;
+
     public static void main(String[] args) {
 
         Process process = null;
+        BufferedWriter writer = null;
+        BufferedReader reader = null;
 
         try {
             System.out.println("========================================");
@@ -26,9 +35,13 @@ public class Main {
 
             System.out.println("\n[1] Arrancando ws3270...");
 
+            // -localcp 65001: ws3270 usa UTF-8 en su entrada y salida,
+            // igual que los lectores de abajo (si no, usa cp1252 y las
+            // tildes y la ñ llegan mal).
             ProcessBuilder pb = new ProcessBuilder(
                     WS3270,
-                    "-script"
+                    "-script",
+                    "-localcp", "65001"
             );
 
             // Evitamos que ws3270 mezcle mensajes con stderr
@@ -36,14 +49,14 @@ public class Main {
 
             process = pb.start();
 
-            BufferedWriter writer = new BufferedWriter(
+            writer = new BufferedWriter(
                     new OutputStreamWriter(
                             process.getOutputStream(),
                             StandardCharsets.UTF_8
                     )
             );
 
-            BufferedReader reader = new BufferedReader(
+            reader = new BufferedReader(
                     new InputStreamReader(
                             process.getInputStream(),
                             StandardCharsets.UTF_8
@@ -58,6 +71,7 @@ public class Main {
 
             System.out.println("\n[2] Conectando al mainframe...");
 
+            instanteConexion = System.currentTimeMillis();
             send(writer, "Connect(" + HOST + ":" + PORT + ")");
 
             waitForOk(reader);
@@ -74,6 +88,11 @@ public class Main {
 
             waitForOk(reader);
 
+            // Wait(InputField) puede volver antes de que el mainframe
+            // haya dibujado la pantalla (sale vacía o con "Working").
+            // Repetimos Ascii() hasta que tenga contenido.
+            waitForScreen(writer, reader, 10000);
+
             System.out.println("    OK: pantalla preparada.");
 
             // --------------------------------------------------
@@ -84,24 +103,10 @@ public class Main {
 
             send(writer, "Ascii()");
 
-            readScreen(reader);
+            System.out.print(readScreen(reader));
 
-            // --------------------------------------------------
-            // 5. Desconectar
-            // --------------------------------------------------
-
-            System.out.println("\n[5] Esperando antes de desconectar...");
-
-            // IMPORTANTE:
-            // El enunciado exige al menos 1 segundo
-            // entre conexión y desconexión.
-            Thread.sleep(1500);
-
-            send(writer, "Disconnect()");
-
-            waitForOk(reader);
-
-            System.out.println("    OK: desconectado.");
+            // 5. La desconexión se hace en finally, para que se
+            //    respete el segundo mínimo también si hay un error.
 
         } catch (Exception e) {
 
@@ -110,14 +115,84 @@ public class Main {
 
         } finally {
 
-            if (process != null) {
-                process.destroy();
-            }
+            // --------------------------------------------------
+            // 5. Desconectar (siempre por aquí, haya error o no)
+            // --------------------------------------------------
+
+            System.out.println("\n[5] Desconectando...");
+            disconnect(process, writer, reader);
 
             System.out.println("\n========================================");
             System.out.println("             FIN DE LA PRUEBA");
             System.out.println("========================================");
         }
+    }
+
+
+    /**
+     * Único punto de desconexión. Espera hasta que hayan pasado
+     * MIN_CONEXION_MS desde Connect, desconecta, cierra ws3270 y, solo
+     * si no responde, lo mata.
+     */
+    private static void disconnect(
+            Process process,
+            BufferedWriter writer,
+            BufferedReader reader
+    ) {
+
+        if (process == null) {
+            return;
+        }
+
+        try {
+            if (instanteConexion != 0) {
+                long transcurrido = System.currentTimeMillis() - instanteConexion;
+                if (transcurrido < MIN_CONEXION_MS) {
+                    Thread.sleep(MIN_CONEXION_MS - transcurrido);
+                }
+                System.out.println("    Tiempo conectado: "
+                        + (System.currentTimeMillis() - instanteConexion) + " ms");
+                send(writer, "Disconnect()");
+                waitForOk(reader);
+            }
+            send(writer, "Quit()");
+            process.waitFor(3, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (Exception e) {
+            System.err.println("    Aviso al desconectar: " + e.getMessage());
+        } finally {
+            // Solo llega aquí vivo si ws3270 no ha respondido; como ya se
+            // ha esperado el mínimo, matarlo no incumple la regla.
+            if (process.isAlive()) {
+                process.destroy();
+            }
+            System.out.println("    OK: desconectado.");
+        }
+    }
+
+
+    /**
+     * Repite Ascii() hasta que la pantalla tenga texto y el mainframe
+     * no esté trabajando ("Working"), o hasta agotar el tiempo.
+     */
+    private static void waitForScreen(
+            BufferedWriter writer,
+            BufferedReader reader,
+            long maxMs
+    ) throws IOException, InterruptedException {
+
+        long limite = System.currentTimeMillis() + maxMs;
+
+        while (System.currentTimeMillis() < limite) {
+            send(writer, "Ascii()");
+            String pantalla = readScreen(reader);
+            String texto = pantalla.replace("data:", "").trim();
+            if (!texto.isEmpty() && !pantalla.contains("Working")) {
+                return;
+            }
+            Thread.sleep(300);
+        }
+
+        throw new IOException("La pantalla no ha llegado en " + maxMs + " ms");
     }
 
 
@@ -161,10 +236,11 @@ public class Main {
     }
 
 
-    private static void readScreen(
+    private static String readScreen(
             BufferedReader reader
     ) throws IOException {
 
+        StringBuilder pantalla = new StringBuilder();
         String line;
 
         while ((line = reader.readLine()) != null) {
@@ -173,11 +249,23 @@ public class Main {
 
             /*
              * La salida de Ascii() termina cuando ws3270
-             * vuelve a enviar "ok".
+             * vuelve a enviar "ok" (o "error").
              */
             if (line.equals("ok")) {
-                break;
+                return pantalla.toString();
+            }
+
+            if (line.startsWith("error")) {
+                throw new IOException("ws3270 devolvió: " + line);
+            }
+
+            if (line.startsWith("data:")) {
+                pantalla.append(line).append('\n');
             }
         }
+
+        throw new IOException(
+                "ws3270 cerró la conexión inesperadamente."
+        );
     }
 }
