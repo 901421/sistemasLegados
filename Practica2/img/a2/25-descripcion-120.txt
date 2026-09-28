@@ -1,0 +1,43 @@
+ENTER DATE(DDMM):                                                               
+?                                                                               
+0810                                                                            
+ENTER DESCRIPTION:                                                              
+?                                                                               
+L79_abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij12345 
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+1                                                                               
+ENTER DATE(DDMM):                                                               
+?                                                                               
+0910                                                                            
+ENTER DESCRIPTION:                                                              
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+L120_abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcde
+                                                                      Reading   

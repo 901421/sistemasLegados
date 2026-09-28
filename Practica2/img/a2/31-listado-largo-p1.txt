@@ -1,0 +1,43 @@
+T30                                                                             
+GENERAL TASK ASSIGNED                                                           
+ASSIGN TASKS                                                                    
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+3                                                                               
+MENU PRINCIPAL                                                                  
+1.ASSIGN TASKS  2.VIEW TASKS  3.EXIT                                            
+OPTION:                                                                         
+?                                                                               
+2                                                                               
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+1                                                                               
+TASK 0: GENERAL 0510 ----- Camión                                               
+TASK 1: GENERAL 0610 ----- Año                                                  
+TASK 2: GENERAL 0710 ----- L30_abcdefghiGENERAL 0810 ----- L79_abcdefghiGENERAL 
+0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghija                           
+bcdSPECIFIC 1110 Ana Lopez                                                      
+TASK 3: GENERAL 0810 ----- L79_abcdefghiGENERAL 0910 ----- L120_abcdefghSPECIFIC
+ 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                                 
+TASK 4: GENERAL 0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghijabcdSPECIFIC
+ 1110 Ana Lopez                                                                 
+TASK 7: GENERAL 0112 ----- D11_4567890                                          
+TASK 8: GENERAL 0112 ----- D12_45678901                                         
+TASK 9: GENERAL 0112 ----- D13_456789012SPECIFIC 0212 N16_456789012345 DSPECIFIC
+ 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234                           
+567SPECIFIC 0312 N13_456789012 DescSPECIFIC 0312 N14_4567890123 DesSPECIFIC 0312
+ N15_45678901234 DeSPECIFIC 0312 Fin Desc                                       
+TASK 19: GENERAL 1501 ----- T01                                                 
+TASK 20: GENERAL 1502 ----- T02                                                 
+TASK 21: GENERAL 1503 ----- T03                                                 
+TASK 22: GENERAL 1504 ----- T04                                                 
+TASK 23: GENERAL 1505 ----- T05                                                 
+TASK 24: GENERAL 1506 ----- T06                                                 
+TASK 25: GENERAL 1507 ----- T07                                                 
+TASK 26: GENERAL 1508 ----- T08                                                 
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      More...   

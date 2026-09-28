@@ -1,0 +1,43 @@
+TASK 4: GENERAL 0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghijabcdSPECIFIC
+ 1110 Ana Lopez                                                                 
+TASK 7: GENERAL 0112 ----- D11_4567890                                          
+TASK 8: GENERAL 0112 ----- D12_45678901                                         
+TASK 9: GENERAL 0112 ----- D13_456789012SPECIFIC 0212 N16_456789012345 DSPECIFIC
+ 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234                           
+567 Desc                                                                        
+TOTAL TASK                                                                      
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+2                                                                               
+TASK 2: GENERAL 0710 ----- L30_abcdefghiGENERAL 0810 ----- L79_abcdefghiGENERAL 
+0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghija                           
+bcdSPECIFIC 1110 Ana Lopez                                                      
+TASK 3: GENERAL 0810 ----- L79_abcdefghiGENERAL 0910 ----- L120_abcdefghSPECIFIC
+ 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                                 
+TASK 4: GENERAL 0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghijabcdSPECIFIC
+ 1110 Ana Lopez                                                                 
+TASK 5: SPECIFIC 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                 
+TASK 6: SPECIFIC 1110 Ana Lopez                                                 
+TASK 9: GENERAL 0112 ----- D13_456789012SPECIFIC 0212 N16_456789012345 DSPECIFIC
+ 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234                           
+567 Desc                                                                        
+TASK 10: SPECIFIC 0212 N16_456789012345 DSPECIFIC 0212 N17_4567890123456 SPECIFI
+C 0212 N18_45678901234567 Desc                                                  
+TASK 11: SPECIFIC 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234567 Desc  
+TASK 12: SPECIFIC 0212 N18_45678901234567 Desc                                  
+TOTAL TASK                                                                      
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      Reading   

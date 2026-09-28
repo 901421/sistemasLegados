@@ -33,6 +33,7 @@ Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para
 | 2026-09-28 | A1 — Instalar wc3270 y primer login | Imad, Paula y Ainhoa | Hecha | `ENTORNO.md`, `img/a1/` |
 | 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | En curso | `docs/mapa-pantallas.md`, `img/a2/` |
 | 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
+| 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
 
 ---
 

@@ -1,0 +1,43 @@
+TASK 2: GENERAL 0710 ----- L30_abcdefghiGENERAL 0810 ----- L79_abcdefghiGENERAL 
+0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghija                           
+bcdSPECIFIC 1110 Ana Lopez                                                      
+TASK 3: GENERAL 0810 ----- L79_abcdefghiGENERAL 0910 ----- L120_abcdefghSPECIFIC
+ 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                                 
+TASK 4: GENERAL 0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghijabcdSPECIFIC
+ 1110 Ana Lopez                                                                 
+TASK 5: SPECIFIC 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                 
+TASK 6: SPECIFIC 1110 Ana Lopez                                                 
+TASK 9: GENERAL 0112 ----- D13_456789012SPECIFIC 0212 N16_456789012345 DSPECIFIC
+ 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234                           
+567SPECIFIC 0312 N13_456789012 DescSPECIFIC 0312 N14_4567890123 DesSPECIFIC 0312
+ N15_45678901234 DeSPECIFIC 0312 Fin Desc                                       
+TASK 10: SPECIFIC 0212 N16_456789012345 DSPECIFIC 0212 N17_4567890123456 SPECIFI
+C 0212 N18_45678901234567SPECIFIC 0312 N13_456789012                            
+DescSPECIFIC 0312 N14_4567890123 DesSPECIFIC 0312 N15_45678901234 DeSPECIFIC 031
+2 Fin Desc                                                                      
+TASK 11: SPECIFIC 0212 N17_4567890123456 SPECIFIC 0212 N18_45678901234567SPECIFI
+C 0312 N13_456789012 DescSPECIFIC 0312 N14_4567890123                           
+DesSPECIFIC 0312 N15_45678901234 DeSPECIFIC 0312 Fin Desc                       
+TASK 12: SPECIFIC 0212 N18_45678901234567SPECIFIC 0312 N13_456789012 DescSPECIFI
+C 0312 N14_4567890123 DesSPECIFIC 0312 N15_4567890123                           
+4 DeSPECIFIC 0312 Fin Desc                                                      
+TASK 13: SPECIFIC 0312 N13_456789012 DescSPECIFIC 0312 N14_4567890123 DesSPECIFI
+C 0312 N15_45678901234 DeSPECIFIC 0312 Fin Desc                                 
+TASK 14: SPECIFIC 0312 N14_4567890123 DesSPECIFIC 0312 N15_45678901234 DeSPECIFI
+C 0312 Fin Desc                                                                 
+TASK 15: SPECIFIC 0312 N15_45678901234 DeSPECIFIC 0312 Fin Desc                 
+TASK 16: SPECIFIC 0312 Fin Desc                                                 
+TASK 17: SPECIFIC 0412 N12_45678901 Desc                                        
+TASK 18: SPECIFIC 0412 Fin Desc                                                 
+TOTAL TASK                                                                      
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      Reading   

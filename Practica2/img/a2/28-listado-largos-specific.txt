@@ -1,0 +1,43 @@
+TASK 3: GENERAL 0810 ----- L79_abcdefghiGENERAL 0910 ----- L120_abcdefghSPECIFIC
+ 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                                 
+TASK 4: GENERAL 0910 ----- L120_abcdefghSPECIFIC 1010 N80_abcdefghijabcdSPECIFIC
+ 1110 Ana Lopez                                                                 
+TASK 5: SPECIFIC 1010 N80_abcdefghijabcdSPECIFIC 1110 Ana Lopez                 
+TASK 6: SPECIFIC 1110 Ana Lopez                                                 
+TOTAL TASK                                                                      
+VIEW TASKS                                                                      
+1. GENERAL TASK  2.SPECIFIC TASK  3. MAIN MENU                                  
+OPTION:                                                                         
+?                                                                               
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+------T-----------------------------------------------------------------T       
+                                                                                
+                                                                      Reading   
