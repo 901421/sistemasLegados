@@ -31,9 +31,10 @@ Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para
 | Fecha | Tarea | Realizada por | Estado | Evidencia |
 |---|---|---|---|---|
 | 2026-09-28 | A1 — Instalar wc3270 y primer login | Imad, Paula y Ainhoa | Hecha | `ENTORNO.md`, `img/a1/` |
-| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | En curso | `docs/mapa-pantallas.md`, `img/a2/` |
+| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md`, `img/a2/` |
 | 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
 | 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
+| 2026-09-28 | A2 — Alcance de la GUI acordado a partir del mapa (AMB-5) | Imad | Hecha | `DECISIONES.md` D2, `docs/requisitos.md` AMB-5 |
 
 ---
 
@@ -59,7 +60,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - Login con `grupo_02` / `secreto6`. **No cambiar la clave** (D1). Probar el comando `help`.
   - Dejar la sesión abierta unos segundos antes de salir (R15).
   - Hecha cuando: capturas de la bienvenida de MUSIC/SP y de la sesión iniciada; versión de wc3270 anotada en `ENTORNO.md`.
-- [ ] **A2 — Mapa de pantallas de `tasks.c`** (4 h) — R8, R9, R10; resuelve AMB-5
+- [x] **A2 — Mapa de pantallas de `tasks.c`** (4 h) — R8, R9, R10; resuelve AMB-5
   - Arrancar `tasks.c` escribiéndolo en la línea de comandos.
   - Recorrer todas las opciones: `1 - ASSIGN TASKS`, `2 - VIEW TASKS`, `0 - EXIT`.
   - Para cada pantalla, anotar: textos fijos, posición (fila y columna) de cada campo, longitud máxima, teclas que acepta (Enter, PF3, Clear…), mensajes de error y a qué pantalla lleva cada acción.
