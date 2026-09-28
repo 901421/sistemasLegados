@@ -147,6 +147,23 @@ Causa probable de los dos primeros casos: lectura con `scanf` (`%s` corta en el 
 
 `3` en el menú principal → `*Press enter to continue ... More...` → Intro → menú FSI → `off` → bienvenida de MUSIC → desconectar el emulador.
 
+## 9. Mainframe bloqueado (pantalla de Hercules)
+
+El 2026-09-28, al conectar para seguir con las pruebas, la primera pantalla no fue la bienvenida de MUSIC sino la consola del emulador Hercules (`21-hercules-bloqueado`):
+
+```
+ Hercules Version  : 3.07
+ Host name         : EOLO
+ ...
+            HHH          HHH   The S/370, ESA/390 and z/Architecture
+ ...                             My PC thinks it's a MAINFRAME
+```
+
+- Es el bloqueo que describe el guion cuando alguien desconecta antes de 1 s: el mainframe deja de aceptar sesiones hasta que el profesor lo resetea.
+- Lo que se escribe en esta pantalla no llega a MUSIC: `tareas.c` dio `Keyboard locked` / `Operator error`.
+- La sesión anterior del grupo había terminado de forma ordenada (`3.EXIT`, `off`, espera y cierre tras varios minutos conectados).
+- **Para la GUI:** si la primera pantalla contiene `Hercules`, avisar al usuario de que el mainframe está bloqueado, desconectar respetando el segundo mínimo y no reintentar.
+
 ## Pendiente de probar
 
 - Fecha con letras (`ab12`) y fecha vacía.
