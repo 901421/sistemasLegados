@@ -18,6 +18,7 @@ Practica1/ejecutable-linux/
 Practica2/**/out/
 Practica2/**/*.class
 Practica2/**/.idea/workspace.xml
+Practica2/**/.idea/.name
 Practica2/**/.idea/shelf/
 Practica2/**/.idea/httpRequests/
 Practica2/**/.idea/queries/
