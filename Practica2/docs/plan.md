@@ -53,7 +53,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Capa de acceso en Java: proceso hijo ws3270/s3270, envío de comandos y lectura de respuestas, sincronización (esperar a que la pantalla esté lista), **punto único de desconexión** con espera ≥ 1,5 s en todos los caminos, detección de "Hercules".
   - Capturar pantallas reales (fixtures) y tests offline del análisis de pantallas.
 - **Verificación:** tests offline en verde; sesión real login → `tasks.c` → salida → logoff sin errores y con ≥ 1 s medido en el registro; prueba de cierre por error y por Ctrl+C.
-- **Estado:** Pendiente.
+- **Estado:** En curso (2026-10-02). Hecho: ws3270 v4.5ga6 identificado (`ENTORNO.md`); guion de órdenes probado a mano por script (2026-09-28); clase de conexión `mainframe/MainframeClient.java` con punto único de desconexión, espera de pantalla estable, tiempo máximo por orden y detección de Hercules, ejecutada contra el mainframe (conectar, leer la bienvenida, desconectar a los 1501 ms). Falta: login, arranque de `tareas.c` y salida desde Java; pantallas guardadas y tests offline; prueba real de cierre por error y por Ctrl+C.
 
 ## Aplicación que hay que construir
 - **Qué pide:** programa con interfaz gráfica (lenguaje libre) que accede al mainframe lanzando el emulador como proceso; diseño de interfaz propio, tomando la maqueta como ejemplo (tabla de tareas, alta con "Nueva", "Salir").

@@ -36,6 +36,7 @@ Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para
 | 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
 | 2026-09-28 | A2 — Alcance de la GUI acordado a partir del mapa (AMB-5) | Imad | Hecha | `DECISIONES.md` D2, `docs/requisitos.md` AMB-5 |
 | 2026-09-28 | B2 — Revisión y corrección de la prueba Java con ws3270: desconexión segura (1,5 s), UTF-8 y espera de pantalla | Imad | Hecha | `docs/correcciones-prueba-java.md`, `SL-P2-02/src/Main.java` |
+| 2026-10-02 | B2/B3 — Clase de conexión `MainframeClient`: órdenes a ws3270 con tiempo máximo, espera de pantalla estable, punto único de desconexión (1,5 s, también con Ctrl+C) y detección de Hercules; probada contra el mainframe sin login | Imad | En curso | `SL-P2-02/src/mainframe/MainframeClient.java`, `docs/correcciones-prueba-java.md` |
 
 ---
 
