@@ -46,7 +46,14 @@ Referencias: `Rn` = requisito y `AMB-n` = ambigüedad de `docs/requisitos.md`; `
 Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para el reparto y el cronograma de la memoria (R26, R27).
 
 | Fecha | Tarea | Realizada por | Estado | Evidencia |
-|
+|---|---|---|---|---|
+| 2026-09-28 | A1 — Instalar wc3270 y primer login | Imad, Paula y Ainhoa | Hecha | `ENTORNO.md`, `img/a1/` |
+| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md`, `img/a2/` |
+| 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
+| 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
+| 2026-09-28 | A2 — Alcance de la GUI acordado a partir del mapa (AMB-5) | Imad | Hecha | `DECISIONES.md` D2, `docs/requisitos.md` AMB-5 |
+| 2026-09-28 | B2 — Revisión y corrección de la prueba Java con ws3270: desconexión segura (1,5 s), UTF-8 y espera de pantalla | Imad | Hecha | `docs/correcciones-prueba-java.md`, `SL-P2-02/src/Main.java` |
+| 2026-10-02 | B2/B3 — Clase de conexión `MainframeClient`: órdenes a ws3270 con tiempo máximo, espera de pantalla estable, punto único de desconexión (1,5 s, también con Ctrl+C) y detección de Hercules; probada contra el mainframe sin login | Imad | En curso | `SL-P2-02/src/mainframe/MainframeClient.java`, `docs/correcciones-prueba-java.md` |
 | 2026-10-02 | T1 — Estructura del programa (esqueletos de las clases con sus firmas) y convenios de trabajo | Imad | Hecha, pendiente de que la revisen Paula y Ainhoa | `docs/convenios.md`, `SL-P2-02/src/` |
 
 ---
