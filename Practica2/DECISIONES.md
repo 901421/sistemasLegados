@@ -42,6 +42,31 @@ Referencias: `Rn` = requisito, `AMB-n` = ambigüedad de `docs/requisitos.md`.
 - Rechazar en lugar de corregir: lo que ve el usuario es exactamente lo que se guarda.
 - Mantener `tareas.c` abierto evita perder las tareas de la sesión y el coste de recompilar (unos 3 s) en cada operación.
 
-**Descartado.** Selector de tipo General/Específica (se aleja de la maqueta sin aportar nada). Solo tareas generales (deja fuera una función que `tareas.c` tiene). Cambiar los espacios por `_` (modifica el texto sin que el usuario lo pida). Relanzar `tareas.c` en cada operación (pierde las tareas y es lento).
+**Descartado.** Selector de tipo General/Específica (se aleja de la maqueta sin aportar nada; **revisado en D3**, que lo adopta). Solo tareas generales (deja fuera una función que `tareas.c` tiene). Cambiar los espacios por `_` (modifica el texto sin que el usuario lo pida). Relanzar `tareas.c` en cada operación (pierde las tareas y es lento).
 
 **Pendiente.** AMB-8: confirmar si las tareas deberían sobrevivir a un reinicio de `tareas.c` ("los datos se almacenan en disco"). Si el profesor aclara que sí y hay que hacer algo distinto, se revisa esta decisión antes de tocar el código.
+
+**Nota (2026-10-07).** El formulario cambia en D3: el tipo se elige con botones y la fecha con desplegables. El resto de D2 (tabla, validaciones, `tareas.c` abierto toda la sesión) sigue igual.
+
+---
+
+## D3 — Diseño de la interfaz: tipo con botones, fecha con desplegables, pestañas y buscador (2026-10-07)
+
+**Problema.** Con la GUI ya funcionando según D2, la primera versión (3 campos en fila, como la maqueta) resultaba poco clara: "nombre vacío = tarea general" no se entiende sin leer una ayuda, la fecha `DDMM` se escribe a mano y es fácil equivocarse, y nada avisa de los límites de longitud de `tareas.c` hasta que se pulsa "Nueva". El guion deja el diseño a cada grupo: "se espera de cada grupo que diseñe el interfaz que considere más adecuado para esta aplicación" (R19).
+
+**Decisión.**
+- **Tipo con botones General / Específica.** El nombre solo se puede escribir en las específicas; una específica sin nombre se rechaza con aviso.
+- **Fecha con dos desplegables, día y mes**, con la fecha de hoy por defecto; los días se ajustan al mes (febrero admite el 29, porque no hay año). Se sigue enviando `DDMM` a `tareas.c`.
+- **Sin año.** `tareas.c` pide `DDMM` y guarda cada tarea en una línea de 31 caracteres (`docs/mapa-pantallas.md` §5): enviar `DDMMAAAA` quitaría 4 caracteres a la descripción, y guardar el año solo en la GUI se perdería al volver a leer el listado.
+- **Contador de caracteres** junto a la descripción ("6/12" en las generales, "nombre + descripción: 14/16" en las específicas), en rojo si se pasa del límite de D2.
+- **Listado en pestañas Todas / Generales / Específicas** con el número de tareas de cada una, como los dos listados de `tareas.c`; **buscador** que filtra por cualquier columna; orden por columna con clic en la cabecera; la fecha se muestra como "12 oct" (si no es `DDMM`, tal cual).
+- **Aspecto:** el del sistema (en Windows, el de Windows), cabeceras con título, recuadros, filas alternas, icono propio, avisos de resultado en la barra inferior ("✓ Tarea creada") y atajos (F5, Alt+N, Alt+S). Sin librerías externas (`docs/convenios.md` §2).
+
+**Por qué es lógico.**
+- Lo que pide la maqueta sigue estando (R20): campos para una tarea nueva, botón "Nueva", tabla con desplazamiento y "Salir".
+- Con botones y desplegables es imposible pedir lo que `tareas.c` no admite (una fecha inexistente, una específica sin nombre), y el contador avisa del límite de 31 caracteres antes de enviar.
+- `GestorTareas.nueva` y `Validador` no cambian: el formulario les pasa los mismos datos que con D2 (nombre vacío en las generales, fecha `DDMM`).
+
+**Descartado.** Añadir el año a la fecha (no cabe en el formato de `tareas.c`, ver arriba). Borrar o modificar tareas (`tareas.c` solo asigna y lista; habría que modificarlo, R12). Librerías de aspecto como FlatLaf (`docs/convenios.md` §2: sin librerías externas).
+
+**Pendiente.** Comprobar el formulario con el `Validador` terminado y contra el mainframe. Revisarlo con Paula y Ainhoa.
