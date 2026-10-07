@@ -18,7 +18,11 @@ public class GestorFalso extends GestorTareas {
 
     private final List<Tarea> tareas = new ArrayList<>(List.of(
             new Tarea(1, Tarea.Tipo.GENERAL, "1210", "", "examen"),
-            new Tarea(2, Tarea.Tipo.ESPECIFICA, "1510", "Paula", "memoria")));
+            new Tarea(2, Tarea.Tipo.ESPECIFICA, "1510", "Paula", "memoria"),
+            new Tarea(3, Tarea.Tipo.GENERAL, "1910", "", "entrega"),
+            new Tarea(4, Tarea.Tipo.ESPECIFICA, "0910", "Ainhoa", "login"),
+            new Tarea(5, Tarea.Tipo.ESPECIFICA, "1310", "Imad", "integración"),
+            new Tarea(6, Tarea.Tipo.GENERAL, "0111", "", "revisión")));
 
     public GestorFalso() {
         super(null);

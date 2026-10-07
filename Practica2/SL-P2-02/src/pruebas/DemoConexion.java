@@ -2,6 +2,7 @@ package pruebas;
 
 import javax.swing.SwingUtilities;
 
+import gui.Estilo;
 import gui.VentanaConexion;
 
 /**
@@ -12,6 +13,8 @@ import gui.VentanaConexion;
 public class DemoConexion {
 
     public static void main(String[] args) {
+        // El mismo aspecto que el programa de verdad (Main).
+        Estilo.aplicarAspecto();
         SwingUtilities.invokeLater(() -> new VentanaConexion(new ConectorFalso()).setVisible(true));
     }
 }

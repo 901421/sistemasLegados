@@ -1,18 +1,25 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
@@ -45,7 +53,8 @@ public class VentanaConexion extends JFrame {
         Conexion conectar(String host, int puerto, String usuario, String clave) throws IOException;
     }
 
-    private static final Color COLOR_ERROR = new Color(0xB00020);
+    /** Ancho de la ventana, en píxeles. */
+    private static final int ANCHO = 420;
 
     private final Conector conector;
 
@@ -56,6 +65,7 @@ public class VentanaConexion extends JFrame {
     private final JPasswordField clave = new JPasswordField("secreto6", 15);
     private final JButton botonConectar = new JButton("Conectar");
     private final JProgressBar indicador = new JProgressBar();
+    private final JCheckBox mostrarClave = new JCheckBox("Mostrar clave");
     private final JLabel estado = new JLabel(" ");
 
     private boolean conectando = false;
@@ -72,27 +82,56 @@ public class VentanaConexion extends JFrame {
         super("Conexión");
         this.conector = conector;
 
+        setIconImage(Estilo.icono());
+
+        JPanel textos = new JPanel();
+        textos.setLayout(new BoxLayout(textos, BoxLayout.Y_AXIS));
+        textos.add(Estilo.titulo("Gestor de tareas"));
+        textos.add(Box.createVerticalStrut(2));
+        textos.add(Estilo.subtitulo("tareas.c en MUSIC/SP (IBM ESA/390) por TN3270"));
+        JPanel cabecera = new JPanel(new BorderLayout(Estilo.MARGEN, 0));
+        cabecera.add(new JLabel(new ImageIcon(Estilo.icono().getScaledInstance(40, 40, Image.SCALE_SMOOTH))),
+                BorderLayout.WEST);
+        cabecera.add(textos, BorderLayout.CENTER);
+
         JPanel campos = new JPanel(new GridBagLayout());
-        campos.setBorder(new EmptyBorder(10, 10, 0, 10));
+        campos.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Datos de conexión"),
+                new EmptyBorder(4, 8, 6, 8)));
         anadirFila(campos, 0, "Host", host);
         anadirFila(campos, 1, "Puerto", puerto);
         anadirFila(campos, 2, "Usuario", usuario);
         anadirFila(campos, 3, "Clave", clave);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.LINE_START;
+        campos.add(mostrarClave, c);
+        char ocultar = clave.getEchoChar();
+        mostrarClave.addActionListener(e -> clave.setEchoChar(mostrarClave.isSelected() ? (char) 0 : ocultar));
 
         indicador.setIndeterminate(true);
         indicador.setVisible(false);
-        JPanel boton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        indicador.setPreferredSize(new Dimension(80, indicador.getPreferredSize().height));
+        botonConectar.setMnemonic(KeyEvent.VK_C);
+        JPanel boton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         boton.add(indicador);
         boton.add(botonConectar);
 
-        estado.setBorder(new EmptyBorder(0, 10, 10, 10));
+        // Alto fijo de dos líneas: un error no cambia el tamaño de la ventana.
+        estado.setVerticalAlignment(SwingConstants.TOP);
+        estado.setPreferredSize(new Dimension(ANCHO - 2 * Estilo.MARGEN, 2 * estado.getFontMetrics(estado.getFont()).getHeight() + 4));
 
-        JPanel abajo = new JPanel(new BorderLayout());
+        JPanel abajo = new JPanel(new BorderLayout(0, 8));
         abajo.add(boton, BorderLayout.NORTH);
-        abajo.add(estado, BorderLayout.SOUTH);
+        abajo.add(estado, BorderLayout.CENTER);
 
-        add(campos, BorderLayout.CENTER);
-        add(abajo, BorderLayout.SOUTH);
+        JPanel contenido = new JPanel(new BorderLayout(0, Estilo.MARGEN));
+        contenido.setBorder(new EmptyBorder(Estilo.MARGEN + 4, Estilo.MARGEN + 4, Estilo.MARGEN, Estilo.MARGEN + 4));
+        contenido.add(cabecera, BorderLayout.NORTH);
+        contenido.add(campos, BorderLayout.CENTER);
+        contenido.add(abajo, BorderLayout.SOUTH);
+        setContentPane(contenido);
 
         // Intro en cualquier campo equivale a pulsar "Conectar".
         getRootPane().setDefaultButton(botonConectar);
@@ -107,6 +146,7 @@ public class VentanaConexion extends JFrame {
         });
 
         pack();
+        setSize(Math.max(getWidth(), ANCHO), getHeight());
         setResizable(false);
         setLocationRelativeTo(null);
     }
@@ -114,7 +154,7 @@ public class VentanaConexion extends JFrame {
     private static void anadirFila(JPanel panel, int fila, String etiqueta, JTextField campo) {
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = fila;
-        c.insets = new Insets(3, 3, 3, 3);
+        c.insets = new Insets(3, 4, 3, 4);
         c.anchor = GridBagConstraints.LINE_END;
         panel.add(new JLabel(etiqueta), c);
         c.gridx = 1;
@@ -162,7 +202,7 @@ public class VentanaConexion extends JFrame {
                     if (salirAlTerminar) {
                         cerrarYSalir(conexion);
                     } else {
-                        abrirTareas(conexion);
+                        abrirTareas(conexion, u, h);
                     }
                 } catch (ExecutionException e) {
                     if (salirAlTerminar) {
@@ -177,8 +217,10 @@ public class VentanaConexion extends JFrame {
         }.execute();
     }
 
-    private void abrirTareas(Conexion conexion) {
-        new VentanaTareas(conexion.cliente(), conexion.sesion(), conexion.gestor()).setVisible(true);
+    private void abrirTareas(Conexion conexion, String usuario, String host) {
+        VentanaTareas tareas = new VentanaTareas(conexion.cliente(), conexion.sesion(), conexion.gestor());
+        tareas.setInfoConexion(usuario, host);
+        tareas.setVisible(true);
         dispose();
     }
 
@@ -186,8 +228,8 @@ public class VentanaConexion extends JFrame {
     private void pedirSalida() {
         if (conectando) {
             salirAlTerminar = true;
-            estado.setForeground(getForeground());
-            estado.setText("Saliendo al terminar...");
+            estado.setForeground(Estilo.TEXTO_SECUNDARIO);
+            estado.setText("Saliendo al terminar…");
             return;
         }
         salir();
@@ -201,7 +243,7 @@ public class VentanaConexion extends JFrame {
     /** Se cerró la ventana mientras se entraba: cierra la sesión en orden antes de salir. */
     private void cerrarYSalir(Conexion conexion) {
         setConectando(true);
-        estado.setText("Cerrando sesión...");
+        estado.setText("Cerrando sesión…");
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws IOException {
@@ -227,17 +269,16 @@ public class VentanaConexion extends JFrame {
         }
         botonConectar.setEnabled(!conectando);
         indicador.setVisible(conectando);
-        estado.setForeground(getForeground());
-        estado.setText(conectando ? (salirAlTerminar ? "Saliendo al terminar..." : "Conectando...") : " ");
+        estado.setForeground(Estilo.TEXTO_SECUNDARIO);
+        estado.setText(conectando ? (salirAlTerminar ? "Saliendo al terminar…" : "Conectando…") : " ");
         setCursor(conectando ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : Cursor.getDefaultCursor());
-        pack();
     }
 
     /** Datos mal escritos: en rojo bajo el botón, sin cuadro de diálogo. */
     private void mostrarAviso(String mensaje) {
-        estado.setForeground(COLOR_ERROR);
-        estado.setText(mensaje);
-        pack();
+        estado.setForeground(Estilo.ERROR);
+        // HTML para que un mensaje largo pase a la segunda línea.
+        estado.setText("<html>" + mensaje + "</html>");
     }
 
     private void mostrarError(Throwable causa) {

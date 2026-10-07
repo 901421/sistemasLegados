@@ -1,6 +1,6 @@
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
+import gui.Estilo;
 import gui.VentanaConexion;
 import mainframe.MainframeClient;
 
@@ -17,13 +17,8 @@ public class Main {
             System.setProperty(MainframeClient.PROPIEDAD_RUTA, args[0]);
         }
 
-        // Aspecto del sistema (en Windows, el de Windows). Si no se puede, se
-        // queda el de Java, que funciona igual.
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException e) {
-            System.err.println("Se usa el aspecto de Java: " + e.getMessage());
-        }
+        // Aspecto del sistema (en Windows, el de Windows).
+        Estilo.aplicarAspecto();
 
         // Las ventanas se crean en el hilo de la interfaz, como pide Swing.
         SwingUtilities.invokeLater(() -> new VentanaConexion().setVisible(true));

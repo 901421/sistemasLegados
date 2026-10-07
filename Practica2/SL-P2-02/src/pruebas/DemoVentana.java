@@ -2,6 +2,7 @@ package pruebas;
 
 import javax.swing.SwingUtilities;
 
+import gui.Estilo;
 import gui.VentanaTareas;
 import mainframe.MainframeClient;
 
@@ -12,8 +13,12 @@ import mainframe.MainframeClient;
 public class DemoVentana {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() ->
-                new VentanaTareas(new MainframeClient(), new SesionFalsa(), new GestorFalso())
-                        .setVisible(true));
+        // El mismo aspecto que el programa de verdad (Main).
+        Estilo.aplicarAspecto();
+        SwingUtilities.invokeLater(() -> {
+            VentanaTareas ventana = new VentanaTareas(new MainframeClient(), new SesionFalsa(), new GestorFalso());
+            ventana.setInfoConexion("grupo_02", "demo sin mainframe");
+            ventana.setVisible(true);
+        });
     }
 }

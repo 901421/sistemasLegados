@@ -23,6 +23,7 @@ gui  ──►  tareas  ──►  mainframe  ──►  ws3270  ──►  main
 | `gui/VentanaTareas.java` | Ventana principal, trabajo en segundo plano y cierre | Esqueleto | Imad |
 | `gui/PanelAlta.java` | Formulario de alta y botón "Nueva" | Esqueleto | Ainhoa |
 | `gui/ModeloTablaTareas.java` | Datos de la tabla de tareas | Esqueleto | Paula |
+| `gui/Estilo.java` | Aspecto común de las ventanas: colores, letras, márgenes e icono | Hecho | Imad |
 | `pruebas/PruebasOffline.java` | Pruebas con pantallas guardadas, sin conectar | Esqueleto | Todos |
 | `Main.java` | Arranque: abre `VentanaConexion` (ruta de ws3270 opcional como argumento) | Hecho | — |
 
