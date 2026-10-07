@@ -24,7 +24,7 @@ gui  ──►  tareas  ──►  mainframe  ──►  ws3270  ──►  main
 | `gui/PanelAlta.java` | Formulario de alta y botón "Nueva" | Esqueleto | Ainhoa |
 | `gui/ModeloTablaTareas.java` | Datos de la tabla de tareas | Esqueleto | Paula |
 | `pruebas/PruebasOffline.java` | Pruebas con pantallas guardadas, sin conectar | Esqueleto | Todos |
-| `Main.java` | Ahora: prueba de conexión. Al final: abre `VentanaConexion` | Prueba | — |
+| `Main.java` | Arranque: abre `VentanaConexion` (ruta de ws3270 opcional como argumento) | Hecho | — |
 
 Los métodos de los esqueletos lanzan `UnsupportedOperationException("Pendiente")`: así todo compila desde el primer día y cada uno puede usar las clases de los demás antes de que estén terminadas.
 
