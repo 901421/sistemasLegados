@@ -14,3 +14,6 @@ public record Tarea(int numero, Tipo tipo, String fecha, String nombre, String d
 
     public enum Tipo { GENERAL, ESPECIFICA }
 }
+
+// Posible modificación a clase con atributos
+// La clase record se puede ver como una decisión de diseño dado que los datos de una Tarea son inmutables
