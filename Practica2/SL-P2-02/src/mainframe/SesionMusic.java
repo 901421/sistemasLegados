@@ -19,22 +19,30 @@ public class SesionMusic {
         this.cliente = cliente;
     }
 
+    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
+    // cuando esté implementado el parser.
     private boolean esBienvenida(String pantalla) {
         return pantalla.contains(
                 "Multi-User System for Interactive Computing / System Product"
         );
     }
 
+    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
+    // cuando esté implementado el parser.
     private boolean esLogin(String pantalla) {
         return pantalla.contains("MUSIC Userid:")
                 && pantalla.contains("Password:");
     }
 
+    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
+    // cuando esté implementado el parser.
     private boolean esInformacionSesion(String pantalla) {
         return pantalla.contains("Userid last signed on")
                 && pantalla.contains("Press ENTER to continue");
     }
 
+    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
+    // cuando esté implementado el parser.
     private boolean esFsi(String pantalla) {
         return pantalla.contains("Command ===>");
     }
