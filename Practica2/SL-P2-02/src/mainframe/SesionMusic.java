@@ -41,6 +41,14 @@ public class SesionMusic {
                 && pantalla.contains("Press ENTER to continue");
     }
 
+    // TODO: Sustituir por Pantalla.identificar() cuando esté disponible.
+    private boolean esMenuPrincipal(String pantalla) {
+        return pantalla.contains("MENU PRINCIPAL")
+                && pantalla.contains("ASSIGN TASKS")
+                && pantalla.contains("VIEW TASKS")
+                && pantalla.contains("OPTION:");
+    }
+
     // TODO: Sustituir este reconocimiento por Pantalla.identificar()
     // cuando esté implementado el parser.
     private boolean esFsi(String pantalla) {
@@ -150,9 +158,25 @@ public class SesionMusic {
         esperarFsi();
     }
 
-    /** Desde el menú FSI, arranca tareas.c y espera a su menú principal. */
-    public void arrancarTareas() throws IOException {
-        throw new UnsupportedOperationException("Pendiente");
+    /**
+     * Desde el menú FSI, arranca tareas.c y espera a su menú principal.
+     *
+     * @return pantalla del menú principal de tareas.c
+     * @throws IOException si no estamos en el FSI o no aparece el menú
+     */
+    public String arrancarTareas() throws IOException {
+        String pantalla = cliente.pantalla();
+
+        if (!esFsi(pantalla)) {
+            throw new IOException(
+                    "No se puede ejecutar tareas.c: no estamos en el menú FSI."
+            );
+        }
+
+        cliente.escribir("tareas.c");
+        cliente.intro();
+
+        return cliente.esperarTexto("MENU PRINCIPAL", 30_000);
     }
 
     /**
@@ -172,6 +196,50 @@ public class SesionMusic {
         cliente.intro();
 
         esperarBienvenida();
+    }
+
+    /**
+     * Sale de tareas.c desde su menú principal y regresa al FSI.
+     */
+    public void cerrarTareas() throws IOException {
+        String pantalla = cliente.pantalla();
+
+        if (!esMenuPrincipal(pantalla)) {
+            throw new IOException(
+                    "No se puede cerrar tareas.c: no estamos en el menú principal."
+            );
+        }
+
+        cliente.escribir("3");
+        cliente.intro();
+
+        long limite = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(ESPERA_MS);
+
+        boolean continuacionEnviada = false;
+
+        while (System.nanoTime() < limite) {
+            pantalla = cliente.pantalla();
+
+            if (esFsi(pantalla)) {
+                return;
+            }
+
+            if (pantalla.contains("Press enter to continue")
+                    || MainframeClient.hayMas(pantalla)) {
+
+                if (!continuacionEnviada) {
+                    cliente.intro();
+                    continuacionEnviada = true;
+                }
+            }
+
+            pausar();
+        }
+
+        throw new IOException(
+                "No se ha conseguido regresar al FSI al salir de tareas.c."
+        );
     }
 
     /**
