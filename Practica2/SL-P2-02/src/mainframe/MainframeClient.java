@@ -262,6 +262,35 @@ public class MainframeClient implements AutoCloseable {
         throw new IOException("La pantalla no se ha estabilizado en " + maxMs + " ms.");
     }
 
+    /**
+     * Espera hasta que la pantalla contenga un texto determinado.
+     *
+     * @throws IOException si el texto no aparece dentro del tiempo indicado
+     */
+    public String esperarTexto(String texto, long maxMs) throws IOException {
+        long limite = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(maxMs);
+
+        while (System.nanoTime() < limite) {
+            String actual = pantalla();
+
+            if (actual.contains(texto)) {
+                return actual;
+            }
+
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Espera interrumpida", e);
+            }
+        }
+
+        throw new IOException(
+                "No apareció el texto esperado: " + texto
+        );
+    }
+
     // ------------------------------------------------------------------
     // Reconocimiento de pantallas
     // ------------------------------------------------------------------
@@ -289,6 +318,7 @@ public class MainframeClient implements AutoCloseable {
         if (proceso == null) {
             throw new IOException("No hay conexión con el mainframe.");
         }
+        // se muestra la contraseña??
         registrar(">> " + orden);
         entrada.write(orden);
         entrada.newLine();
