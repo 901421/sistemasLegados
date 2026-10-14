@@ -32,6 +32,7 @@ public class LectorListado {
             return tareasEncontradas;
         }
 
+        // Dividimos la pantalla en líneas
         String[] lineas = pantallaTexto.split("\\r?\\n");
 
         for (String linea : lineas) {
@@ -40,7 +41,7 @@ public class LectorListado {
             if (lineaLimpia.startsWith("TASK")) {
                 Tarea tarea = procesarLineaTarea(lineaLimpia);
                 if (tarea != null) {
-                    // Si el validador devuelve null, significa que la tarea es válida
+                    // Comprobamos que los datos sean válidos
                     boolean esValida = (validator == null) ||
                             (Validador.validar(tarea.fecha(), tarea.nombre(), tarea.descripcion()) == null);
 
@@ -55,18 +56,18 @@ public class LectorListado {
     }
 
     private Tarea procesarLineaTarea(String linea) {
-        // Intentar parsear como Tarea General
+        // 1. Intentar parsear como Tarea General
         Matcher matcherGen = PATTERN_GENERAL.matcher(linea);
         if (matcherGen.find()) {
             int id = Integer.parseInt(matcherGen.group(1));
             String fecha = matcherGen.group(2);
             String descripcion = matcherGen.group(3).trim();
 
-            // En tareas generales el nombre va vacío ("") segun la javadoc de Tarea
+            // En tareas generales el nombre va vacío ("") según la especificación
             return new Tarea(id, Tarea.Tipo.GENERAL, fecha, "", descripcion);
         }
 
-        // Intentar parsear como Tarea Específica
+        // 2. Intentar parsear como Tarea Específica
         Matcher matcherSpec = PATTERN_SPECIFIC.matcher(linea);
         if (matcherSpec.find()) {
             int id = Integer.parseInt(matcherSpec.group(1));
@@ -78,20 +79,5 @@ public class LectorListado {
         }
 
         return null;
-    }
-
-    /**
-     * Comprueba si la pantalla contiene el indicador de paginación "More..."
-     */
-    public boolean hayMasPaginas(String pantallaTexto) {
-        return pantallaTexto != null && pantallaTexto.contains("More...");
-    }
-
-    /**
-     * Detecta si hemos llegado al final del listado o al menú principal.
-     */
-    public boolean esFinDeListado(String pantallaTexto) {
-        if (pantallaTexto == null) return true;
-        return pantallaTexto.contains("TOTAL TASK") || pantallaTexto.contains("OPTION:");
     }
 }
