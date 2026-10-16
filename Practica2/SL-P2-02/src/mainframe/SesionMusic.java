@@ -11,108 +11,13 @@ import java.util.concurrent.TimeUnit;
 public class SesionMusic {
 
     private static final long ESPERA_MS = 15_000;
+    private static final long ESPERA_ARRANQUE_MS = 30_000;
     private static final long PAUSA_MS = 300;
 
     private final MainframeClient cliente;
 
     public SesionMusic(MainframeClient cliente) {
         this.cliente = cliente;
-    }
-
-    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
-    // cuando esté implementado el parser.
-    private boolean esBienvenida(String pantalla) {
-        return pantalla.contains(
-                "Multi-User System for Interactive Computing / System Product"
-        );
-    }
-
-    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
-    // cuando esté implementado el parser.
-    private boolean esLogin(String pantalla) {
-        return pantalla.contains("MUSIC Userid:")
-                && pantalla.contains("Password:");
-    }
-
-    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
-    // cuando esté implementado el parser.
-    private boolean esInformacionSesion(String pantalla) {
-        return pantalla.contains("Userid last signed on")
-                && pantalla.contains("Press ENTER to continue");
-    }
-
-    // TODO: Sustituir por Pantalla.identificar() cuando esté disponible.
-    private boolean esMenuPrincipal(String pantalla) {
-        return pantalla.contains("MENU PRINCIPAL")
-                && pantalla.contains("ASSIGN TASKS")
-                && pantalla.contains("VIEW TASKS")
-                && pantalla.contains("OPTION:");
-    }
-
-    // TODO: Sustituir este reconocimiento por Pantalla.identificar()
-    // cuando esté implementado el parser.
-    private boolean esFsi(String pantalla) {
-        return pantalla.contains("Command ===>");
-    }
-
-    private String esperarFsi() throws IOException {
-        long limite = System.nanoTime()
-                + TimeUnit.MILLISECONDS.toNanos(ESPERA_MS);
-
-        boolean informacionContinuada = false;
-
-        while (System.nanoTime() < limite) {
-            String pantalla = cliente.pantalla();
-
-            if (MainframeClient.sesionEnUso(pantalla)) {
-                throw new IOException(
-                        "MUSIC/SP indica que el usuario ya tiene una sesión en uso."
-                );
-            }
-
-            if (esFsi(pantalla)) {
-                return pantalla;
-            }
-
-            // Pantalla informativa posterior a login
-            if (esInformacionSesion(pantalla)) {
-
-                if (!informacionContinuada) {
-                    cliente.intro();
-                    informacionContinuada = true;
-                }
-
-                // Si sigue visible, esperar a que cambie
-                pausar();
-                continue;
-            }
-
-            // Otra pantalla: esperar a que aparezca el FSI
-            pausar();
-        }
-
-        throw new IOException(
-                "No se ha alcanzado el menú FSI tras el inicio de sesión."
-        );
-    }
-
-    private String esperarBienvenida() throws IOException {
-        long limite = System.nanoTime()
-                + TimeUnit.MILLISECONDS.toNanos(ESPERA_MS);
-
-        while (System.nanoTime() < limite) {
-            String pantalla = cliente.pantalla();
-
-            if (esBienvenida(pantalla)) {
-                return pantalla;
-            }
-
-            pausar();
-        }
-
-        throw new IOException(
-                "No se ha confirmado el regreso a la bienvenida de MUSIC/SP."
-        );
     }
 
     private void pausar() throws IOException {
@@ -124,6 +29,40 @@ public class SesionMusic {
         }
     }
 
+    private String esperarPantalla(Pantalla esperada, long maxMs)
+        throws IOException {
+
+        long limite = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(maxMs);
+
+        while (System.nanoTime() < limite) {
+            String texto = cliente.pantalla();
+            Pantalla actual = Pantalla.identificar(texto);
+
+            if (actual == esperada) {
+                return texto;
+            }
+
+            if (actual == Pantalla.SESION_EN_USO) {
+                throw new IOException(
+                        "El usuario ya tiene una sesión activa en MUSIC/SP."
+                );
+            }
+
+            if (actual == Pantalla.HERCULES) {
+                throw new IOException(
+                        "El mainframe muestra la consola de Hercules."
+                );
+            }
+
+            pausar();
+        }
+
+        throw new IOException(
+                "Tiempo de espera agotado. Pantalla esperada: " + esperada
+        );
+    }
+
     /**
      * Va de la bienvenida al menú FSI: pasa los "More...", escribe usuario y
      * clave y, si la sesión anterior quedó abierta, contesta OK.
@@ -131,16 +70,18 @@ public class SesionMusic {
      * @throws IOException si el usuario o la clave no son válidos, o la pantalla no es la esperada
      */
     public void iniciar(String usuario, String clave) throws IOException {
-        String pantalla = cliente.pantalla();
+        String texto = cliente.pantalla();
+        Pantalla actual = Pantalla.identificar(texto);
 
         // Avanzar hasta el login
-        if (esBienvenida(pantalla)) {
+        if (actual == Pantalla.BIENVENIDA) {
             cliente.intro();
-            pantalla = cliente.esperarPantallaEstable(10_000);
+            esperarPantalla(Pantalla.LOGIN, ESPERA_MS);
+            actual = Pantalla.LOGIN;
         }
 
         // Comprobar que estamos en el login
-        if (!esLogin(pantalla)) {
+        if (actual != Pantalla.LOGIN) {
             throw new IOException(
                     "No se ha encontrado la pantalla de login."
             );
@@ -155,8 +96,56 @@ public class SesionMusic {
         cliente.intro();
 
         // Esperar respuesta
-        esperarFsi();
+        esperarFsiTrasLogin();
     }
+
+    /**
+     * Gestiona la pantalla informativa posterior al login.
+     * Envía un único Intro cuando aparece el mensaje de continuación.
+     */
+    private void esperarFsiTrasLogin() throws IOException {
+        long limite = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(ESPERA_MS);
+
+        boolean continuacionEnviada = false;
+
+        while (System.nanoTime() < limite) {
+            String texto = cliente.pantalla();
+            Pantalla actual = Pantalla.identificar(texto);
+
+            if (actual == Pantalla.MENU_FSI) {
+                return;
+            }
+
+            if (actual == Pantalla.SESION_EN_USO) {
+                throw new IOException(
+                        "El usuario ya tiene una sesión activa en MUSIC/SP."
+                );
+            }
+
+            if (actual == Pantalla.HERCULES) {
+                throw new IOException(
+                        "El mainframe muestra la consola de Hercules."
+                );
+            }
+
+            // Continuación específica del login.
+            if (!continuacionEnviada
+                    && texto.contains("Userid last signed on")
+                    && texto.contains("Press ENTER to continue")) {
+
+                cliente.intro();
+                continuacionEnviada = true;
+            }
+
+            pausar();
+        }
+
+        throw new IOException(
+                "No se ha alcanzado el FSI tras el inicio de sesión."
+        );
+    }
+
 
     /**
      * Desde el menú FSI, arranca tareas.c y espera a su menú principal.
@@ -165,48 +154,53 @@ public class SesionMusic {
      * @throws IOException si no estamos en el FSI o no aparece el menú
      */
     public String arrancarTareas() throws IOException {
-        String pantalla = cliente.pantalla();
+        if (Pantalla.identificar(cliente.pantalla())
+                != Pantalla.MENU_FSI) {
 
-        if (!esFsi(pantalla)) {
             throw new IOException(
-                    "No se puede ejecutar tareas.c: no estamos en el menú FSI."
+                    "No se puede ejecutar tareas.c: no estamos en el FSI."
             );
         }
 
         cliente.escribir("tareas.c");
         cliente.intro();
 
-        return cliente.esperarTexto("MENU PRINCIPAL", 30_000);
+        return esperarPantalla(
+                Pantalla.MENU_PRINCIPAL,
+                ESPERA_ARRANQUE_MS
+        );
     }
 
     /**
-     * Cierra la sesión lógica cuando se está en FSI.
-     * No desconecta el emulador.
+     * Regresa al menú principal desde ASSIGN TASKS o VIEW TASKS.
      */
-    public void cerrarDesdeFsi() throws IOException {
-        String pantalla = cliente.pantalla();
+    public void volverAlMenuPrincipal() throws IOException {
+        Pantalla actual = Pantalla.identificar(cliente.pantalla());
 
-        if (!esFsi(pantalla)) {
+        if (actual != Pantalla.MENU_ASSIGN
+                && actual != Pantalla.MENU_VIEW) {
+
             throw new IOException(
-                    "No estamos en FSI: no se enviará off."
+                    "No estamos en un submenú desde el que se pueda regresar."
             );
         }
 
-        cliente.escribir("off");
+        cliente.escribir("3");
         cliente.intro();
 
-        esperarBienvenida();
+        esperarPantalla(Pantalla.MENU_PRINCIPAL, ESPERA_MS);
     }
 
     /**
      * Sale de tareas.c desde su menú principal y regresa al FSI.
      */
     public void cerrarTareas() throws IOException {
-        String pantalla = cliente.pantalla();
+        if (Pantalla.identificar(cliente.pantalla())
+                != Pantalla.MENU_PRINCIPAL) {
 
-        if (!esMenuPrincipal(pantalla)) {
             throw new IOException(
-                    "No se puede cerrar tareas.c: no estamos en el menú principal."
+                    "No se puede cerrar tareas.c: "
+                            + "no estamos en el menú principal."
             );
         }
 
@@ -219,19 +213,25 @@ public class SesionMusic {
         boolean continuacionEnviada = false;
 
         while (System.nanoTime() < limite) {
-            pantalla = cliente.pantalla();
+            String texto = cliente.pantalla();
+            Pantalla actual = Pantalla.identificar(texto);
 
-            if (esFsi(pantalla)) {
+            if (actual == Pantalla.MENU_FSI) {
                 return;
             }
 
-            if (pantalla.contains("Press enter to continue")
-                    || MainframeClient.hayMas(pantalla)) {
+            if (actual == Pantalla.HERCULES) {
+                throw new IOException(
+                        "El mainframe muestra la consola de Hercules."
+                );
+            }
 
-                if (!continuacionEnviada) {
-                    cliente.intro();
-                    continuacionEnviada = true;
-                }
+            // Pantalla de continuación al salir
+            if (!continuacionEnviada
+                    && texto.contains("Press enter to continue")) {
+
+                cliente.intro();
+                continuacionEnviada = true;
             }
 
             pausar();
@@ -243,11 +243,60 @@ public class SesionMusic {
     }
 
     /**
+     * Cierra la sesión lógica cuando se está en FSI.
+     * No desconecta el emulador.
+     */
+    public void cerrarDesdeFsi() throws IOException {
+        if (Pantalla.identificar(cliente.pantalla())
+                != Pantalla.MENU_FSI) {
+
+            throw new IOException(
+                    "No estamos en el FSI: no se enviará off."
+            );
+        }
+
+        cliente.escribir("off");
+        cliente.intro();
+
+        esperarPantalla(Pantalla.BIENVENIDA, ESPERA_MS);
+    }
+
+    /**
      * Sale de tareas.c (opción 3) si está abierto y cierra la sesión con
      * "off". Deja la conexión abierta: después hay que llamar a
      * {@link MainframeClient#desconectar()}.
+     *
+     *  No intenta cerrar desde formularios de tareas o pantallas
+     *  desconocidas, ya que no existe una ruta de salida confirmada.
      */
     public void cerrar() throws IOException {
-        throw new UnsupportedOperationException("Pendiente");
+        Pantalla actual = Pantalla.identificar(cliente.pantalla());
+
+        switch (actual) {
+            case BIENVENIDA:
+                return;
+
+            case MENU_FSI:
+                cerrarDesdeFsi();
+                return;
+
+            case MENU_PRINCIPAL:
+                cerrarTareas();
+                cerrarDesdeFsi();
+                return;
+
+            case MENU_ASSIGN:
+            case MENU_VIEW:
+                volverAlMenuPrincipal();
+                cerrarTareas();
+                cerrarDesdeFsi();
+                return;
+
+            default:
+                throw new IOException(
+                        "No se puede cerrar automáticamente desde "
+                                + "la pantalla actual: " + actual
+                );
+        }
     }
 }
