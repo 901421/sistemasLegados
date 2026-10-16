@@ -29,50 +29,55 @@ public enum Pantalla {
      * Indica a qué pantalla corresponde un texto devuelto por
      * {@link MainframeClient#pantalla()}. tareas.c escribe hacia abajo sin
      * limpiar, así que cuenta el último menú que aparece.
-     *
-     * @param texto El texto de la pantalla devuelto por el emulador.
-     * @return El tipo de Pantalla detectado.
      */
     public static Pantalla identificar(String texto) {
         if (texto == null || texto.isBlank()) {
             return DESCONOCIDA;
         }
 
+        // 1. Pantallas globales de sistema / inicio de sesión
+        if (texto.contains("Hercules")) {
+            return HERCULES;
+        }
         if (texto.contains("Userid is in use")) {
             return SESION_EN_USO;
         }
-
         if (texto.contains("MUSIC Userid:") && texto.contains("Password:")) {
             return LOGIN;
         }
-
         if (texto.contains("Command ===>")) {
             return MENU_FSI;
         }
-
         if (texto.contains("Multi-User System for Interactive Computing / System Product")) {
             return BIENVENIDA;
         }
 
-        // 2. Pantallas de la aplicación tareas.c (escritura acumulativa hacia abajo)
-        // Buscamos la última aparición (lastIndexOf) de los textos característicos de cada menú
-        int posPrincipal = texto.lastIndexOf("MENU PRINCIPAL");
-        int posAssign = texto.lastIndexOf("ASSIGN TASKS");
-        int posView = texto.lastIndexOf("VIEW TASKS");
+        String[] lineas = texto.split("\\r?\\n");
 
-        // Evaluamos cuál de las opciones de tareas.c aparece más abajo en la pantalla
-        int maxPos = Math.max(posPrincipal, Math.max(posAssign, posView));
+        // Recorremos las líneas comenzando desde el final del buffer de pantalla
+        for (int i = lineas.length - 1; i >= 0; i--) {
+            String linea = lineas[i].trim();
 
-        if (maxPos != -1) {
-            if (maxPos == posPrincipal) {
+            // Si detectamos la línea de opciones de un submenú:
+            if (linea.contains("1. GENERAL TASK") && linea.contains("2.SPECIFIC TASK") && linea.contains("3. MAIN MENU")) {
+                // Comprobamos la línea JUSTO ENCIMA
+                if (i > 0) {
+                    String lineaTitulo = lineas[i - 1].trim();
+
+                    if (lineaTitulo.contains("VIEW TASKS")) {
+                        return MENU_VIEW;
+                    }
+                    if (lineaTitulo.contains("ASSIGN TASKS")) {
+                        return MENU_ASSIGN;
+                    }
+                }
+            }
+
+            if (linea.equals("MENU PRINCIPAL")) {
                 return MENU_PRINCIPAL;
-            } else if (maxPos == posAssign) {
-                return MENU_ASSIGN;
-            } else if (maxPos == posView) {
-                return MENU_VIEW;
             }
         }
 
-        return HERCULES;
+        return DESCONOCIDA;
     }
 }
