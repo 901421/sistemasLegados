@@ -228,7 +228,8 @@ public class SesionMusic {
 
             // Pantalla de continuación al salir
             if (!continuacionEnviada
-                    && texto.contains("Press enter to continue")) {
+                    && (texto.contains("Press enter to continue")
+                    || MainframeClient.hayMas(texto))) {
 
                 cliente.intro();
                 continuacionEnviada = true;

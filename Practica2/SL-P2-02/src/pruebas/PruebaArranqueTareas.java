@@ -46,15 +46,9 @@ public class PruebaArranqueTareas {
                 System.out.println("tareas.c iniciado correctamente.");
                 System.out.println(pantalla);
 
-                // Salir de tareas.c y regresar al FSI
-                sesion.cerrarTareas();
+                sesion.cerrar();
 
-                System.out.println("Salida de tareas.c correcta.");
-
-                // Cerrar la sesión MUSIC/SP
-                sesion.cerrarDesdeFsi();
-
-                System.out.println("Sesión MUSIC/SP cerrada.");
+                System.out.println("Salida de tareas.c y MUSIC/SP cerrada.");
 
             } finally {
                 // Si hay un error, comprobar dónde estamos antes de cerrar.

@@ -44,7 +44,7 @@ public class PruebaLogin {
                     String pantalla = cliente.pantalla();
 
                     if (pantalla.contains("Command ===>")) {
-                        sesion.cerrarDesdeFsi();
+                        sesion.cerrar();
                         System.out.println("Sesión MUSIC/SP cerrada.");
                     }
                 }
