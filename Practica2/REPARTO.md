@@ -110,6 +110,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
 - [ ] **P4 — Montar el zip y probarlo en limpio** (1,5 h) — R3, R29
   - `SL-P2-02.zip` desde el commit final (`git archive`) más lo compilado: programa, Java reducido, ws3270, `lanzar.bat`, `LEEME.txt` y memoria PDF.
   - Descomprimir en una carpeta nueva de Windows (ruta con espacios) y probar con doble clic.
+  - No meter en el zip ficheros del IDE (`Practica2/.idea/`, `Practica2.iml`, `SL-P2-02/*.iml`) ni compilados sueltos.
   - Depende de: I5, A3.
   - Hecha cuando: la prueba en limpio funciona de principio a fin.
 - [ ] **P5 — Pruebas finales: listados** (0,5 h) — R10
