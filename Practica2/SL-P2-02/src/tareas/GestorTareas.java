@@ -21,7 +21,7 @@ public class GestorTareas {
 
     public GestorTareas(MainframeClient cliente) {
         this.cliente = cliente;
-        this.lector = new LectorListado(new Validador());
+        this.lector = new LectorListado();
     }
 
     /**

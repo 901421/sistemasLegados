@@ -182,7 +182,10 @@ public class PruebasOffline {
      * eco de la opción en la primera página, y el listado acaba en TOTAL TASK.
      */
     static void probarPaginasListado() throws IOException {
-        LectorListado lector = new LectorListado(null);
+        LectorListado lector = new LectorListado();
+
+        comprobar("listado: enseña también las tareas con fecha imposible (22 de 22)",
+                lector.parsearPantalla(pantalla("a2/31-listado-largo-p2")).size() == 22);
 
         GestorTareas.Pagina vacia = GestorTareas.leerPagina(pantalla("a2/03-view-general"), "1", true, lector);
         comprobar("listado: vacío, sin tareas", vacia.tareas().isEmpty());

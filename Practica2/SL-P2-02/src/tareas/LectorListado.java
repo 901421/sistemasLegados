@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Saca las tareas del texto de un listado de tareas.c, tal cual aparecen.
+ * {@link Validador} es para las altas, no para lo que se lee.
+ */
 public class LectorListado {
 
     // Regex para detectar tareas generales: TASK <num>: GENERAL <fecha> ----- <descripcion>
@@ -16,12 +20,6 @@ public class LectorListado {
     private static final Pattern PATTERN_SPECIFIC = Pattern.compile(
             "TASK\\s+(\\d+):\\s+SPECIFIC\\s+(\\d{4})\\s+(\\S+)\\s+(.+)"
     );
-
-    private final Validador validator;
-
-    public LectorListado(Validador validator) {
-        this.validator = validator;
-    }
 
     /**
      * Parsea la pantalla actual y extrae la lista de tareas válidas.
@@ -40,14 +38,9 @@ public class LectorListado {
 
             if (lineaLimpia.startsWith("TASK")) {
                 Tarea tarea = procesarLineaTarea(lineaLimpia);
+                // Sin filtrar: se enseña lo que guarda tareas.c, aunque sea raro.
                 if (tarea != null) {
-                    // Comprobamos que los datos sean válidos
-                    boolean esValida = (validator == null) ||
-                            (Validador.validar(tarea.fecha(), tarea.nombre(), tarea.descripcion()) == null);
-
-                    if (esValida) {
-                        tareasEncontradas.add(tarea);
-                    }
+                    tareasEncontradas.add(tarea);
                 }
             }
         }
