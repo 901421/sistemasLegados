@@ -166,6 +166,10 @@ public class PruebasOffline {
         comprobarPantalla("a2/12-listado-general", Pantalla.MENU_VIEW);
         comprobarPantalla("a2/31-listado-largo-p2", Pantalla.MENU_VIEW);
         comprobarPantalla("a2/21-hercules-bloqueado", Pantalla.HERCULES);
+        comprobarPantalla("a2/06-assign-general", Pantalla.FORMULARIO);
+        comprobarPantalla("a2/07-assign-general-fecha", Pantalla.FORMULARIO);
+        comprobarPantalla("a2/09-assign-general-descripcion", Pantalla.FORMULARIO);
+        comprobarPantalla("a2/13-assign-specific", Pantalla.FORMULARIO);
         comprobar("pantalla: texto vacío", Pantalla.identificar("") == Pantalla.DESCONOCIDA);
     }
 

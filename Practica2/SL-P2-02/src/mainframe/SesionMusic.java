@@ -13,6 +13,8 @@ public class SesionMusic {
     private static final long ESPERA_MS = 15_000;
     private static final long ESPERA_ARRANQUE_MS = 30_000;
     private static final long PAUSA_MS = 300;
+    /** Dato de relleno para terminar un alta a medias: vale como fecha DDMM y como palabra. */
+    private static final String RELLENO = "0101";
 
     private final MainframeClient cliente;
 
@@ -263,12 +265,52 @@ public class SesionMusic {
     }
 
     /**
+     * Termina un alta que se quedó a medias contestando cada pregunta con un
+     * dato de relleno válido (sirve como fecha, nombre o descripción), hasta
+     * volver a ASSIGN TASKS. La tarea de relleno se pierde al salir de
+     * tareas.c, que no guarda nada (AMB-8).
+     */
+    private void terminarFormulario() throws IOException {
+        String texto = cliente.esperarPantallaEstable(ESPERA_MS);
+        // Una tarea específica tiene 3 preguntas; con margen por los "More...".
+        for (int i = 0; i < 6; i++) {
+            Pantalla actual = Pantalla.identificar(texto);
+            if (actual == Pantalla.MENU_ASSIGN) {
+                return;
+            }
+            if (MainframeClient.hayMas(texto)) {
+                cliente.intro();
+            } else if (actual == Pantalla.FORMULARIO) {
+                cliente.escribir(RELLENO);
+                cliente.intro();
+            } else {
+                throw new IOException("No se puede terminar el alta a medias desde: " + actual);
+            }
+            texto = esperarCambio(texto);
+        }
+        throw new IOException("No se ha conseguido terminar el alta a medias.");
+    }
+
+    /** Espera a que la pantalla sea distinta de la anterior y esté estable. */
+    private String esperarCambio(String anterior) throws IOException {
+        long limite = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(ESPERA_MS);
+        while (System.nanoTime() < limite) {
+            String texto = cliente.esperarPantallaEstable(ESPERA_MS);
+            if (!texto.equals(anterior)) {
+                return texto;
+            }
+        }
+        throw new IOException("El mainframe no ha respondido a tiempo.");
+    }
+
+    /**
      * Sale de tareas.c (opción 3) si está abierto y cierra la sesión con
      * "off". Deja la conexión abierta: después hay que llamar a
      * {@link MainframeClient#desconectar()}.
      *
-     *  No intenta cerrar desde formularios de tareas o pantallas
-     *  desconocidas, ya que no existe una ruta de salida confirmada.
+     * Si un alta se quedó a medias, la termina con datos de relleno antes de
+     * salir. No intenta cerrar desde pantallas desconocidas, ya que no existe
+     * una ruta de salida confirmada.
      */
     public void cerrar() throws IOException {
         Pantalla actual = Pantalla.identificar(cliente.pantalla());
@@ -282,6 +324,13 @@ public class SesionMusic {
                 return;
 
             case MENU_PRINCIPAL:
+                cerrarTareas();
+                cerrarDesdeFsi();
+                return;
+
+            case FORMULARIO:
+                terminarFormulario();
+                volverAlMenuPrincipal();
                 cerrarTareas();
                 cerrarDesdeFsi();
                 return;

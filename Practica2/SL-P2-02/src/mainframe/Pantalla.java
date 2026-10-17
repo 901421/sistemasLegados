@@ -22,6 +22,8 @@ public enum Pantalla {
     MENU_ASSIGN,
     /** tareas.c: menú "VIEW TASKS". */
     MENU_VIEW,
+    /** tareas.c: en mitad de un alta, pide la fecha, el nombre o la descripción ("ENTER ..."). */
+    FORMULARIO,
     /** Ninguna de las anteriores. */
     DESCONOCIDA;
 
@@ -54,6 +56,10 @@ public enum Pantalla {
 
         String[] lineas = texto.split("\\r?\\n");
 
+        if (enFormulario(lineas)) {
+            return FORMULARIO;
+        }
+
         // Recorremos las líneas comenzando desde el final del buffer de pantalla
         for (int i = lineas.length - 1; i >= 0; i--) {
             String linea = lineas[i].trim();
@@ -79,5 +85,34 @@ public enum Pantalla {
         }
 
         return DESCONOCIDA;
+    }
+
+    /**
+     * Si lo último que ha escrito tareas.c (encima de la línea "------T---")
+     * es una pregunta "ENTER ...:", sola o seguida del "?" que espera respuesta.
+     */
+    private static boolean enFormulario(String[] lineas) {
+        String ultima = null;
+        String penultima = null;
+        for (String linea : lineas) {
+            if (linea.startsWith("------T")) {
+                break;
+            }
+            if (!linea.isBlank()) {
+                penultima = ultima;
+                ultima = linea.trim();
+            }
+        }
+        if (ultima == null) {
+            return false;
+        }
+        if (ultima.equals("?")) {
+            return penultima != null && esPreguntaDeAlta(penultima);
+        }
+        return esPreguntaDeAlta(ultima);
+    }
+
+    private static boolean esPreguntaDeAlta(String linea) {
+        return linea.contains("ENTER ") && linea.endsWith(":");
     }
 }
