@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import gui.ModeloTablaTareas;
 import gui.PanelAlta;
 import mainframe.MainframeClient;
+import mainframe.Pantalla;
 import tareas.GestorTareas;
 import tareas.LectorListado;
 import tareas.Tarea;
@@ -37,6 +38,7 @@ public class PruebasOffline {
         // Cada prueba nueva se añade aquí.
         probarModeloTabla();
         probarPanelAlta();
+        probarPantallas();
         probarPaginasListado();
         probarPreguntasAlta();
 
@@ -147,6 +149,28 @@ public class PruebasOffline {
     /** Lee una pantalla guardada, por ejemplo {@code pantalla("a2/12-listado-general")}. */
     static String pantalla(String nombre) throws IOException {
         return Files.readString(PANTALLAS.resolve(nombre + ".txt"), StandardCharsets.UTF_8);
+    }
+
+    /** Pantalla.identificar con las pantallas reales de img/a1 e img/a2. */
+    static void probarPantallas() throws IOException {
+        comprobarPantalla("a1/01-bienvenida", Pantalla.BIENVENIDA);
+        comprobarPantalla("a1/02-login", Pantalla.LOGIN);
+        comprobarPantalla("a1/03-sesion-en-uso", Pantalla.SESION_EN_USO);
+        comprobarPantalla("a1/04-menu-fsi", Pantalla.MENU_FSI);
+        comprobarPantalla("a1/05-help", Pantalla.MENU_FSI);
+        comprobarPantalla("a2/00-tasks-c-no-existe", Pantalla.DESCONOCIDA);
+        comprobarPantalla("a2/01-tareas-arranque", Pantalla.MENU_PRINCIPAL);
+        comprobarPantalla("a2/02-view-tasks", Pantalla.MENU_VIEW);
+        comprobarPantalla("a2/05-assign-tasks", Pantalla.MENU_ASSIGN);
+        comprobarPantalla("a2/14-specific-assigned", Pantalla.MENU_ASSIGN);
+        comprobarPantalla("a2/12-listado-general", Pantalla.MENU_VIEW);
+        comprobarPantalla("a2/31-listado-largo-p2", Pantalla.MENU_VIEW);
+        comprobarPantalla("a2/21-hercules-bloqueado", Pantalla.HERCULES);
+        comprobar("pantalla: texto vacío", Pantalla.identificar("") == Pantalla.DESCONOCIDA);
+    }
+
+    private static void comprobarPantalla(String nombre, Pantalla esperada) throws IOException {
+        comprobar("pantalla: " + nombre + " es " + esperada, Pantalla.identificar(pantalla(nombre)) == esperada);
     }
 
     /**
