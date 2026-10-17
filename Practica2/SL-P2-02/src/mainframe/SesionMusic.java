@@ -146,7 +146,8 @@ public class SesionMusic {
         }
 
         throw new IOException(
-                "No se ha alcanzado el FSI tras el inicio de sesión."
+                "No se ha podido entrar en MUSIC/SP. Comprueba el usuario y la clave.\n"
+                        + "(No se ha llegado al menú FSI tras el inicio de sesión.)"
         );
     }
 
