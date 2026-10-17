@@ -224,6 +224,15 @@ public class MainframeClient implements AutoCloseable {
         enviar("String(\"" + escapado + "\")");
     }
 
+    /**
+     * Escribe una clave en la posición del cursor. Se envía igual que
+     * {@link #escribir}, pero en el registro y en los errores sale como "****".
+     */
+    public synchronized void escribirClave(String clave) throws IOException {
+        String escapado = clave.replace("\\", "\\\\").replace("\"", "\\\"");
+        ejecutar("String(\"" + escapado + "\")", "String(\"****\")", MAX_RESPUESTA_MS);
+    }
+
     /** Pulsa Intro. */
     public void intro() throws IOException {
         enviar("Enter()");
@@ -315,11 +324,18 @@ public class MainframeClient implements AutoCloseable {
     // ------------------------------------------------------------------
 
     private List<String> ejecutar(String orden, long maxMs) throws IOException {
+        return ejecutar(orden, orden, maxMs);
+    }
+
+    /**
+     * @param visible la orden tal como sale en el registro y en los errores
+     *                (distinta de la real cuando lleva una clave)
+     */
+    private List<String> ejecutar(String orden, String visible, long maxMs) throws IOException {
         if (proceso == null) {
             throw new IOException("No hay conexión con el mainframe.");
         }
-        // se muestra la contraseña??
-        registrar(">> " + orden);
+        registrar(">> " + visible);
         entrada.write(orden);
         entrada.newLine();
         entrada.flush();
@@ -333,10 +349,10 @@ public class MainframeClient implements AutoCloseable {
                 leida = salida.poll(limite - System.nanoTime(), TimeUnit.NANOSECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new IOException("Espera de respuesta interrumpida: " + orden);
+                throw new IOException("Espera de respuesta interrumpida: " + visible);
             }
             if (leida == null) {
-                throw new IOException("ws3270 no ha respondido a " + orden + " en " + maxMs + " ms.");
+                throw new IOException("ws3270 no ha respondido a " + visible + " en " + maxMs + " ms.");
             }
             if (leida.isEmpty()) {
                 throw new IOException("ws3270 se ha cerrado inesperadamente.");
@@ -347,7 +363,7 @@ public class MainframeClient implements AutoCloseable {
                 return datos;
             }
             if (linea.equals("error")) {
-                throw new IOException("ws3270 rechazó " + orden + ": " + String.join(" ", datos).trim());
+                throw new IOException("ws3270 rechazó " + visible + ": " + String.join(" ", datos).trim());
             }
             if (linea.startsWith("data:")) {
                 // Formato "data: <texto>"; el texto conserva sus espacios.

@@ -66,10 +66,12 @@ public class SesionMusic {
     }
 
     /**
-     * Va de la bienvenida al menú FSI: pasa los "More...", escribe usuario y
-     * clave y, si la sesión anterior quedó abierta, contesta OK.
+     * Va de la bienvenida al menú FSI: pasa los "More..." y escribe usuario y
+     * clave (la clave no sale en el registro).
      *
-     * @throws IOException si el usuario o la clave no son válidos, o la pantalla no es la esperada
+     * @throws IOException si el usuario o la clave no son válidos, la sesión
+     *                     anterior sigue abierta ("Userid is in use") o la
+     *                     pantalla no es la esperada
      */
     public void iniciar(String usuario, String clave) throws IOException {
         String texto = cliente.pantalla();
@@ -94,7 +96,7 @@ public class SesionMusic {
         cliente.intro();
 
         // Introducir contraseña y confirmar
-        cliente.escribir(clave);
+        cliente.escribirClave(clave);
         cliente.intro();
 
         // Esperar respuesta
