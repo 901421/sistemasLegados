@@ -78,6 +78,9 @@ public class PanelAlta extends JPanel {
         mes.setSelectedIndex(hoy.getMonthValue() - 1);
         rellenarDias(hoy.getDayOfMonth());
         mes.addActionListener(e -> rellenarDias((Integer) dia.getSelectedItem()));
+        // El aspecto de Windows calcula el ancho con una cifra de menos y el día sale
+        // como "..."; con el ancho de tres cifras se ve entero.
+        dia.setPrototypeDisplayValue(888);
         dia.setMaximumRowCount(16);
         mes.setMaximumRowCount(12);
         JPanel filaFecha = filaSinMargen(dia, mes);
