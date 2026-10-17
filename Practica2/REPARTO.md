@@ -48,13 +48,25 @@ Registro de lo hecho, con quién lo hizo y dónde está la evidencia. Sirve para
 | Fecha | Tarea | Realizada por | Estado | Evidencia |
 |---|---|---|---|---|
 | 2026-09-28 | A1 — Instalar wc3270 y primer login | Imad, Paula y Ainhoa | Hecha | `ENTORNO.md`, `img/a1/` |
-| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md`, `img/a2/` |
+| 2026-09-28 | A2 — Mapa de pantallas de la aplicación legada (`tareas.c`) | Imad y Paula | Hecha | `docs/mapa-pantallas.md`, `img/a2/` |
 | 2026-09-28 | A2 — Pantalla de mainframe bloqueado (Hercules) y cómo debe reaccionar la GUI | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §9, `img/a2/21-hercules-bloqueado` |
-| 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad, Paula y Ainhoa | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
+| 2026-09-28 | A2 — Casos límite de la aplicación legada: fechas, tildes, longitudes (límite de 31 caracteres por tarea) y listado largo | Imad | Hecha | `docs/mapa-pantallas.md` §2, §5 y §6, `img/a2/22` a `32` |
 | 2026-09-28 | A2 — Alcance de la GUI acordado a partir del mapa (AMB-5) | Imad | Hecha | `DECISIONES.md` D2, `docs/requisitos.md` AMB-5 |
 | 2026-09-28 | B2 — Revisión y corrección de la prueba Java con ws3270: desconexión segura (1,5 s), UTF-8 y espera de pantalla | Imad | Hecha | `docs/correcciones-prueba-java.md`, `SL-P2-02/src/Main.java` |
 | 2026-10-02 | B2/B3 — Clase de conexión `MainframeClient`: órdenes a ws3270 con tiempo máximo, espera de pantalla estable, punto único de desconexión (1,5 s, también con Ctrl+C) y detección de Hercules; probada contra el mainframe sin login | Imad | En curso | `SL-P2-02/src/mainframe/MainframeClient.java`, `docs/correcciones-prueba-java.md` |
 | 2026-10-02 | T1 — Estructura del programa (esqueletos de las clases con sus firmas) y convenios de trabajo | Imad | Hecha, pendiente de que la revisen Paula y Ainhoa | `docs/convenios.md`, `SL-P2-02/src/` |
+| 2026-10-07 | P3 — Tabla de tareas (`ModeloTablaTareas`): columnas, fecha "12 oct", orden y contadores | Imad | Hecha | `gui/ModeloTablaTareas.java`, `PruebasOffline` |
+| 2026-10-07 | A2 — Formulario de alta (`PanelAlta`): tipo con botones, fecha con desplegables, contador y errores en rojo | Imad | Hecha | `gui/PanelAlta.java`, D3 |
+| 2026-10-07 | I4 — Ventana de tareas: trabajo en segundo plano, indicador, Salir/X en orden, pestañas y buscador | Imad | Hecha, falta prueba real | `gui/VentanaTareas.java` |
+| 2026-10-07 | A1 — Ventana de conexión (D1): datos precargados, errores y aviso de Hercules | Imad | Hecha, falta prueba real | `gui/VentanaConexion.java` |
+| 2026-10-07 | Diseño de la interfaz (D3) y aspecto común (`Estilo`) | Imad | Hecha | `DECISIONES.md` D3, `gui/Estilo.java` |
+| 2026-10-09 | A2 — `Validador`: fecha DDMM real, sin espacios y longitudes (D2) | Paula; corregido por Imad (espacios en la descripción) | Hecha | `tareas/Validador.java`, `docs/correcciones-revision-octubre.md` D |
+| 2026-10-09 | P2 — Leer los listados (`LectorListado`): tareas generales y específicas | Paula; corregido por Imad (sin filtro, acordado con el grupo) | Hecha | `tareas/LectorListado.java`, `docs/correcciones-revision-octubre.md` C |
+| 2026-10-14 | P2 — Recorrer el listado con `More...` (`GestorTareas.listar`) | Paula; rehecho por Imad según el mapa de pantallas | Hecha, falta prueba real | `tareas/GestorTareas.java`, `docs/correcciones-revision-octubre.md` A |
+| 2026-10-14 | I3 — Alta de una tarea (`GestorTareas.nueva`) | Primera versión de Paula; rehecho por Imad | Hecha, falta prueba real | `tareas/GestorTareas.java`, `docs/correcciones-revision-octubre.md` B |
+| 2026-10-13 | P1 — Login, arranque de `tareas.c` y cierre con `off` (`SesionMusic`), espera de texto en `MainframeClient` y pruebas contra el mainframe | Ainhoa; ampliado por Imad (salida con un alta a medias) | Hecha, falta la salida de sus pruebas reales | `mainframe/SesionMusic.java`, `pruebas/Prueba*.java`, `docs/correcciones-revision-octubre.md` E |
+| 2026-10-16 | Reconocimiento de pantallas (`Pantalla.identificar`) | Paula; ampliado por Imad (estado `FORMULARIO`) y pruebas con las capturas reales | Hecha | `mainframe/Pantalla.java`, `PruebasOffline` |
+| 2026-10-17 | Revisión de los commits del 9 al 16 de octubre y correcciones A-E | Imad | Hecha | `docs/correcciones-revision-octubre.md` |
 
 ---
 
