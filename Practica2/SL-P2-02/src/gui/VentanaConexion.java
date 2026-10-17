@@ -294,12 +294,14 @@ public class VentanaConexion extends JFrame {
 
     /**
      * Conexión real: conecta, hace login y arranca tareas.c. Si algo falla
-     * después de conectar, desconecta (respetando el tiempo mínimo) antes de
+     * después de conectar, intenta cerrar la sesión en orden (para no dejar
+     * "Userid is in use") y desconecta, respetando el tiempo mínimo, antes de
      * devolver el error.
      */
     private static Conexion conectarAlMainframe(String host, int puerto, String usuario, String clave)
             throws IOException {
         MainframeClient cliente = new MainframeClient();
+        SesionMusic sesion = null;
         try {
             try {
                 cliente.conectar(host, puerto);
@@ -310,12 +312,22 @@ public class VentanaConexion extends JFrame {
                 throw new IOException("No se ha podido conectar con " + host + ":" + puerto
                         + ". Comprueba la red y los datos.\n(" + e.getMessage() + ")", e);
             }
-            SesionMusic sesion = new SesionMusic(cliente);
+            sesion = new SesionMusic(cliente);
             sesion.iniciar(usuario, clave);
             sesion.arrancarTareas();
             return new Conexion(cliente, sesion, new GestorTareas(cliente));
         } catch (IOException | RuntimeException e) {
-            cliente.desconectar();
+            try {
+                if (sesion != null) {
+                    // Solo manda órdenes desde pantallas que reconoce (FSI, menús de tareas.c).
+                    sesion.cerrar();
+                }
+            } catch (IOException | RuntimeException errorAlCerrar) {
+                // Al usuario se le enseña el primer error, que es el que explica qué ha pasado.
+                System.err.println("No se ha podido cerrar la sesión: " + errorAlCerrar.getMessage());
+            } finally {
+                cliente.desconectar();
+            }
             throw e;
         }
     }
