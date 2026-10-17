@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 
 import gui.ModeloTablaTareas;
 import gui.PanelAlta;
+import tareas.GestorTareas;
+import tareas.LectorListado;
 import tareas.Tarea;
 
 /**
@@ -33,6 +35,7 @@ public class PruebasOffline {
         // Cada prueba nueva se añade aquí.
         probarModeloTabla();
         probarPanelAlta();
+        probarPaginasListado();
 
         System.out.println(fallos == 0 ? "TODO BIEN" : "FALLOS: " + fallos);
         System.exit(fallos == 0 ? 0 : 1);
@@ -141,6 +144,39 @@ public class PruebasOffline {
     /** Lee una pantalla guardada, por ejemplo {@code pantalla("a2/12-listado-general")}. */
     static String pantalla(String nombre) throws IOException {
         return Files.readString(PANTALLAS.resolve(nombre + ".txt"), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Páginas reales de los listados (img/a2): solo cuenta lo que hay tras el
+     * eco de la opción en la primera página, y el listado acaba en TOTAL TASK.
+     */
+    static void probarPaginasListado() throws IOException {
+        LectorListado lector = new LectorListado(null);
+
+        GestorTareas.Pagina vacia = GestorTareas.leerPagina(pantalla("a2/03-view-general"), "1", true, lector);
+        comprobar("listado: vacío, sin tareas", vacia.tareas().isEmpty());
+        comprobar("listado: vacío, termina", vacia.completa());
+
+        GestorTareas.Pagina general = GestorTareas.leerPagina(pantalla("a2/12-listado-general"), "1", true, lector);
+        comprobar("listado: 3 generales", general.tareas().size() == 3);
+        comprobar("listado: la primera es la TASK 0", general.tareas().get(0).numero() == 0);
+        comprobar("listado: TOTAL TASK antes de More... termina", general.completa());
+
+        GestorTareas.Pagina p1 = GestorTareas.leerPagina(pantalla("a2/31-listado-largo-p1"), "1", true, lector);
+        comprobar("listado largo: la página 1 no termina", !p1.completa());
+        comprobar("listado largo: la página 1 acaba en la TASK 26",
+                p1.tareas().get(p1.tareas().size() - 1).numero() == 26);
+        GestorTareas.Pagina p2 = GestorTareas.leerPagina(pantalla("a2/31-listado-largo-p2"), "1", false, lector);
+        comprobar("listado largo: la página 2 empieza en la TASK 27", p2.tareas().get(0).numero() == 27);
+        comprobar("listado largo: la página 2 tiene 22 tareas", p2.tareas().size() == 22);
+        comprobar("listado largo: la página 2 termina", p2.completa());
+
+        GestorTareas.Pagina especifica = GestorTareas.leerPagina(pantalla("a2/15-listado-specific"), "2", false, lector);
+        comprobar("listado: 1 específica", especifica.tareas().size() == 1
+                && especifica.tareas().get(0).tipo() == Tarea.Tipo.ESPECIFICA);
+
+        comprobar("listado: sin el eco de la opción, aún no hay página",
+                GestorTareas.leerPagina(pantalla("a2/02-view-tasks"), "1", true, lector) == null);
     }
 
     /** Anota un fallo si la condición no se cumple. */

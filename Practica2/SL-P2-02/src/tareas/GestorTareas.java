@@ -2,8 +2,10 @@ package tareas;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import mainframe.MainframeClient;
+import mainframe.Pantalla;
 
 /**
  * Operaciones de la aplicación legada: listar tareas y crear una nueva.
@@ -11,6 +13,8 @@ import mainframe.MainframeClient;
  * Es lo único que usa la interfaz gráfica para llegar a los datos.
  */
 public class GestorTareas {
+
+    private static final long ESPERA_MS = 10_000;
 
     private final MainframeClient cliente;
     private final LectorListado lector;
@@ -21,48 +25,127 @@ public class GestorTareas {
     }
 
     /**
-     * Tareas generales y específicas, ordenadas por número. Recorre todas
-     * las páginas de cada listado ("More...").
+     * Tareas generales y específicas, ordenadas por número. Desde el menú
+     * principal entra en VIEW TASKS, pide cada listado (1 y 2) recorriendo
+     * todas sus páginas ("More...") hasta "TOTAL TASK" y vuelve con 3.
+     *
+     * @throws IOException si tareas.c no muestra la pantalla esperada a tiempo
      */
     public List<Tarea> listar() throws IOException {
-        List<Tarea> todasLasTareas = new ArrayList<>();
-
-        // 1. Desde el MENU PRINCIPAL de tareas.c, elegimos la opción de ver/listar tareas (opción "2")
         cliente.escribir("2");
         cliente.intro();
+        esperarMenu(Pantalla.MENU_VIEW);
 
-        boolean listadoCompleto = false;
+        List<Tarea> tareas = new ArrayList<>();
+        tareas.addAll(listarTipo("1"));
+        tareas.addAll(listarTipo("2"));
 
-        while (!listadoCompleto) {
-            // 2. Esperamos a que la pantalla se dibuje y estabilice
-            String pantallaTexto = cliente.esperarPantallaEstable(10_000);
+        cliente.escribir("3");
+        cliente.intro();
+        esperarMenu(Pantalla.MENU_PRINCIPAL);
 
-            // 3. Extraemos las tareas presentes en la lectura actual de pantalla
-            List<Tarea> tareasPaginaActual = lector.parsearPantalla(pantallaTexto);
+        tareas.sort(Comparator.comparingInt(Tarea::numero));
+        return tareas;
+    }
 
-            // 4. Guardamos/acumulamos las tareas obtenidas (evitando duplicados si en el scroll repite líneas)
-            for (Tarea t : tareasPaginaActual) {
-                if (!todasLasTareas.contains(t)) {
-                    todasLasTareas.add(t);
+    /** Desde VIEW TASKS, pide un listado (1 generales, 2 específicas) y vuelve a VIEW TASKS. */
+    private List<Tarea> listarTipo(String opcion) throws IOException {
+        String anterior = cliente.pantalla();
+        cliente.escribir(opcion);
+        cliente.intro();
+
+        List<Tarea> tareas = new ArrayList<>();
+        boolean primera = true;
+        while (true) {
+            String texto = esperarCambio(anterior);
+            Pagina pagina = leerPagina(texto, opcion, primera, lector);
+            if (pagina == null) {
+                // Todavía no ha salido el eco de la opción: se vuelve a leer.
+                anterior = texto;
+                continue;
+            }
+            tareas.addAll(pagina.tareas());
+            if (pagina.completa()) {
+                break;
+            }
+            if (!MainframeClient.hayMas(texto)) {
+                throw new IOException("El listado de tareas no ha terminado como se esperaba.");
+            }
+            anterior = texto;
+            primera = false;
+            cliente.intro();
+        }
+        esperarMenu(Pantalla.MENU_VIEW);
+        return tareas;
+    }
+
+    /**
+     * Lo que aporta una página del listado: sus tareas y si en ella aparece
+     * "TOTAL TASK" (fin del listado).
+     */
+    public record Pagina(List<Tarea> tareas, boolean completa) {
+    }
+
+    /**
+     * Saca de una pantalla las tareas de un listado. tareas.c escribe hacia
+     * abajo sin borrar, así que en la primera página solo cuenta lo que hay
+     * después del eco de la opción ("?" y debajo la opción); las páginas
+     * siguientes empiezan limpias. Se lee hasta "TOTAL TASK".
+     *
+     * @return la página, o null si en la primera aún no se ve el eco de la opción
+     */
+    public static Pagina leerPagina(String pantalla, String opcion, boolean primera, LectorListado lector) {
+        String[] lineas = pantalla.split("\\r?\\n");
+        int inicio = 0;
+        if (primera) {
+            inicio = -1;
+            for (int i = lineas.length - 1; i > 0; i--) {
+                if (lineas[i].trim().equals(opcion) && lineas[i - 1].trim().equals("?")) {
+                    inicio = i + 1;
+                    break;
                 }
             }
-
-            // 5. Comprobar únicamente la ÚLTIMA LÍNEA mediante la función de MainframeClient
-            if (MainframeClient.hayMas(pantallaTexto)) {
-                // Si la última línea es "More...", la pantalla está llena y requiere Intro
-                cliente.intro();
-            } else {
-                // Si la última línea NO es "More...", ya hemos llegado al final del listado
-                listadoCompleto = true;
+            if (inicio < 0) {
+                return null;
             }
         }
+        StringBuilder trozo = new StringBuilder();
+        for (int i = inicio; i < lineas.length; i++) {
+            if (lineas[i].trim().equals("TOTAL TASK")) {
+                return new Pagina(lector.parsearPantalla(trozo.toString()), true);
+            }
+            trozo.append(lineas[i]).append('\n');
+        }
+        return new Pagina(lector.parsearPantalla(trozo.toString()), false);
+    }
 
-        // 6. Al terminar de volcar todo el listado, enviamos un Intro final para
-        // salir del listado y regresar al Menú Principal de tareas.c
-        cliente.intro();
-        cliente.esperarPantallaEstable(10_000);
+    /** Espera a que la pantalla sea distinta de la anterior y esté estable. */
+    private String esperarCambio(String anterior) throws IOException {
+        long limite = System.nanoTime() + ESPERA_MS * 1_000_000;
+        while (System.nanoTime() < limite) {
+            String texto = cliente.esperarPantallaEstable(ESPERA_MS);
+            if (!texto.equals(anterior)) {
+                return texto;
+            }
+        }
+        throw new IOException("tareas.c no ha respondido a tiempo.");
+    }
 
-        return todasLasTareas;
+    /**
+     * Espera a que tareas.c muestre un menú, pasando los "More..." que
+     * salgan por el camino (en un menú no se pierde nada al pasarlos).
+     */
+    private void esperarMenu(Pantalla menu) throws IOException {
+        long limite = System.nanoTime() + ESPERA_MS * 1_000_000;
+        while (System.nanoTime() < limite) {
+            String texto = cliente.esperarPantallaEstable(ESPERA_MS);
+            if (MainframeClient.hayMas(texto)) {
+                cliente.intro();
+            } else if (Pantalla.identificar(texto) == menu) {
+                return;
+            }
+        }
+        throw new IOException("tareas.c no ha vuelto al menú esperado (" + menu + ").");
     }
 
     /**
