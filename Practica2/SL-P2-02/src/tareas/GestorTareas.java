@@ -29,9 +29,11 @@ public class GestorTareas {
      * principal entra en VIEW TASKS, pide cada listado (1 y 2) recorriendo
      * todas sus páginas ("More...") hasta "TOTAL TASK" y vuelve con 3.
      *
-     * @throws IOException si tareas.c no muestra la pantalla esperada a tiempo
+     * @throws IOException si tareas.c no está en su menú principal o no muestra
+     *                     la pantalla esperada a tiempo
      */
     public List<Tarea> listar() throws IOException {
+        comprobarMenuPrincipal();
         cliente.escribir("2");
         cliente.intro();
         esperarMenu(Pantalla.MENU_VIEW);
@@ -46,6 +48,19 @@ public class GestorTareas {
 
         tareas.sort(Comparator.comparingInt(Tarea::numero));
         return tareas;
+    }
+
+    /**
+     * Cada operación empieza en el menú principal. Si una anterior falló a
+     * medias, tareas.c puede estar en otra pantalla (por ejemplo, esperando
+     * la descripción de un alta): mandar órdenes ahí guardaría datos basura.
+     */
+    private void comprobarMenuPrincipal() throws IOException {
+        Pantalla actual = Pantalla.identificar(cliente.esperarPantallaEstable(ESPERA_MS));
+        if (actual != Pantalla.MENU_PRINCIPAL) {
+            throw new IOException("La sesión con tareas.c ha quedado a medias por un error anterior "
+                    + "(pantalla: " + actual + "). Sal y vuelve a entrar.");
+        }
     }
 
     /** Desde VIEW TASKS, pide un listado (1 generales, 2 específicas) y vuelve a VIEW TASKS. */
@@ -168,6 +183,7 @@ public class GestorTareas {
         }
         boolean especifica = nombre != null && !nombre.isBlank();
 
+        comprobarMenuPrincipal();
         cliente.escribir("1");
         cliente.intro();
         esperarMenu(Pantalla.MENU_ASSIGN);

@@ -37,10 +37,10 @@ public final class Validador {
         }
 
         // 3. Validar que no contengan espacios
-        if (nom.contains(" ")) {
+        if (tieneEspacios(nom)) {
             return "El nombre no puede contener espacios.";
         }
-        if (desc.contains(" ")) {
+        if (tieneEspacios(desc)) {
             return "La descripción no puede contener espacios.";
         }
 
@@ -58,6 +58,11 @@ public final class Validador {
         }
 
         return null; // Todo correcto
+    }
+
+    /** Cualquier espacio en blanco: también tabuladores o espacios duros pegados de otro sitio. */
+    private static boolean tieneEspacios(String texto) {
+        return texto.codePoints().anyMatch(c -> Character.isWhitespace(c) || Character.isSpaceChar(c));
     }
 
     private static String validarFecha(String fecha) {

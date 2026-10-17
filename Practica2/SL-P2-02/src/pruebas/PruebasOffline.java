@@ -242,6 +242,10 @@ public class PruebasOffline {
 
         comprobar("validar: descripción con espacios",
                 "La descripción no puede contener espacios.".equals(Validador.validar("1210", "", "hola mundo")));
+        comprobar("validar: tabulador en la descripción",
+                Validador.validar("1210", "", "hola\tmundo") != null);
+        comprobar("validar: espacio duro en el nombre",
+                Validador.validar("1210", "Ana\u00A0Lopez", "repaso") != null);
         comprobar("validar: descripción de una palabra", Validador.validar("1210", "", "hola") == null);
 
         // Sin conexión: si nueva() intentara enviar algo, el error sería otro.
