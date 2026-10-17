@@ -53,7 +53,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Capa de acceso en Java: proceso hijo ws3270/s3270, envío de comandos y lectura de respuestas, sincronización (esperar a que la pantalla esté lista), **punto único de desconexión** con espera ≥ 1,5 s en todos los caminos, detección de "Hercules".
   - Capturar pantallas reales (fixtures) y tests offline del análisis de pantallas.
 - **Verificación:** tests offline en verde; sesión real login → `tasks.c` → salida → logoff sin errores y con ≥ 1 s medido en el registro; prueba de cierre por error y por Ctrl+C.
-- **Estado:** En curso (2026-10-02). Hecho: ws3270 v4.5ga6 identificado (`ENTORNO.md`); guion de órdenes probado a mano por script (2026-09-28); clase de conexión `mainframe/MainframeClient.java` con punto único de desconexión, espera de pantalla estable, tiempo máximo por orden y detección de Hercules, ejecutada contra el mainframe (conectar, leer la bienvenida, desconectar a los 1501 ms). Falta: login, arranque de `tareas.c` y salida desde Java; pantallas guardadas y tests offline; prueba real de cierre por error y por Ctrl+C.
+- **Estado:** En curso (2026-10-17). Hecho: ws3270 v4.5ga6 (`ENTORNO.md`); `MainframeClient` con punto único de desconexión, espera de pantalla estable y detección de Hercules; login, arranque de `tareas.c` y salida con `off` desde Java (`SesionMusic`); 39 pantallas guardadas y pruebas sin conexión (`PruebasOffline`, `TODO BIEN`); sesión real completa desde la GUI el 2026-10-17 (`DESCONECTADO tras 81497 ms`). Falta: prueba de cierre por error y por Ctrl+C (con `lanzar.bat` sin consola, tarea A3).
 
 ## Aplicación que hay que construir
 - **Qué pide:** programa con interfaz gráfica (lenguaje libre) que accede al mainframe lanzando el emulador como proceso; diseño de interfaz propio, tomando la maqueta como ejemplo (tabla de tareas, alta con "Nueva", "Salir").
@@ -66,7 +66,7 @@ Estados: Pendiente · En curso · Hecho (con evidencia en `docs/requisitos.md`).
   - Cierre ordenado con "Salir" y con la X (sale de `tasks.c`, logoff, R15).
   - `build.bat`/`build.sh`, runtime jlink para Windows y `lanzar.bat`.
 - **Verificación:** prueba en Windows con doble clic: conectar, listar, crear tarea, comprobar que aparece también en wc3270 a mano, casos límite y salida; capturas automáticas.
-- **Estado:** Pendiente.
+- **Estado:** En curso (2026-10-17). Hecho: ventanas de conexión y de tareas, alta, listado, segundo plano y cierre ordenado con Salir, probados contra el mainframe el 2026-10-17; casos límite de entrada (`Validador`, `Working`/`Hercules`). Falta: X contra el mainframe, comprobar en wc3270 a mano, `build.bat`/`build.sh`, runtime jlink, `lanzar.bat` y capturas.
 
 ## Documentación
 - **Qué pide:** memoria de 4-5 páginas: dificultades, todo lo hecho más allá del enunciado (sincronización, etc.), pantallazos, distribución de tareas, cronograma, alcance, y todo lo necesario para ejecutar desde Windows con doble clic.
