@@ -31,7 +31,9 @@ public class ConectorFalso implements VentanaConexion.Conector {
                     + ". Comprueba la red y los datos.");
         }
         if (!clave.equals("secreto6")) {
-            throw new IOException("Usuario o clave incorrectos.");
+            // El mismo texto que da SesionMusic.iniciar cuando no se llega al menú FSI.
+            throw new IOException("No se ha podido entrar en MUSIC/SP. Comprueba el usuario y la clave.\n"
+                    + "(No se ha llegado al menú FSI tras el inicio de sesión.)");
         }
         // El cliente nunca se conecta: desconectar() no hace nada.
         return new VentanaConexion.Conexion(new MainframeClient(), new SesionFalsa(), new GestorFalso());

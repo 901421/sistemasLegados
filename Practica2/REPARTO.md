@@ -97,12 +97,12 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - `mainframe/SesionMusic.java`: `iniciar` (pasar "More...", usuario, Tab, clave; contestar `OK` si sale "Userid is in use"; error claro si la clave no vale), `arrancarTareas` y `cerrar` (opción `3`, Intro, `off`).
   - Depende de: `MainframeClient` (hecha).
   - Hecha cuando: una prueba real conecta, entra, abre `tareas.c`, lee el menú, sale con `off` y desconecta sin errores.
-- [ ] **P2 — Leer los listados** (3 h) — R10, R11, R16
+- [x] **P2 — Leer los listados** (3 h) — R10, R11, R16 — *`LectorListado` y primera versión de `listar` por Paula; `listar` rehecho por Imad. Pruebas sin conexión y prueba real del 2026-10-17.*
   - `tareas/LectorListado.java`: sacar las tareas de las líneas `TASK n: ...` y detectar `TOTAL TASK`.
   - `GestorTareas.listar()`: pedir el listado general y el específico, guardar cada página y pulsar Intro mientras haya "More...".
   - Pruebas sin conexión con `img/a2/`: listado vacío, con tildes, de varias páginas (`31-listado-largo-p1` y `p2`).
   - Depende de: P1.
-  - Hecha cuando: las pruebas pasan y el listado real coincide con lo que se ve en wc3270.
+  - Hecha cuando: las pruebas pasan y el listado real coincide con lo que se ve en la ventana durante la prueba real (no se puede comparar después en wc3270: al salir, `tareas.c` pierde las tareas, AMB-8).
 - [ ] **P3 — Tabla de tareas** (3,5 h) — R10, R19, R20
   - `gui/ModeloTablaTareas.java` y la tabla dentro de `VentanaTareas`: columnas Nº, tipo, fecha, nombre y descripción, barra de desplazamiento, refresco con botón y tras cada alta.
   - Mientras no esté P2, con datos inventados.
