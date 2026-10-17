@@ -12,13 +12,14 @@ import java.util.regex.Pattern;
 public class LectorListado {
 
     // Regex para detectar tareas generales: TASK <num>: GENERAL <fecha> ----- <descripcion>
+    // La fecha es cualquier palabra: tareas.c la guarda sin comprobarla.
     private static final Pattern PATTERN_GENERAL = Pattern.compile(
-            "TASK\\s+(\\d+):\\s+GENERAL\\s+(\\d{4})\\s+-----\\s+(.+)"
+            "TASK\\s+(\\d+):\\s+GENERAL\\s+(\\S+)\\s+-----\\s+(.+)"
     );
 
     // Regex para detectar tareas específicas: TASK <num>: SPECIFIC <fecha> <nombre> <descripcion>
     private static final Pattern PATTERN_SPECIFIC = Pattern.compile(
-            "TASK\\s+(\\d+):\\s+SPECIFIC\\s+(\\d{4})\\s+(\\S+)\\s+(.+)"
+            "TASK\\s+(\\d+):\\s+SPECIFIC\\s+(\\S+)\\s+(\\S+)\\s+(.+)"
     );
 
     /**

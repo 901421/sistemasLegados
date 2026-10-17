@@ -12,6 +12,9 @@ public final class Validador {
     /** Nombre y descripción de una tarea específica, sumados. */
     public static final int MAX_NOMBRE_MAS_DESCRIPCION = 16;
 
+    /** Tareas que admite tareas.c en total ({@code NUM_TAREAS}); con más, no pregunta nada. */
+    public static final int MAX_TAREAS = 128;
+
     public Validador() {
     }
 

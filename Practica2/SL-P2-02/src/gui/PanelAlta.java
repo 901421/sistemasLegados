@@ -133,6 +133,11 @@ public class PanelAlta extends JPanel {
         empezarAEscribir();
     }
 
+    /** Muestra un motivo en rojo bajo el formulario, como los de la validación. */
+    public void mostrarError(String mensaje) {
+        error.setText(mensaje);
+    }
+
     /** Pone el cursor en el primer campo que hay que escribir. */
     public void empezarAEscribir() {
         (especifica.isSelected() ? nombre : descripcion).requestFocusInWindow();

@@ -52,6 +52,7 @@ import mainframe.MainframeClient;
 import mainframe.SesionMusic;
 import tareas.GestorTareas;
 import tareas.Tarea;
+import tareas.Validador;
 
 /**
  * Ventana principal "Tareas": formulario de alta ({@link PanelAlta}), tabla
@@ -350,6 +351,12 @@ public class VentanaTareas extends JFrame {
 
     /** Llamado por el formulario con datos ya validados. */
     private void nueva(String fecha, String nombre, String descripcion) {
+        // Con el máximo, tareas.c no pregunta nada: se avisa sin tocar el mainframe.
+        if (modelo.contar(null) >= Validador.MAX_TAREAS) {
+            panelAlta.mostrarError("tareas.c admite como máximo " + Validador.MAX_TAREAS
+                    + " tareas: no se pueden crear más.");
+            return;
+        }
         ejecutar("Creando tarea…", () -> {
             gestor.nueva(fecha, nombre, descripcion);
             return gestor.listar();

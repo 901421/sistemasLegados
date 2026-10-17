@@ -3,7 +3,9 @@ package tareas;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import mainframe.MainframeClient;
 import mainframe.Pantalla;
 
@@ -38,14 +40,32 @@ public class GestorTareas {
         cliente.intro();
         esperarMenu(Pantalla.MENU_VIEW);
 
-        List<Tarea> tareas = new ArrayList<>();
-        tareas.addAll(listarTipo("1"));
-        tareas.addAll(listarTipo("2"));
+        List<Tarea> generales = listarTipo("1");
+        List<Tarea> especificas = listarTipo("2");
 
         cliente.escribir("3");
         cliente.intro();
         esperarMenu(Pantalla.MENU_PRINCIPAL);
 
+        return unir(generales, especificas);
+    }
+
+    /**
+     * Junta los dos listados, ordenados por número y sin repetir. tareas.c
+     * elige qué tareas lista buscando la palabra en toda la línea
+     * ({@code strstr(tarea, "GENERAL")}): una específica cuya descripción
+     * contiene "GENERAL" sale en los dos listados. El número es único.
+     */
+    public static List<Tarea> unir(List<Tarea> generales, List<Tarea> especificas) {
+        List<Tarea> tareas = new ArrayList<>();
+        Set<Integer> vistas = new HashSet<>();
+        for (List<Tarea> listado : List.of(generales, especificas)) {
+            for (Tarea t : listado) {
+                if (vistas.add(t.numero())) {
+                    tareas.add(t);
+                }
+            }
+        }
         tareas.sort(Comparator.comparingInt(Tarea::numero));
         return tareas;
     }

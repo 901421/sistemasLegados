@@ -218,6 +218,16 @@ public class PruebasOffline {
         comprobar("listado: 1 específica", especifica.tareas().size() == 1
                 && especifica.tareas().get(0).tipo() == Tarea.Tipo.ESPECIFICA);
 
+        Tarea conGeneral = new Tarea(1, Tarea.Tipo.ESPECIFICA, "2510", "Ana", "GENERAL");
+        List<Tarea> unidas = GestorTareas.unir(
+                List.of(new Tarea(0, Tarea.Tipo.GENERAL, "1710", "", "examen"), conGeneral),
+                List.of(conGeneral));
+        comprobar("listado: una específica con GENERAL en la descripción sale una vez", unidas.size() == 2);
+        comprobar("listado: unidas en orden de número", unidas.get(0).numero() == 0 && unidas.get(1).numero() == 1);
+        List<Tarea> rara = lector.parsearPantalla("TASK 5: GENERAL ab12 ----- examen\nTASK 6: SPECIFIC 17102027 Ana repaso\n");
+        comprobar("listado: fecha que no es DDMM, tal cual", rara.size() == 2
+                && rara.get(0).fecha().equals("ab12") && rara.get(1).fecha().equals("17102027"));
+
         comprobar("listado: sin el eco de la opción, aún no hay página",
                 GestorTareas.leerPagina(pantalla("a2/02-view-tasks"), "1", true, lector) == null);
     }
