@@ -38,7 +38,7 @@ public enum Pantalla {
         }
 
         // 1. Pantallas globales de sistema / inicio de sesión
-        if (texto.contains("Hercules")) {
+        if (MainframeClient.esHercules(texto)) {
             return HERCULES;
         }
         if (texto.contains("Userid is in use")) {

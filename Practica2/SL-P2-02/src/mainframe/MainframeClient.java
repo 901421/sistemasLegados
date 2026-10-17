@@ -245,7 +245,8 @@ public class MainframeClient implements AutoCloseable {
 
     /**
      * Espera a que el mainframe termine de dibujar la pantalla: repite la
-     * lectura hasta obtener dos iguales, con texto y sin el estado "Working".
+     * lectura hasta obtener dos iguales, con texto y sin el estado "Working"
+     * en la fila de estado.
      * Las esperas propias de ws3270 (Wait) vuelven antes de tiempo.
      *
      * @return la pantalla estable
@@ -257,7 +258,7 @@ public class MainframeClient implements AutoCloseable {
 
         while (System.nanoTime() < limite) {
             String actual = pantalla();
-            if (actual.equals(anterior) && !actual.isBlank() && !actual.contains("Working")) {
+            if (actual.equals(anterior) && !actual.isBlank() && !estaTrabajando(actual)) {
                 return actual;
             }
             anterior = actual;
@@ -304,9 +305,23 @@ public class MainframeClient implements AutoCloseable {
     // Reconocimiento de pantallas
     // ------------------------------------------------------------------
 
-    /** Mainframe bloqueado: aparece la consola de Hercules en lugar de MUSIC/SP. */
+    /**
+     * Mainframe bloqueado: aparece la consola de Hercules en lugar de MUSIC/SP
+     * ("Hercules Version" en la primera fila). Con el espacio no se confunde
+     * con una tarea, que es una sola palabra.
+     */
     public static boolean esHercules(String pantalla) {
-        return pantalla.contains("Hercules");
+        return pantalla.contains("Hercules Version");
+    }
+
+    /**
+     * MUSIC aún está trabajando: "Working" en la fila de estado (la última con
+     * texto, donde salen también "Reading" y "More..."). Solo se mira esa fila
+     * para no confundirlo con una tarea llamada así.
+     */
+    public static boolean estaTrabajando(String pantalla) {
+        String texto = pantalla.stripTrailing();
+        return texto.substring(texto.lastIndexOf('\n') + 1).contains("Working");
     }
 
     /** La sesión anterior no se cerró con "off"; hay que contestar OK. */

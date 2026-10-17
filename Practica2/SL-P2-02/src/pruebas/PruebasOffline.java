@@ -170,6 +170,15 @@ public class PruebasOffline {
         comprobarPantalla("a2/07-assign-general-fecha", Pantalla.FORMULARIO);
         comprobarPantalla("a2/09-assign-general-descripcion", Pantalla.FORMULARIO);
         comprobarPantalla("a2/13-assign-specific", Pantalla.FORMULARIO);
+        comprobar("pantalla: una tarea llamada Hercules no es el bloqueo",
+                Pantalla.identificar(pantalla("a2/12-listado-general").replace("Prueba3", "Hercules"))
+                        == Pantalla.MENU_VIEW);
+        comprobar("pantalla: Reading no es Working",
+                !MainframeClient.estaTrabajando(pantalla("a2/15-listado-specific")));
+        comprobar("pantalla: una tarea llamada Working no es el estado",
+                !MainframeClient.estaTrabajando(pantalla("a2/15-listado-specific").replace("Especifica1", "Working")));
+        comprobar("pantalla: Working en la fila de estado",
+                MainframeClient.estaTrabajando(pantalla("a2/15-listado-specific").replace("Reading", "Working")));
         comprobar("pantalla: texto vacío", Pantalla.identificar("") == Pantalla.DESCONOCIDA);
     }
 
