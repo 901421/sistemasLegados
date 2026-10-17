@@ -125,7 +125,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
 - [ ] **I2 — Prueba real del cierre por error y por Ctrl+C** (1 h) — R15
   - Con el mainframe: comprobar en la traza que pasa ≥ 1 s entre conexión y desconexión en los dos casos.
   - Hecha cuando: las dos trazas están apuntadas como evidencia en `docs/requisitos.md`.
-- [ ] **I3 — Alta de una tarea** (2 h) — R10, R11, R16
+- [x] **I3 — Alta de una tarea** (2 h) — R10, R11, R16 — *Primera versión de Paula; rehecha por Imad. Prueba real del 2026-10-17: general `Camión` y específica `Peña`/`repaso` en el listado (`img/gui/r05-tabla.png`).*
   - `GestorTareas.nueva()`: navegar `ASSIGN TASKS`, enviar fecha, nombre y descripción, y confirmar `GENERAL TASK ASSIGNED` / `SPECIFIC TASK ASSIGNED`.
   - Depende de: P1.
   - Hecha cuando: un alta general y una específica aparecen en el listado, también con tildes.
