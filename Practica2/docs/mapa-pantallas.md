@@ -145,7 +145,11 @@ Límites que salen de ahí, con la fecha de 4 caracteres:
 - **Tarea general:** descripción de 12 caracteres como máximo.
 - **Tarea específica:** nombre + descripción de 16 caracteres como máximo entre los dos.
 
-Causa probable: un búfer de 32 bytes por tarea sin comprobación de longitud (la tarea siguiente se escribe a partir del byte 33). No se ha comprobado leyendo el código.
+Causa, **confirmada en el código fuente de `tareas.c` (leído el 2026-10-17, sin modificarlo)**: cada tarea es un `char[32]` (`#define LONG_TAREA 32`) dentro de `char tareas[128][32]`, y se construye con `strcat` sin comprobar la longitud; lo que pasa de 31 caracteres se escribe en la tarea siguiente.
+
+**Listados por tipo:** `tareas.c` elige las tareas de cada listado con `strstr(tarea, "GENERAL")` o `strstr(tarea, "SPECIFIC")`, es decir, si la palabra aparece **en cualquier parte** de la línea. Una específica cuya descripción contenga `GENERAL` sale en los dos listados (la GUI no la repite: se queda con una por número).
+
+**Máximo de tareas:** `#define NUM_TAREAS 128`. Con 128 tareas, al elegir el tipo `tareas.c` escribe `MAX NUMBER OF TASKS!` y vuelve al menú sin preguntar nada (la GUI avisa antes de intentarlo).
 - El listado termina en `TOTAL TASK`, sin número. **Listado vacío:** solo `TOTAL TASK` (`03-view-general`, `04-view-specific`).
 - Tras el listado vuelve solo al menú `VIEW TASKS`, sin pedir Intro (salvo `More...` si se llena la pantalla).
 
@@ -162,7 +166,7 @@ Causa probable: un búfer de 32 bytes por tarea sin comprobación de longitud (l
 | Nombre con espacios (`Ana Lopez`) | La segunda palabra se toma como descripción: sale `ENTER DESCRIPTION: SPECIFIC TASK ASSIGNED` sin esperar, y se guarda nombre `Ana`, descripción `Lopez` | `26-nombre-con-espacios` |
 | Texto de más de 31 caracteres en la línea de la tarea | Invade la tarea siguiente (apartado 5) | `29-limites-longitud` |
 
-Causa probable de los dos primeros casos: lectura con `scanf` (`%s` corta en el primer espacio y deja el resto en la entrada; `%d` no consume una letra). No se ha comprobado leyendo el código.
+Causa de los dos primeros casos, **confirmada en el código fuente de `tareas.c` (leído el 2026-10-17, sin modificarlo)**: las respuestas se leen con `scanf("%s")` (corta en el primer espacio y deja el resto para la siguiente pregunta) y las opciones con `scanf("%d")` (una letra no se consume y el menú se repite sin fin). La fecha tampoco se comprueba: se guarda la palabra tal cual.
 
 **Salir de un programa colgado:** PA1 (el estado pasa a `**Attn**`) → escribir `/cancel` + Intro (`*Terminated`) → Intro → menú FSI (`17-tras-pa1`, `18-tras-cancel`).
 
@@ -170,7 +174,7 @@ Causa probable de los dos primeros casos: lectura con `scanf` (`%s` corta en el 
 
 - Mientras `tareas.c` sigue abierto, las altas aparecen en el listado.
 - **Ninguna tarea sobrevivió a un reinicio de `tareas.c`**, ni saliendo con PA1 + `/cancel` ni saliendo con `3.EXIT`: al volver a arrancar, los dos listados salían vacíos y la numeración empezaba otra vez en `TASK 0` (`20-listado-tras-exit`). En la sesión siguiente (tras el reseteo del mainframe) pasó lo mismo: la primera tarea volvió a ser la `TASK 0` (`23-listado-tildes`).
-- El guion dice "(los datos se almacenan en disco)". No se ha podido averiguar la causa sin mirar el fichero de datos, lo que prohíbe R13. **Pendiente de preguntar** (ver `docs/requisitos.md`).
+- El guion dice "(los datos se almacenan en disco)". **Causa, confirmada en el código fuente de `tareas.c` (leído el 2026-10-17, sin modificarlo):** el programa no abre ningún fichero (no hay `fopen`); las tareas solo existen en el array `tareas` en memoria, así que desaparecen al salir. No depende de la GUI y no se puede cambiar sin modificar `tareas.c` (R12).
 
 ## 8. Salida
 
