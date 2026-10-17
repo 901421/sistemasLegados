@@ -137,43 +137,121 @@ public class GestorTareas {
      */
     private void esperarMenu(Pantalla menu) throws IOException {
         long limite = System.nanoTime() + ESPERA_MS * 1_000_000;
+        String texto = cliente.esperarPantallaEstable(ESPERA_MS);
         while (System.nanoTime() < limite) {
-            String texto = cliente.esperarPantallaEstable(ESPERA_MS);
             if (MainframeClient.hayMas(texto)) {
                 cliente.intro();
-            } else if (Pantalla.identificar(texto) == menu) {
+                // Sin esperar al cambio, la página vieja haría pulsar Intro otra vez.
+                texto = esperarCambio(texto);
+                continue;
+            }
+            if (Pantalla.identificar(texto) == menu) {
                 return;
             }
+            texto = cliente.esperarPantallaEstable(ESPERA_MS);
         }
         throw new IOException("tareas.c no ha vuelto al menú esperado (" + menu + ").");
     }
 
     /**
      * Crea una tarea: general si el nombre está vacío, específica si no.
+     * Desde el menú principal entra en ASSIGN TASKS, elige el tipo, contesta
+     * cada pregunta solo cuando aparece y vuelve con 3.
+     *
+     * @throws IOException si los datos no pasan el {@link Validador} (no se
+     *                     envía nada) o tareas.c no muestra la pantalla esperada
      */
     public void nueva(String fecha, String nombre, String descripcion) throws IOException {
-        // 1. Entramos al menú de asignar tareas (Opción "1" desde el MENU PRINCIPAL)
+        String error = Validador.validar(fecha, nombre, descripcion);
+        if (error != null) {
+            throw new IOException(error);
+        }
+        boolean especifica = nombre != null && !nombre.isBlank();
+
         cliente.escribir("1");
         cliente.intro();
-        cliente.esperarPantallaEstable(5_000);
+        esperarMenu(Pantalla.MENU_ASSIGN);
 
-        // 2. Enviamos la fecha y confirmamos con Intro
+        cliente.escribir(especifica ? "2" : "1");
+        cliente.intro();
+        esperarPregunta("ENTER DATE(DDMM):");
         cliente.escribir(fecha);
         cliente.intro();
-        cliente.esperarPantallaEstable(5_000);
-
-        // 3. Si tiene nombre, es una tarea Específica; si no, es General
-        if (nombre != null && !nombre.isBlank()) {
-            cliente.escribir(nombre);
+        if (especifica) {
+            esperarPregunta("ENTER NAME:");
+            cliente.escribir(nombre.trim());
             cliente.intro();
-            cliente.esperarPantallaEstable(5_000);
         }
-
-        // 4. Enviamos la descripción y confirmamos
-        cliente.escribir(descripcion);
+        esperarPregunta("ENTER DESCRIPTION:");
+        cliente.escribir(descripcion.trim());
         cliente.intro();
 
-        // 5. Esperamos a que la pantalla se estabilice tras el alta
-        cliente.esperarPantallaEstable(10_000);
+        String texto = esperarPregunta("OPTION:");
+        if (!texto.contains("TASK ASSIGNED") || Pantalla.identificar(texto) != Pantalla.MENU_ASSIGN) {
+            throw new IOException("tareas.c no ha confirmado el alta de la tarea.");
+        }
+        cliente.escribir("3");
+        cliente.intro();
+        esperarMenu(Pantalla.MENU_PRINCIPAL);
+    }
+
+    /**
+     * Pregunta a la que espera tareas.c: la línea que hay encima del último
+     * "?" de la zona de salida, si después de él no se ha escrito nada.
+     *
+     * @return la pregunta; "" si el "?" es lo primero de la página (la pregunta
+     *         quedó en la anterior, antes del "More..."); null si no espera nada
+     */
+    public static String pregunta(String pantalla) {
+        List<String> salida = lineasDeSalida(pantalla);
+        if (salida.isEmpty() || !salida.get(salida.size() - 1).equals("?")) {
+            return null;
+        }
+        return salida.size() == 1 ? "" : salida.get(salida.size() - 2);
+    }
+
+    /** Líneas no vacías de la zona de salida (encima de la línea "------T---"), sin espacios a los lados. */
+    private static List<String> lineasDeSalida(String pantalla) {
+        List<String> salida = new ArrayList<>();
+        for (String linea : pantalla.split("\\r?\\n")) {
+            if (linea.startsWith("------T")) {
+                break;
+            }
+            if (!linea.isBlank()) {
+                salida.add(linea.trim());
+            }
+        }
+        return salida;
+    }
+
+    /**
+     * Espera a que tareas.c haga una pregunta concreta, pasando los "More..."
+     * (la pregunta puede quedar al final de una página y el "?" en la siguiente).
+     *
+     * @return la pantalla con la pregunta
+     */
+    private String esperarPregunta(String esperada) throws IOException {
+        long limite = System.nanoTime() + ESPERA_MS * 1_000_000;
+        String ultimaLinea = "";
+        String texto = cliente.esperarPantallaEstable(ESPERA_MS);
+        while (System.nanoTime() < limite) {
+            if (MainframeClient.hayMas(texto)) {
+                List<String> salida = lineasDeSalida(texto);
+                ultimaLinea = salida.isEmpty() ? "" : salida.get(salida.size() - 1);
+                cliente.intro();
+                // Sin esperar al cambio, la página vieja haría pulsar Intro otra vez.
+                texto = esperarCambio(texto);
+                continue;
+            }
+            String actual = pregunta(texto);
+            if ("".equals(actual)) {
+                actual = ultimaLinea;
+            }
+            if (actual != null && actual.endsWith(esperada)) {
+                return texto;
+            }
+            texto = cliente.esperarPantallaEstable(ESPERA_MS);
+        }
+        throw new IOException("tareas.c no ha preguntado " + esperada);
     }
 }

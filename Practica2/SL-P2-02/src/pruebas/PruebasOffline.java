@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 
 import gui.ModeloTablaTareas;
 import gui.PanelAlta;
+import mainframe.MainframeClient;
 import tareas.GestorTareas;
 import tareas.LectorListado;
 import tareas.Tarea;
@@ -36,6 +37,7 @@ public class PruebasOffline {
         probarModeloTabla();
         probarPanelAlta();
         probarPaginasListado();
+        probarPreguntasAlta();
 
         System.out.println(fallos == 0 ? "TODO BIEN" : "FALLOS: " + fallos);
         System.exit(fallos == 0 ? 0 : 1);
@@ -177,6 +179,34 @@ public class PruebasOffline {
 
         comprobar("listado: sin el eco de la opción, aún no hay página",
                 GestorTareas.leerPagina(pantalla("a2/02-view-tasks"), "1", true, lector) == null);
+    }
+
+    /**
+     * Pregunta a la que espera tareas.c en las pantallas reales del alta, y
+     * que nueva() no envía nada si los datos no son válidos.
+     */
+    static void probarPreguntasAlta() throws IOException {
+        comprobar("alta: tras elegir general pide la fecha",
+                "ENTER DATE(DDMM):".equals(GestorTareas.pregunta(pantalla("a2/06-assign-general"))));
+        comprobar("alta: tras elegir específica pide la fecha",
+                "ENTER DATE(DDMM):".equals(GestorTareas.pregunta(pantalla("a2/13-assign-specific"))));
+        comprobar("alta: con More... aún no hay pregunta",
+                GestorTareas.pregunta(pantalla("a2/07-assign-general-fecha")) == null);
+        comprobar("alta: la pregunta quedó en la página anterior",
+                "".equals(GestorTareas.pregunta(pantalla("a2/08-more-siguiente-pagina"))));
+        comprobar("alta: tras el alta vuelve a pedir opción",
+                "OPTION:".equals(GestorTareas.pregunta(pantalla("a2/14-specific-assigned"))));
+        comprobar("alta: el listado no espera respuesta en la página 1",
+                GestorTareas.pregunta(pantalla("a2/31-listado-largo-p1")) == null);
+
+        // Sin conexión: si nueva() intentara enviar algo, el error sería otro.
+        GestorTareas gestor = new GestorTareas(new MainframeClient());
+        try {
+            gestor.nueva("3102", "", "examen");
+            comprobar("alta: fecha imposible no se envía", false);
+        } catch (IOException e) {
+            comprobar("alta: fecha imposible no se envía", e.getMessage().startsWith("Febrero"));
+        }
     }
 
     /** Anota un fallo si la condición no se cumple. */
