@@ -20,6 +20,7 @@ import mainframe.MainframeClient;
 import tareas.GestorTareas;
 import tareas.LectorListado;
 import tareas.Tarea;
+import tareas.Validador;
 
 /**
  * Pruebas que no se conectan al mainframe: usan las pantallas guardadas en
@@ -198,6 +199,10 @@ public class PruebasOffline {
                 "OPTION:".equals(GestorTareas.pregunta(pantalla("a2/14-specific-assigned"))));
         comprobar("alta: el listado no espera respuesta en la página 1",
                 GestorTareas.pregunta(pantalla("a2/31-listado-largo-p1")) == null);
+
+        comprobar("validar: descripción con espacios",
+                "La descripción no puede contener espacios.".equals(Validador.validar("1210", "", "hola mundo")));
+        comprobar("validar: descripción de una palabra", Validador.validar("1210", "", "hola") == null);
 
         // Sin conexión: si nueva() intentara enviar algo, el error sería otro.
         GestorTareas gestor = new GestorTareas(new MainframeClient());

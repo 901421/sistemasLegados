@@ -40,6 +40,9 @@ public final class Validador {
         if (nom.contains(" ")) {
             return "El nombre no puede contener espacios.";
         }
+        if (desc.contains(" ")) {
+            return "La descripción no puede contener espacios.";
+        }
 
         // 4. Validar longitudes máximas según el tipo
         if (nom.isEmpty()) {
