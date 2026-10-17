@@ -10,24 +10,26 @@ Proyecto de IntelliJ en `Practica2/SL-P2-02/`, código en `src/`. Cada capa solo
 gui  ──►  tareas  ──►  mainframe  ──►  ws3270  ──►  mainframe MUSIC/SP
 ```
 
-| Fichero | Qué hace | Estado | Responsable (propuesta) |
+| Fichero | Qué hace | Estado | Hecho por |
 |---|---|---|---|
-| `mainframe/MainframeClient.java` | Lanza ws3270, envía órdenes, lee pantallas, espera a que estén estables y desconecta respetando el tiempo mínimo | Hecho | Imad |
-| `mainframe/Pantalla.java` | Reconoce en qué pantalla estamos a partir de su texto | Esqueleto | Paula |
-| `mainframe/SesionMusic.java` | Login, arranque de `tareas.c` y cierre con `off` | Esqueleto | Paula |
-| `tareas/Tarea.java` | Los datos de una tarea | Hecho | — |
-| `tareas/LectorListado.java` | Saca las tareas del texto de un listado | Esqueleto | Paula |
-| `tareas/GestorTareas.java` | `listar()` y `nueva(...)`: navega los menús de `tareas.c` | Esqueleto | Paula (`listar`), Imad (`nueva`) |
-| `tareas/Validador.java` | Comprobaciones de D2 antes de enviar un alta | Esqueleto | Ainhoa |
-| `gui/VentanaConexion.java` | Ventana inicial con los datos de conexión (D1) | Esqueleto | Ainhoa |
-| `gui/VentanaTareas.java` | Ventana principal, trabajo en segundo plano y cierre | Esqueleto | Imad |
-| `gui/PanelAlta.java` | Formulario de alta y botón "Nueva" | Esqueleto | Ainhoa |
-| `gui/ModeloTablaTareas.java` | Datos de la tabla de tareas | Esqueleto | Paula |
+| `mainframe/MainframeClient.java` | Lanza ws3270, envía órdenes, lee pantallas, espera a que estén estables y desconecta respetando el tiempo mínimo | Hecho | Imad (`esperarTexto`: Ainhoa) |
+| `mainframe/Pantalla.java` | Reconoce en qué pantalla estamos a partir de su texto | Hecho | Paula (estado `FORMULARIO` y detección de Hercules: Imad) |
+| `mainframe/SesionMusic.java` | Login, arranque de `tareas.c` y cierre con `off` | Hecho | Ainhoa (clave oculta y cierre con un alta a medias: Imad) |
+| `tareas/Tarea.java` | Los datos de una tarea | Hecho | Imad |
+| `tareas/LectorListado.java` | Saca las tareas del texto de un listado | Hecho | Paula (sin filtro: Imad) |
+| `tareas/GestorTareas.java` | `listar()` y `nueva(...)`: navega los menús de `tareas.c` | Hecho | Primera versión de Paula; rehecho por Imad |
+| `tareas/Validador.java` | Comprobaciones de D2 antes de enviar un alta | Hecho | Paula (espacios: Imad) |
+| `gui/VentanaConexion.java` | Ventana inicial con los datos de conexión (D1) | Hecho | Imad |
+| `gui/VentanaTareas.java` | Ventana principal, trabajo en segundo plano y cierre | Hecho | Imad |
+| `gui/PanelAlta.java` | Formulario de alta y botón "Nueva" | Hecho | Imad |
+| `gui/ModeloTablaTareas.java` | Datos de la tabla de tareas | Hecho | Imad |
 | `gui/Estilo.java` | Aspecto común de las ventanas: colores, letras, márgenes e icono | Hecho | Imad |
-| `pruebas/PruebasOffline.java` | Pruebas con pantallas guardadas, sin conectar | Esqueleto | Todos |
-| `Main.java` | Arranque: abre `VentanaConexion` (ruta de ws3270 opcional como argumento) | Hecho | — |
+| `pruebas/PruebasOffline.java` | Pruebas con pantallas guardadas, sin conectar | Hecho | Imad |
+| `pruebas/Prueba*.java` | Pruebas contra el mainframe desde consola (login, arranque, cierre, errores) | Hecho | Ainhoa |
+| `pruebas/*Falso.java`, `Demo*.java` | Conexión simulada para ver las ventanas sin mainframe | Hecho | Imad |
+| `Main.java` | Arranque: abre `VentanaConexion` (ruta de ws3270 opcional como argumento) | Hecho | Imad |
 
-Los métodos de los esqueletos lanzan `UnsupportedOperationException("Pendiente")`: así todo compila desde el primer día y cada uno puede usar las clases de los demás antes de que estén terminadas.
+Al principio eran esqueletos cuyos métodos lanzaban `UnsupportedOperationException("Pendiente")`, para que todo compilara desde el primer día; hoy están todos terminados.
 
 **Las firmas ya escritas (nombre del método, parámetros y lo que devuelve) son el acuerdo entre los tres.** Quien necesite cambiar una, avisa antes al grupo, porque otro puede estar usándola.
 

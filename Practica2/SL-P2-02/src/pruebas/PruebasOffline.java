@@ -246,6 +246,14 @@ public class PruebasOffline {
                 Validador.validar("1210", "", "hola\tmundo") != null);
         comprobar("validar: espacio duro en el nombre",
                 Validador.validar("1210", "Ana\u00A0Lopez", "repaso") != null);
+        comprobar("validar: descripción vacía", Validador.validar("1210", "", "  ") != null);
+        comprobar("validar: general de 13 caracteres", Validador.validar("1210", "", "D13_456789012") != null
+                && Validador.validar("1210", "", "D12_45678901") == null);
+        comprobar("validar: específica de 17 entre nombre y descripción",
+                Validador.validar("1210", "N13_456789012", "Desc") != null
+                        && Validador.validar("1210", "N12_45678901", "Desc") == null);
+        comprobar("validar: tildes y ñ", Validador.validar("0510", "", "Camión") == null
+                && Validador.validar("0610", "Peña", "Año") == null);
         comprobar("validar: descripción de una palabra", Validador.validar("1210", "", "hola") == null);
 
         // Sin conexión: si nueva() intentara enviar algo, el error sería otro.

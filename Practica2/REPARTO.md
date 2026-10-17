@@ -92,7 +92,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
 
 ### Paula (≈11 h)
 
-- [ ] **P1 — Login, arranque de `tareas.c` y cierre de sesión** (2,5 h) — R7, R9, R14, R21
+- [x] **P1 — Login, arranque de `tareas.c` y cierre de sesión** (2,5 h) — R7, R9, R14, R21 — *Hecha por Ainhoa (`SesionMusic`) y Paula (`Pantalla`); prueba real completa el 2026-10-17. Con "Userid is in use" se da un error claro en vez de contestar `OK` (decisión del 2026-10-17); login con Intro en vez de Tab, comprobado en real.*
   - `mainframe/Pantalla.java`: reconocer cada pantalla por su texto, con pruebas sin conexión.
   - `mainframe/SesionMusic.java`: `iniciar` (pasar "More...", usuario, Tab, clave; contestar `OK` si sale "Userid is in use"; error claro si la clave no vale), `arrancarTareas` y `cerrar` (opción `3`, Intro, `off`).
   - Depende de: `MainframeClient` (hecha).
@@ -129,7 +129,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - `GestorTareas.nueva()`: navegar `ASSIGN TASKS`, enviar fecha, nombre y descripción, y confirmar `GENERAL TASK ASSIGNED` / `SPECIFIC TASK ASSIGNED`.
   - Depende de: P1.
   - Hecha cuando: un alta general y una específica aparecen en el listado, también con tildes.
-- [ ] **I4 — Trabajo en segundo plano, indicador y cierre** (3 h) — R15, R21
+- [x] **I4 — Trabajo en segundo plano, indicador y cierre** (3 h) — R15, R21 — *Hecha por Imad; prueba real con Salir el 2026-10-17 (`DESCONECTADO tras 81497 ms`). La X va por el mismo camino; falta probarla en real.*
   - `gui/VentanaTareas.java`: todas las operaciones con el mainframe en segundo plano (`SwingWorker`), con indicador de "trabajando" y botones desactivados.
   - "Salir" y la X: cierran la sesión (`SesionMusic.cerrar`), desconectan y esperan a que termine.
   - Hecha cuando: la ventana nunca se congela y el cierre siempre pasa por `MainframeClient.desconectar()`.
@@ -150,7 +150,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - La conexión se hace en segundo plano; la ventana no se congela.
   - Depende de: P1 para probar contra el mainframe.
   - Hecha cuando: probado con datos correctos, clave errónea y sin red.
-- [ ] **A2 — Formulario de alta con validaciones** (3 h) — R10, R19, R20
+- [x] **A2 — Formulario de alta con validaciones** (3 h) — R10, R19, R20 — *`PanelAlta` hecho por Imad (D3); `Validador` por Paula, corregido por Imad (espacios). Pruebas sin conexión de datos válidos, vacíos, largos, con espacios y con tildes.*
   - `tareas/Validador.java` (D2): fecha `DDMM` real, sin espacios en nombre ni descripción, descripción ≤ 12 en general, nombre + descripción ≤ 16 en específica. Con pruebas sin conexión.
   - `gui/PanelAlta.java`: los tres campos y el botón "Nueva"; muestra el error de validación o el resultado del alta.
   - Hecha cuando: probado con datos válidos, vacíos, demasiado largos, con espacios y con tildes.
