@@ -156,7 +156,8 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - Hecha cuando: probado con datos válidos, vacíos, demasiado largos, con espacios y con tildes.
 - [ ] **A3 — `build.bat`, `build.sh` y `lanzar.bat`** (2 h) — R29
   - `build.bat` / `build.sh`: compilan el programa y dejan la carpeta de ejecución lista.
-  - `lanzar.bat`: arranca el programa con el Java de I5 con doble clic, sin ventana de consola si es posible, y funciona en rutas con espacios y paréntesis.
+  - `lanzar.bat`: arranca el programa con el Java de I5 con doble clic y funciona en rutas con espacios y paréntesis.
+  - **Obligatorio sin consola:** `start "" "...\javaw.exe" ...`, nunca `java.exe` en una consola. Un Ctrl+C o cerrar la consola llega también a ws3270, que corta la conexión al instante sin esperar el mínimo (R15).
   - Hecha cuando: doble clic en `lanzar.bat` en Windows abre la ventana de conexión.
 - [ ] **A4 — Capturas automáticas** (2 h) — R25
   - Script PowerShell que abre el programa y saca las capturas para la memoria (conexión, listado, alta, errores). Avisar antes de lanzarlo porque toma el teclado y el ratón.
