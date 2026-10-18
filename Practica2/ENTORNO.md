@@ -41,7 +41,18 @@ Durante el desarrollo, Java se ejecuta en WSL y lanza este mismo `ws3270.exe` de
 | Elemento | Valor | Cómo se comprobó |
 |---|---|---|
 | JDK de desarrollo (WSL) | OpenJDK 25.0.4 LTS (SDKMAN) | `java -version` |
+| JDK de Windows (para `jlink`) | OpenJDK 27 (build 27+35-2325), en `C:\Users\imadx\.jdks\openjdk-27` | `java.exe -version` |
+| Módulos que usa el programa | `java.base`, `java.desktop` | `jdeps` |
 
-## Pendiente
+## Java reducido para la entrega
 
-- JDK de Windows y runtime reducido con `jlink` (tarea B5).
+`SL-P2-02/build.sh` (desde WSL) compila el programa, lo empaqueta en `programa/SL-P2-02.jar`, genera con `jlink.exe` de Windows un Java reducido en `java/` y copia `ws3270.exe` a `ws3270/`. Todo queda en `Practica2/entrega/SL-P2-02/`, que no se sube al repositorio.
+
+| Elemento | Valor | Cómo se comprobó |
+|---|---|---|
+| Opciones de `jlink` | `--add-modules java.base,java.desktop --strip-debug --no-header-files --no-man-pages --compress=zip-9` | `build.sh` |
+| Tamaño | `java/` 47 MB, `ws3270/` 3,1 MB, jar 64 KB; unos 34 MB comprimido en zip | `du -sh`, `zip -9` |
+| Funciona solo | las pruebas sin conexión pasan con ese Java (`TODO BIEN`); `java.exe --dry-run -jar programa/SL-P2-02.jar` carga `Main`; en ese Windows no hay `java` en el `PATH` | ejecución del 2026-10-18 |
+| Emulador incluido | `ws3270.exe` v4.5ga6, un solo fichero sin DLL | `ws3270.exe -v` |
+
+`jlink.exe` no escribe bien en rutas de WSL, así que `build.sh` genera el Java en el `%TEMP%` de Windows y luego lo copia.

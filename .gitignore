@@ -24,5 +24,8 @@ Practica2/**/.idea/httpRequests/
 Practica2/**/.idea/queries/
 Practica2/**/.idea/dataSources/
 Practica2/**/.idea/dataSources.local.xml
+
+# Práctica 2: carpeta de la entrega generada por build.sh
+Practica2/entrega/
 .vscode/
 .DS_Store
