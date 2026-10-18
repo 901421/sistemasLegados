@@ -133,7 +133,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - `gui/VentanaTareas.java`: todas las operaciones con el mainframe en segundo plano (`SwingWorker`), con indicador de "trabajando" y botones desactivados.
   - "Salir" y la X: cierran la sesión (`SesionMusic.cerrar`), desconectan y esperan a que termine.
   - Hecha cuando: la ventana nunca se congela y el cierre siempre pasa por `MainframeClient.desconectar()`.
-- [ ] **I5 — Java reducido para Windows, ws3270 dentro del zip y `ENTORNO.md`** (3 h) — R29, AMB-7
+- [x] **I5 — Java reducido para Windows, ws3270 dentro del zip y `ENTORNO.md`** (3 h) — R29, AMB-7 — *Hecha por Imad el 2026-10-18: `build.sh` con `jlink` (`java.base`, `java.desktop`, 47 MB) y `ws3270.exe`; probado contra el mainframe desde una carpeta de Windows sin Java en el `PATH` (`docs/pruebas-reales/2026-10-18-entrega-automatica.log`).*
   - Generar con `jlink` un Java mínimo **para Windows** (necesita un JDK de Windows) con solo los módulos que use el programa.
   - Copiar `ws3270.exe` (y lo que necesite) a la carpeta de la entrega; la ruta se pasa con `-Dws3270.ruta`.
   - Hecha cuando: el programa arranca en un Windows sin Java instalado usando solo lo de la carpeta.
@@ -154,7 +154,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - `tareas/Validador.java` (D2): fecha `DDMM` real, sin espacios en nombre ni descripción, descripción ≤ 12 en general, nombre + descripción ≤ 16 en específica. Con pruebas sin conexión.
   - `gui/PanelAlta.java`: los tres campos y el botón "Nueva"; muestra el error de validación o el resultado del alta.
   - Hecha cuando: probado con datos válidos, vacíos, demasiado largos, con espacios y con tildes.
-- [ ] **A3 — `build.bat`, `build.sh` y `lanzar.bat`** (2 h) — R29
+- [x] **A3 — `build.bat`, `build.sh` y `lanzar.bat`** (2 h) — R29 — *Hecha por Imad el 2026-10-18: `lanzar.bat` con `start "" javaw` (sin consola), probado con doble clic en una ruta con espacios y paréntesis, a mano (conectar, alta y salir) y con `pruebas.PruebaEntrega` (cierre con la X, `DESCONECTADO tras 38913 ms`); `build.bat` y `build.sh` generan la misma carpeta.*
   - `build.bat` / `build.sh`: compilan el programa y dejan la carpeta de ejecución lista.
   - `lanzar.bat`: arranca el programa con el Java de I5 con doble clic y funciona en rutas con espacios y paréntesis.
   - **Obligatorio sin consola:** `start "" "...\javaw.exe" ...`, nunca `java.exe` en una consola. Un Ctrl+C o cerrar la consola llega también a ws3270, que corta la conexión al instante sin esperar el mínimo (R15).

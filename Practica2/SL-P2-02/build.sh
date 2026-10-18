@@ -2,7 +2,7 @@
 # Prepara la carpeta de la entrega (para Windows) desde WSL:
 #   1. compila el programa y lo empaqueta en programa/SL-P2-02.jar;
 #   2. genera con jlink un Java reducido para Windows en java/;
-#   3. copia ws3270.exe a ws3270/.
+#   3. copia ws3270.exe a ws3270/ y lanzar.bat.
 # Resultado: ../entrega/SL-P2-02/
 #
 # Necesita: javac y jar en WSL, y un JDK de Windows con jlink.exe
@@ -40,7 +40,8 @@ rm -rf "$DESTINO_WSL"
 cp -r "$DESTINO_WSL" "$SALIDA/java"
 rm -rf "$DESTINO_WSL"
 
-echo "== 3. Emulador ws3270"
+echo "== 3. Emulador ws3270 y lanzar.bat"
 cp "$WS3270" "$SALIDA/ws3270/ws3270.exe"
+cp "$PROYECTO/lanzar.bat" "$SALIDA/lanzar.bat"
 
 echo "== Hecho: $(cd "$SALIDA" && pwd) ($(du -sh "$SALIDA" | cut -f1))"
