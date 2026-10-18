@@ -3,13 +3,14 @@
 #   1. compila el programa y lo empaqueta en programa/SL-P2-02.jar;
 #   2. genera con jlink un Java reducido para Windows en java/;
 #   3. copia ws3270.exe a ws3270/ y lanzar.bat;
-#   4. añade LEEME.txt, la memoria y el código (git archive de HEAD) y
-#      monta el zip.
+#   4. añade LEEME.txt, la memoria, la tarea voluntaria (IHJ-tasks.zip) y el
+#      código (git archive de HEAD) y monta el zip.
 # Resultado: ../entrega/SL-P2-02/ y ../entrega/SL-P2-02.zip
 #
 # Necesita: javac y jar en WSL, y un JDK de Windows con jlink.exe
 # (por defecto el de C:\Users\imadx\.jdks\openjdk-27; se cambia con JDK_WINDOWS).
-# La memoria se toma de MEMORIA (por defecto ../memoria-SL-P2-02.pdf).
+# La memoria se toma de MEMORIA (por defecto ../docs/memoria-SL-P2-02.pdf) y la
+# voluntaria de VOLUNTARIA (por defecto ../voluntaria/entrega/IHJ-tasks.zip).
 set -euo pipefail
 
 PROYECTO="$(cd "$(dirname "$0")" && pwd)"
@@ -18,7 +19,8 @@ JDK_WINDOWS="${JDK_WINDOWS:-/mnt/c/Users/imadx/.jdks/openjdk-27}"
 WS3270="${WS3270:-/mnt/c/Program Files/wc3270/ws3270.exe}"
 # Módulos que usa el programa (medidos con jdeps).
 MODULOS="java.base,java.desktop"
-MEMORIA="${MEMORIA:-$PROYECTO/../memoria-SL-P2-02.pdf}"
+MEMORIA="${MEMORIA:-$PROYECTO/../docs/memoria-SL-P2-02.pdf}"
+VOLUNTARIA="${VOLUNTARIA:-$PROYECTO/../voluntaria/entrega/IHJ-tasks.zip}"
 
 # El zip lleva el código de un commit: si hay cambios sin commit, el jar no
 # coincidiría con él. SIN_COMPROBAR_GIT=1 lo salta (solo para pruebas).
@@ -62,10 +64,15 @@ if [ -f "$MEMORIA" ]; then
 else
     echo "AVISO: no está la memoria ($MEMORIA); el zip sale sin ella." >&2
 fi
-# Código del commit actual, sin los ficheros del IDE.
+if [ -f "$VOLUNTARIA" ]; then
+    cp "$VOLUNTARIA" "$SALIDA/IHJ-tasks.zip"
+else
+    echo "AVISO: no está la voluntaria ($VOLUNTARIA); el zip sale sin ella." >&2
+fi
+# Código del commit actual, sin los ficheros del IDE ni el LEEME (ya está arriba).
 mkdir "$SALIDA/fuente"
 git -C "$PROYECTO" archive --format=tar HEAD . \
-    | tar -x -C "$SALIDA/fuente" --exclude='.idea' --exclude='*.iml'
+    | tar -x -C "$SALIDA/fuente" --exclude='.idea' --exclude='*.iml' --exclude='LEEME.txt'
 (cd "$SALIDA/.." && zip -q -r -9 SL-P2-02.zip SL-P2-02)
 
 echo "== Hecho: $(cd "$SALIDA/.." && pwd)/SL-P2-02.zip ($(du -h "$SALIDA.zip" | cut -f1)), commit $(git -C "$PROYECTO" rev-parse --short HEAD)"

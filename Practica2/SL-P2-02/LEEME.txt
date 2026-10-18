@@ -18,6 +18,8 @@ CONTENIDO
   programa\SL-P2-02.jar  el programa
   java\                  Java reducido para Windows (jlink)
   ws3270\ws3270.exe      emulador 3270 sin ventana (x3270 4.5ga6)
+  IHJ-tasks.zip          tarea voluntaria: reescritura de tasks.c
+                         (ver tasks.README dentro)
   fuente\                código fuente y scripts de compilación
                          (build.bat en Windows; build.sh desde WSL, dentro
                          del repositorio git)

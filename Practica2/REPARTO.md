@@ -88,7 +88,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - Hecha cuando: Paula y Ainhoa los han revisado y están de acuerdo (o se han cambiado).
 - [ ] **T2 — Forma de trabajo en git** *(todos)*
   - Se trabaja en `main`; `git pull --rebase` antes de empezar y antes de subir; commits pequeños y que compilen.
-- [ ] **T3 — Memoria** *(todos, al final)* — R22-R29. Ver tareas M1-M4.
+- [x] **T3 — Memoria** *(todos, al final)* — R22-R29. Ver tareas M1-M4. — *Redactada por Imad el 2026-10-18 (`docs/memoria-SL-P2-02.pdf`, 5 páginas con portada); revisada por Imad.*
 
 ### Paula (≈11 h)
 
@@ -139,7 +139,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - Hecha cuando: el programa arranca en un Windows sin Java instalado usando solo lo de la carpeta.
 - [ ] **I6 — Pruebas finales: conexión y cierre** (1 h) — R1, R15, R21
   - Login incorrecto, mainframe no disponible, cierre con la X, cierre por error; con captura.
-- [ ] **I7 — Leer [1] y [2]** (0,5 h) — R4
+- [x] **I7 — Leer [1] y [2]** (0,5 h) — R4 — *Hecha el 2026-10-18: resumidos en la introducción de la memoria.*
   - Lo justo para explicar en la memoria qué son ESA/390 y MUSIC/SP.
 
 ### Ainhoa (≈11 h)
@@ -167,14 +167,14 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
 
 ### Memoria (todos)
 
-- [ ] **M1 — Parte de cada uno** (≈3 h por persona) — R23, R24, R25, R28
+- [x] **M1 — Parte de cada uno** (≈3 h por persona) — R23, R24, R25, R28 — *Redactada por Imad el 2026-10-18 (`docs/memoria-SL-P2-02.pdf`, 5 páginas con portada); revisada por Imad.*
   - Paula: la aplicación legada, el mapa de pantallas y la lectura de listados.
   - Imad: la conexión, la sincronización, la regla de 1 s y el entorno.
   - Ainhoa: la interfaz, el diseño elegido frente a la maqueta y la entrega.
   - Cada uno incluye las dificultades que encontró y lo que hizo más allá del enunciado.
-- [ ] **M2 — Reparto y cronograma** — R26, R27
+- [x] **M2 — Reparto y cronograma** — R26, R27 — *Apartados 7 y 8 de la memoria.*
   - Tabla de reparto (este fichero) y cronograma sacado de las fechas de los commits.
-- [ ] **M3 — Cómo ejecutarlo en Windows** — R29
+- [x] **M3 — Cómo ejecutarlo en Windows** — R29 — *Apartado 9 de la memoria.*
   - Doble clic en `lanzar.bat`; credenciales precargadas (D1); qué hacer si la clave cambia.
-- [ ] **M4 — Revisión conjunta y PDF** — R22
+- [x] **M4 — Revisión conjunta y PDF** — R22 — *PDF exportado con Word el 2026-10-18; revisado por Imad.*
   - 4-5 páginas aprox. más portada; revisión de los tres; exportar a PDF y meterlo en el zip (P4).

@@ -1,2 +1,5 @@
 # Los .bat de Windows necesitan finales de linea CRLF
 *.bat text eol=crlf
+
+# El LEEME de la entrega se abre en el Bloc de notas de Windows
+Practica2/SL-P2-02/LEEME.txt text eol=crlf
