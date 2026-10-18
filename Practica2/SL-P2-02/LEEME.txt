@@ -11,6 +11,9 @@ CÓMO SE EJECUTA
      vienen ya puestos y se pueden cambiar).
   No hace falta instalar nada: el zip lleva su propio Java y el emulador.
   Hace falta red con acceso a 155.210.152.51, puerto 3270.
+  Como el zip viene de Internet, Windows puede mostrar un aviso al abrir
+  lanzar.bat: pulsar "Ejecutar" o, si sale "Windows protegió su PC",
+  "Más información" y "Ejecutar de todas formas".
 
 CONTENIDO
   lanzar.bat             arranca el programa (sin consola)
