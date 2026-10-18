@@ -107,7 +107,7 @@ Formato: `[ ]` pendiente · `[x]` hecha. Cada tarea indica los requisitos que cu
   - `gui/ModeloTablaTareas.java` y la tabla dentro de `VentanaTareas`: columnas Nº, tipo, fecha, nombre y descripción, barra de desplazamiento, refresco con botón y tras cada alta.
   - Mientras no esté P2, con datos inventados.
   - Hecha cuando: muestra el listado real, vacío y largo.
-- [ ] **P4 — Montar el zip y probarlo en limpio** (1,5 h) — R3, R29
+- [x] **P4 — Montar el zip y probarlo en limpio** (1,5 h) — R3, R29 — *Hecha por Imad el 2026-10-18: paso 4 de `build.sh` (`LEEME.txt`, memoria, `fuente/` con `git archive` sin ficheros del IDE, zip de 33 MB); descomprimido con Windows en una ruta con espacios y paréntesis, doble clic y prueba real (`docs/pruebas-reales/2026-10-18-zip-limpio.log`). Rehacer el zip con la memoria antes de enviar.*
   - `SL-P2-02.zip` desde el commit final (`git archive`) más lo compilado: programa, Java reducido, ws3270, `lanzar.bat`, `LEEME.txt` y memoria PDF.
   - Descomprimir en una carpeta nueva de Windows (ruta con espacios) y probar con doble clic.
   - No meter en el zip ficheros del IDE (`Practica2/.idea/`, `Practica2.iml`, `SL-P2-02/*.iml`) ni compilados sueltos.

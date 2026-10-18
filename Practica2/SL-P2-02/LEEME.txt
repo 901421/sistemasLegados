@@ -1,0 +1,27 @@
+SL-P2-02 - Sistemas Legados, Práctica 2 (grupo 02)
+Imad, Paula y Ainhoa
+
+Interfaz de ventanas para la aplicación legada tareas.c del mainframe
+(MUSIC/SP en IBM ESA/390), a la que se accede por TN3270 con ws3270.
+
+CÓMO SE EJECUTA
+  1. Descomprimir el zip entero en cualquier carpeta de Windows.
+  2. Doble clic en lanzar.bat.
+  3. En la ventana de conexión, pulsar "Conectar" (los datos del grupo
+     vienen ya puestos y se pueden cambiar).
+  No hace falta instalar nada: el zip lleva su propio Java y el emulador.
+  Hace falta red con acceso a 155.210.152.51, puerto 3270.
+
+CONTENIDO
+  lanzar.bat             arranca el programa (sin consola)
+  memoria-SL-P2-02.pdf   memoria de la práctica
+  programa\SL-P2-02.jar  el programa
+  java\                  Java reducido para Windows (jlink)
+  ws3270\ws3270.exe      emulador 3270 sin ventana (x3270 4.5ga6)
+  fuente\                código fuente y scripts de compilación
+                         (build.bat en Windows; build.sh desde WSL, dentro
+                         del repositorio git)
+
+AL SALIR
+  Usar el botón "Salir" o la X de la ventana: el programa cierra tareas.c
+  y la sesión de MUSIC antes de desconectar.
