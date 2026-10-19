@@ -29,3 +29,7 @@ Practica2/**/.idea/dataSources.local.xml
 Practica2/entrega/
 .vscode/
 .DS_Store
+
+# Práctica 3: compilados
+Practica3/**/out/
+Practica3/**/*.class

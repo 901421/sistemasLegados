@@ -20,7 +20,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
   - `.conf` propio de DOSBox fuera de `Database/` (ventana 640x400 sin escalar, cycles) y lanzador que lo usa.
   - Manifiesto SHA-256 de `Database/` y comprobación de que sigue igual tras usar la app.
 - **Verificación:** capturas reales de cada pantalla del mapa; el manifiesto coincide antes y después de una sesión de pruebas.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (commit `286b311`).
 
 ## 2. Objetivo (funcionalidades)
 
@@ -39,7 +39,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
 - **Requisitos:** R15 (y R13).
 - **Tareas:** clase de teclado con Robot; tabla de caracteres → teclas para la distribución española de DOSBox (letras, dígitos, espacio, `'`, `-`, `.`, `&`, `!`…); foco en la ventana de DOSBox (JNA); pausas mínimas entre teclas.
 - **Verificación:** prueba real que escribe cada carácter del conjunto permitido en un INPUT de la app y lo lee en pantalla.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (2026-10-19, prueba real `TODO BIEN`). Queda por probar en real traer DOSBox al frente cuando el foco lo tiene el navegador y devolvérselo: se verifica en el apartado 2.
 
 ## 4. Captura de la salida de la aplicación legada
 
