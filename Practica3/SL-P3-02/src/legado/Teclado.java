@@ -5,7 +5,6 @@ import com.sun.jna.platform.win32.WinDef.HKL;
 
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,18 +63,46 @@ public class Teclado {
         pulsar(KeyEvent.VK_SPACE, List.of(), "espacio");
     }
 
-    /** Pulsa la tecla (con sus modificadores) que produce el carácter c. */
-    public void tecla(char c) {
+    /**
+     * true si el carácter c se puede escribir en DOSBox con Robot. No se puede si:
+     * el teclado no tiene tecla para él; necesita AltGr (Robot lo simula con
+     * Ctrl+Alt y DOSBox no lo toma como AltGr: # @ ] | ~ en el teclado español);
+     * su tecla es una tecla muerta (^ `); o Java no tiene un código de tecla que
+     * Robot acepte (ñ, º, ç...). Comprobado con pruebas.CapturarJuegoCaracteres.
+     */
+    public boolean puedeEscribir(char c) {
+        return motivoNoEscribible(c) == null;
+    }
+
+    /** Por qué no se puede escribir c, o null si se puede. */
+    private String motivoNoEscribible(char c) {
         short codigo = User32.INSTANCE.VkKeyScanExW(c, distribucion);
-        if (codigo == -1) {
-            throw new IllegalArgumentException("El teclado no tiene ninguna tecla para '" + c + "'");
+        if (codigo == -1) return "el teclado no tiene ninguna tecla para él";
+        int vkWindows = codigo & 0xFF;
+        int modificadores = (codigo >> 8) & 0xFF;
+        if ((modificadores & 6) != 0) return "necesita AltGr";
+        if (vkWindows >= 0xBA) {
+            int mapa = User32.INSTANCE.MapVirtualKeyEx(vkWindows, MAPVK_VK_TO_CHAR, distribucion);
+            if ((mapa & 0x80000000) != 0) return "está en una tecla muerta";
+            if (teclaJava(vkWindows, c, distribucion) > 0xFFFF) return "Robot no acepta su tecla";
         }
+        return null;
+    }
+
+    /**
+     * Pulsa la tecla (con Mayúsculas si hace falta) que produce el carácter c.
+     *
+     * @throws IllegalArgumentException sin pulsar nada si c no se puede escribir
+     */
+    public void tecla(char c) {
+        String motivo = motivoNoEscribible(c);
+        if (motivo != null) {
+            throw new IllegalArgumentException("No se puede escribir '" + c + "': " + motivo);
+        }
+        short codigo = User32.INSTANCE.VkKeyScanExW(c, distribucion);
         int vkWindows = codigo & 0xFF;          // byte bajo: la tecla
-        int modificadores = (codigo >> 8) & 0xFF; // byte alto: 1 Mayús, 2 Ctrl, 4 Alt
-        List<Integer> mods = new ArrayList<>();
-        if ((modificadores & 1) != 0) mods.add(KeyEvent.VK_SHIFT);
-        if ((modificadores & 2) != 0) mods.add(KeyEvent.VK_CONTROL);
-        if ((modificadores & 4) != 0) mods.add(KeyEvent.VK_ALT);
+        int modificadores = (codigo >> 8) & 0xFF; // byte alto: 1 Mayús (2 Ctrl y 4 Alt ya descartados)
+        List<Integer> mods = (modificadores & 1) != 0 ? List.of(KeyEvent.VK_SHIFT) : List.of();
         int java = teclaJava(vkWindows, c, distribucion);
         pulsar(java, mods, String.format("'%c' (Windows 0x%02X, Java %s, modificadores %d)",
                 c, vkWindows, KeyEvent.getKeyText(java), modificadores));
@@ -83,7 +110,9 @@ public class Teclado {
 
     /**
      * Pulsa una tecla con sus modificadores: primero se bajan los modificadores,
-     * luego la tecla, y se suelta todo en orden inverso.
+     * luego la tecla, y se suelta todo en orden inverso. Los modificadores se
+     * sueltan siempre, aunque Robot rechace la tecla, para no dejar Mayúsculas
+     * pulsada en Windows.
      */
     private void pulsar(int teclaJava, List<Integer> modificadores, String descripcion) {
         if (!dosbox.estaDelante()) {
@@ -92,10 +121,17 @@ public class Teclado {
                     + "\": no se escribe en otra ventana");
         }
         if (traza) System.out.println("  tecla " + descripcion);
-        for (int m : modificadores) robot.keyPress(m);
-        robot.keyPress(teclaJava);
-        robot.keyRelease(teclaJava);
-        for (int i = modificadores.size() - 1; i >= 0; i--) robot.keyRelease(modificadores.get(i));
+        int pulsados = 0;
+        try {
+            for (int m : modificadores) {
+                robot.keyPress(m);
+                pulsados++;
+            }
+            robot.keyPress(teclaJava);
+            robot.keyRelease(teclaJava);
+        } finally {
+            for (int i = pulsados - 1; i >= 0; i--) robot.keyRelease(modificadores.get(i));
+        }
         robot.delay(PAUSA_MS);
     }
 
