@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jboss-vfs-3.3.2.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jna-5.19.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-io-2.22.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jna-platform-5.19.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tess4j-5.20.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lept4j-1.24.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jai-imageio-core-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-2.0.18.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

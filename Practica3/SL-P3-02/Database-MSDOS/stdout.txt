@@ -1,0 +1,6 @@
+DOSBox version 0.74
+Copyright 2002-2010 DOSBox Team, published under GNU GPL.
+---
+CONFIG:Loading primary settings from config file C:\Users\paulix\Desktop\sistemasLegados\Practica3\SL-P3-02\dosbox\p3-dosbox.conf
+MIDI:Opened device:win32
+DOS keyboard layout loaded with main language code SP for layout sp
