@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ZX Spectrum Archive</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="js/app.js" defer></script>
+</head>
+
+<body>
+    <!-- Cabecera -->
+    <header class="site-header">
+        <div class="container header-content">
+            <div class="brand">
+                <h1>ZX Spectrum Archive</h1>
+                <p>Archivo de programas MS-DOS</p>
+            </div>
+
+            <div class="record-counter">
+                <span>Total de registros</span>
+                <strong id="total-registros">—</strong>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+
+        <!-- Buscador -->
+        <section class="search-section"
+                 aria-labelledby="search-title">
+
+            <div class="section-heading">
+                <h2 id="search-title">Explorar programas</h2>
+                <p>
+                    Consulta los programas almacenados
+                    en el sistema legado.
+                </p>
+            </div>
+
+            <!-- Selector de búsqueda -->
+            <div class="search-tabs"
+                 role="group"
+                 aria-label="Tipo de búsqueda">
+
+                <button
+                    type="button"
+                    id="tab-nombre"
+                    class="tab active"
+                    aria-pressed="true">
+                    Por nombre
+                </button>
+
+                <button
+                    type="button"
+                    id="tab-cinta"
+                    class="tab"
+                    aria-pressed="false">
+                    Por cinta
+                </button>
+            </div>
+
+            <!-- Búsqueda por nombre -->
+            <form id="form-nombre" class="search-form">
+                <label for="nombre">
+                    Nombre del programa
+                </label>
+
+                <div class="search-input-group">
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Ej. DEFENDER"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button type="submit">
+                        Consultar
+                    </button>
+                </div>
+            </form>
+
+            <!-- Búsqueda por cinta -->
+            <form id="form-cinta"
+                  class="search-form"
+                  hidden>
+
+                <label for="cinta">
+                    Identificador de cinta
+                </label>
+
+                <div class="search-input-group">
+                    <input
+                        type="text"
+                        id="cinta"
+                        name="cinta"
+                        placeholder="Ej. A o 45"
+                        autocomplete="off"
+                        required
+                    >
+
+                    <button type="submit">
+                        Consultar
+                    </button>
+                </div>
+            </form>
+
+        </section>
+
+        <!-- Resultados compartidos -->
+        <section class="results-section"
+                 aria-labelledby="results-title">
+
+            <div class="results-header">
+                <h2 id="results-title">Resultados</h2>
+
+                <span id="results-count"></span>
+            </div>
+
+            <div class="status-container">
+                <span
+                    id="loading-spinner"
+                    class="loading-spinner"
+                    aria-hidden="true"
+                    hidden>
+                </span>
+
+                <p id="estado"
+                role="status"
+                aria-live="polite">
+                    Realiza una búsqueda para consultar los programas.
+                </p>
+            </div>
+
+            <div id="resultados" class="table-container">
+                <!-- Tabla generada desde JavaScript -->
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>Sistemas Legados · Práctica 3 · Grupo 02</p>
+        </div>
+    </footer>
+</body>
+</html>
