@@ -90,7 +90,20 @@ public class ServicioLegado {
     }
 
     private String[] capturar() throws Exception {
-        BufferedImage img = dosbox.robot().createScreenCapture(dosbox.areaCliente());
-        return lector.leer(img);
+        LectorPantalla.CeldaDesconocida ultimoError = null;
+
+        for (int intento = 0; intento < 3; intento++) {
+            BufferedImage img = dosbox.robot()
+                    .createScreenCapture(dosbox.areaCliente());
+
+            try {
+                return lector.leer(img);
+            } catch (LectorPantalla.CeldaDesconocida e) {
+                ultimoError = e;
+                Thread.sleep(100);
+            }
+        }
+
+        throw ultimoError;
     }
 }
