@@ -1,0 +1,116 @@
+@use "variables" as v;
+@use "components";
+
+/* Reset básico */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    font-family: v.$font-family;
+    color: v.$color-text;
+    background-color: v.$color-background;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+/* Contenedor general */
+.container {
+    width: min(100% - 32px, v.$container-width);
+    margin-inline: auto;
+}
+
+/* Cabecera */
+.site-header {
+    background-color: v.$color-surface;
+    border-bottom: 1px solid v.$color-border;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: v.$spacing-lg;
+
+    padding-block: v.$spacing-lg;
+}
+
+.brand {
+    h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
+    p {
+        margin: v.$spacing-xs 0 0;
+        color: v.$color-text-secondary;
+        font-size: 0.9rem;
+    }
+}
+
+/* Contenido principal */
+.main-content {
+    flex: 1;
+    padding-block: 48px;
+
+    display: flex;
+    flex-direction: column;
+    gap: v.$spacing-xl;
+}
+
+.section-heading {
+    margin-bottom: v.$spacing-lg;
+
+    h2 {
+        margin: 0 0 v.$spacing-sm;
+        font-size: 1.5rem;
+    }
+
+    p {
+        margin: 0;
+        color: v.$color-text-secondary;
+        line-height: 1.5;
+    }
+}
+
+/* Pie de página */
+.site-footer {
+    border-top: 1px solid v.$color-border;
+    text-align: center;
+
+    padding-block: v.$spacing-lg;
+
+    color: v.$color-text-secondary;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .header-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: v.$spacing-md;
+    }
+
+    .main-content {
+        padding-block: v.$spacing-lg;
+    }
+
+    .brand h1 {
+        font-size: 1.3rem;
+    }
+}
