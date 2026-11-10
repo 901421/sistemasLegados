@@ -223,9 +223,12 @@ formNombre.addEventListener("submit", event => {
 formCinta.addEventListener("submit", event => {
     event.preventDefault();
 
-    const cinta = document.getElementById("cinta").value.trim();
+    const cinta = document.getElementById("cinta")
+        .value.trim().toUpperCase();
 
-    if (!cinta) return;
+    if (!/^(?:[A-Z]|\d+)$/.test(cinta)) {
+        return;
+    }
 
     realizarBusqueda("cinta", cinta);
 });

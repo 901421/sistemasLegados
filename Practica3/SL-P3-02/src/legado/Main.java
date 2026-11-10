@@ -75,7 +75,16 @@ public class Main {
                             responderJson(exchange, 400, "{\"error\":\"Falta el parametro id\"}");
                             return;
                         }
-                        List<Juego> resultados = servicio.listarPorCinta(id.trim());
+
+                        id = id.trim().toUpperCase();
+
+                        if (!id.matches("(?:[A-Z]|[0-9]+)")) {
+                            responderJson(exchange, 400,
+                                    "{\"error\":\"El identificador debe ser una letra o un numero\"}");
+                            return;
+                        }
+
+                        List<Juego> resultados = servicio.listarPorCinta(id);
                         responderJson(exchange, 200, convertirListaAJson(resultados));
                     } catch (Exception e) {
                         responderJson(exchange, 500, "{\"error\":\"" + e.getMessage() + "\"}");
