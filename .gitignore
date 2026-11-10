@@ -35,8 +35,12 @@ Practica3/**/out/
 Practica3/**/*.class
 /Practica3/SL-P3-02/fuentes.tmp
 
-# Practica 3 - Archivos generados por Sass
+# Práctica 3 - Archivos generados por Sass
 /Practica3/SL-P3-02/frontend/styles/*.css.map
+
+# Práctica 3 - Salidas generadas por DOSBox
+Practica3/**/Database-MSDOS/**/stdout.txt
+Practica3/**/Database-MSDOS/**/stderr.txt
 
 # Archivos temporales de Windows
 Thumbs.db
