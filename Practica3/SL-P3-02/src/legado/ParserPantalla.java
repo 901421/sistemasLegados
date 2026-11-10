@@ -55,10 +55,10 @@ public class ParserPantalla {
 
             if (l.length() >= 60) {
                 String num = recortar(l, 0, 8);
-                String nombre = recortar(l, 8, 38);
-                String tipo = recortar(l, 38, 53);
-                String cinta = recortar(l, 53, 66);
-                String reg = recortar(l, 66, l.length());
+                String nombre = recortar(l, 12, 45);
+                String tipo = recortar(l, 45, 65);
+                String cinta = recortar(l, 65, 70);
+                String reg = recortar(l, 70, 80);
 
                 if (!nombre.isEmpty()) {
                     lista.add(new Juego(num, nombre, tipo, cinta, reg));
