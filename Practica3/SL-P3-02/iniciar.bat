@@ -34,7 +34,7 @@ echo Iniciando servidor Java y DOSBox...
 echo.
 
 rem Lanzar el servidor en una nueva ventana
-start "ZX Spectrum Archive - Backend" /D "%~dp0" cmd /k java -cp "out;lib/*" legado.Main
+start "ZX Spectrum Archive - Backend" /D "%~dp0" cmd /k java -Dsun.java2d.uiScale.enabled=false -cp "out;lib/*" legado.Main
 
 rem Esperar a que el servidor HTTP este disponible
 echo Esperando al servidor...
