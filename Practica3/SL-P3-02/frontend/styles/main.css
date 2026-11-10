@@ -82,6 +82,14 @@
   font-weight: 600;
 }
 
+/* Texto de ayuda de los formularios */
+.input-help {
+  margin: 0;
+  color: #697386;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 /* Ocultar el formulario inactivo */
 .search-form[hidden] {
   display: none;

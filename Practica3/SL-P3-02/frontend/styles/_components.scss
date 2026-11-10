@@ -88,6 +88,14 @@
     }
 }
 
+/* Texto de ayuda de los formularios */
+.input-help {
+    margin: 0;
+    color: v.$color-text-secondary;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
 /* Ocultar el formulario inactivo */
 .search-form[hidden] {
     display: none;
@@ -138,7 +146,7 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
+
         &:focus-visible {
             outline: 3px solid v.$color-primary;
             outline-offset: 3px;
