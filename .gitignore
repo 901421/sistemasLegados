@@ -33,3 +33,10 @@ Practica2/entrega/
 # Práctica 3: compilados
 Practica3/**/out/
 Practica3/**/*.class
+/Practica3/SL-P3-02/fuentes.tmp
+
+# Practica 3 - Archivos generados por Sass
+/Practica3/SL-P3-02/frontend/styles/*.css.map
+
+# Archivos temporales de Windows
+Thumbs.db
