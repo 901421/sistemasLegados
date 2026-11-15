@@ -31,7 +31,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
   - Wrapper: operaciones F1 (opción 4), F2 (opción 7 con N hasta agotar coincidencias), F3 (opción 3→4 y opción 6 con todas las pantallas, filtrado por partes de la cinta); vuelta al MENÚ y comprobación de estado.
   - Cola de peticiones (una a la vez) y aviso de ocupado; validación de la entrada; mensajes de "no encontrado" y de error.
 - **Verificación:** pruebas reales en Windows desde el navegador local y desde otro equipo o móvil; casos: nombre exacto, subcadena, duplicado (DEFENDER), sin resultados, minúsculas; cintas A, 1 (no coge 10), 29 (incluye E-29), B-E, inexistente (45); comparación con la salida directa de la app.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (2026-11-15). Backend y web revisados, corregidos y probados; decisiones D1-D9. `PruebasOffline`: 137 casos TODO BIEN sin DOSBox. Prueba final real con Imad: F1-F3, foco, Bloq Mayús, móvil, dos clientes a la vez, DOSBox congelado, cierre con la X, Ctrl+C y Administrador de tareas, doble arranque; R5 7/7. R6-R14, R20 y R30 cumplidos.
 
 ## 3. Generación de la entrada de la aplicación legada
 
@@ -39,7 +39,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
 - **Requisitos:** R15 (y R13).
 - **Tareas:** clase de teclado con Robot; tabla de caracteres → teclas para la distribución española de DOSBox (letras, dígitos, espacio, `'`, `-`, `.`, `&`, `!`…); foco en la ventana de DOSBox (JNA); pausas mínimas entre teclas.
 - **Verificación:** prueba real que escribe cada carácter del conjunto permitido en un INPUT de la app y lo lee en pantalla.
-- **Estado:** Hecho (2026-10-19, prueba real `TODO BIEN`). Queda por probar en real traer DOSBox al frente cuando el foco lo tiene el navegador y devolvérselo: se verifica en el apartado 2.
+- **Estado:** Hecho (2026-10-19, prueba real `TODO BIEN`). Traer DOSBox al frente con el navegador en el mismo PC y devolverle el foco: comprobado en la prueba final del apartado 2 (2026-11-15).
 
 ## 4. Captura de la salida de la aplicación legada
 

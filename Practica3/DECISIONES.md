@@ -39,7 +39,7 @@ Referencias: `Rn` = requisito y `AMB-n` = ambigüedad de `docs/requisitos.md`.
 
 **Descartado.** Alargar los tiempos fijos "por si acaso" (más lento y sin garantías). Volver al MENÚ pulsando teclas a ciegas (podría caer en "QUIERES ALTERAR SUS DATOS?").
 
-**Pendiente.** Probar en real los tiempos agotados (pausando DOSBox con Alt+Pausa) y la recuperación. Si 1 s para comprobar el MENÚ da problemas, pasar a 5 s.
+**Resultado (prueba real, 2026-11-15).** Con DOSBox congelado (Alt+Pausa), la consulta dio error a los 10 s (ordenación) con un mensaje claro y la siguiente reinició DOSBox sola. El tiempo de 1 s para comprobar el MENÚ no dio problemas. Hubo que añadir que la pantalla esté quieta (igual en dos capturas separadas 40 ms): la aplicación dibuja el pie de cada página del listado antes de terminar las filas.
 
 ---
 
@@ -83,7 +83,7 @@ Referencias: `Rn` = requisito y `AMB-n` = ambigüedad de `docs/requisitos.md`.
 
 **Descartado.** Responder "ocupado" al instante sin cola. Una DOSBox por usuario. Minimizar DOSBox entre operaciones.
 
-**Pendiente.** Primera prueba real de traer DOSBox al frente con el navegador en el mismo PC (pendiente del apartado 3).
+**Resultado (prueba real, 2026-11-15).** El foco vuelve al navegador tras cada consulta. Si alguien usa el equipo servidor durante una consulta (por ejemplo, un clic en su navegador mientras consulta el móvil), el wrapper vuelve a poner DOSBox delante, como mucho 3 veces por operación, y nunca escribe en otra ventana. Al cerrar la ventana del servidor con la X, Windows Terminal termina Java sin ejecutar el gancho de cierre: DOSBox se mete en un "job" de Windows ligado a Java, y Windows lo cierra al terminar Java por cualquier vía (X, Ctrl+C, Administrador de tareas). Un segundo arranque con el servidor en marcha avisa de que el puerto está en uso y no toca DOSBox.
 
 ---
 
@@ -95,7 +95,7 @@ Referencias: `Rn` = requisito y `AMB-n` = ambigüedad de `docs/requisitos.md`.
 
 **Descartado.** Pedir al usuario que lo desactive: puede estar en otro equipo, sin acceso al teclado del servidor.
 
-**Pendiente.** Resultado de la prueba real.
+**Resultado (prueba real, 2026-11-15).** Con Bloq Mayús activado en el equipo, DEFENDER da los mismos resultados (50 y 323): DOSBox lleva su propio estado de Bloq Mayús, que solo cambia si la tecla se pulsa con DOSBox delante. No hace falta el arreglo. Limitación documentada: pulsar Bloq Mayús, o Alt+Enter (pantalla completa), con DOSBox delante; en el segundo caso, la consulta siguiente reinicia DOSBox.
 
 ---
 
