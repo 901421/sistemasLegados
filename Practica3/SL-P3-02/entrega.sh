@@ -19,7 +19,7 @@ JDK_WINDOWS="${JDK_WINDOWS:-/mnt/c/Users/imadx/.jdks/openjdk-27}"
 # Módulos que usa el programa (medidos con jdeps sobre el código y JNA).
 MODULOS="java.base,java.desktop,java.logging,jdk.httpserver"
 MEMORIA="${MEMORIA:-$PROYECTO/../docs/memoria-SL-P3-02.pdf}"
-VIDEO="${VIDEO:-$PROYECTO/../docs/video-SL-P3-02.mp4}"
+VIDEO="${VIDEO:-$PROYECTO/../docs/video-SL-P3-02.webm}"
 
 # El zip lleva el código de un commit: con cambios sin commit, el programa no
 # coincidiría con él. SIN_COMPROBAR_GIT=1 lo salta (solo para pruebas).
@@ -81,6 +81,11 @@ done
 mkdir "$SALIDA/fuente"
 git -C "$PROYECTO" archive --format=tar HEAD . \
     | tar -x -C "$SALIDA/fuente" --exclude='.idea' --exclude='*.iml' --exclude='LEEME.txt' --exclude='Database-MSDOS'
+# Documentación del grupo (fuera de SL-P3-02 en el repositorio), también del commit.
+mkdir "$SALIDA/fuente/docs"
+git -C "$PROYECTO/.." archive --format=tar HEAD docs/mapa-pantallas.md docs/requisitos.md docs/plan.md \
+        docs/convenios.md docs/ocr-resultados.md DECISIONES.md REPARTO.md \
+    | tar -x -C "$SALIDA/fuente/docs"
 (cd "$SALIDA/.." && zip -q -r -9 SL-P3-02.zip SL-P3-02)
 
 echo "== Hecho: $(cd "$SALIDA/.." && pwd)/SL-P3-02.zip ($(du -h "$SALIDA.zip" | cut -f1)), commit $(git -C "$PROYECTO" rev-parse --short HEAD)"

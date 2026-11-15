@@ -59,7 +59,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
 - **Requisitos:** R21-R29.
 - **Tareas:** `REPARTO.md` con horas reales; `lanzar.bat` (doble clic) y `LEEME`; capturas y un vídeo corto de demostración; memoria (docx → PDF) con portada y logos de `../img/`.
 - **Verificación:** la memoria cubre cada punto de R21-R29 (lista de comprobación) y tiene 4-5 páginas; el doble clic funciona en una carpeta limpia.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (2026-11-16): `lanzar.bat` con Java reducido, `LEEME.txt`, `entrega.sh`, `REPARTO.md`, memoria (portada y 5 páginas), pantallazos y vídeo. R21-R29 cumplidos.
 
 ## 6. Referencias
 
