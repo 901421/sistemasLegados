@@ -50,10 +50,7 @@ public class ServicioLegado {
                 break; // Vuelve al MENÚ
             }
 
-            Juego juego = ParserPantalla.parsearLineaBusqueda(lineas[4]);
-            if (juego != null) {
-                resultados.add(juego);
-            }
+            resultados.add(ParserPantalla.parsearResultadoBusqueda(lineas));
 
             teclado.responder("N"); // Respondemos N para seguir leyendo todos los registros
             Thread.sleep(50);

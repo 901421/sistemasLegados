@@ -28,6 +28,7 @@ public class LectorPantalla {
 
     /** Una celda cuyo dibujo no está en la tabla de plantillas. */
     public static class CeldaDesconocida extends Exception {
+        private static final long serialVersionUID = 1L;
         public final int fila, columna;
         public final String huella;
 

@@ -141,15 +141,16 @@ Página del listado (18 filas por página):
 | Título | 1, 30 | `LOCALIZACION DE DATOS` | — |
 | a | 5, 1 | `SABES EL NUMERO DE REGISTRO QUE QUIERES BUSCAR? (S/N) ` | `N` + Enter (solo acepta `S` o `N` en mayúscula, `L7010`) |
 | b | 10, 1 | `DIME EL NOMBRE DEL PROGRAMA QUE QUIERES VER     ` | nombre + Enter (`INSTR`, subcadena, distingue mayúsculas) |
-| c (hay coincidencia) | 5, 6 | ` 50  -  DEFENDER   ARCADE   CINTA:C` (formato `N;" - ";N$;"   ";T$;"   CINTA:";C$`, `L7060`) | — |
+| c (hay coincidencia) | 5, 6 | `     50  - DEFENDER   ARCADE   CINTA:C` (formato `N;" - ";N$;"   ";T$;"   CINTA:";C$`, `L7060`: el PRINT del número deja un espacio detrás, así que hay dos espacios antes del guion y uno después; corregido el 2026-11-15 con las 17 capturas de resultado de `pruebas/conjunto/`) | — |
 | c | 7, 1 | `ES ESTE ? (S/N)  ` | `N` + Enter → busca la siguiente coincidencia desde N+1 (`L7062`) |
-| d (no hay más) | 12, 1 | `NO HAY NINGUN PROGRAMA CON ESE NOMBRE; PULSA ENTER` y `?` en 13, 1 | Enter |
+| d (no hay más) | 12, 1 | `NO HAY NINGUN PROGRAMA CON ESE NOMBRE; PULSA ENTER` y `?` en 13, 1. **No borra la pantalla:** si había resultados, siguen visibles el último (fila 5) y su `ES ESTE ?` (fila 7) (capturas `12-buscar-tras-ultimo` y `buscar-*-nohay`, comprobado el 2026-11-15) | Enter |
 | e | 10, 10 | `QUIERES BUSCAR ALGUNO MAS? S/N  ` | `N` + Enter → menú |
 
 - DEFENDER dio los registros **50** (cinta C) y **323** (cinta V), en las capturas 10 y 11. Al responder `N` al segundo, sale el mensaje del paso d (captura 12).
 - Sin ninguna coincidencia (`BC'S Q-?`), se va directo al paso d (captura 15).
 - **Nunca se responde `S`** a "ES ESTE?", porque llevaría a `QUIERES ALTERAR SUS DATOS?` (`L7065`), que permite modificar datos.
-- Al leer el resultado, NOMBRE, TIPO y CINTA van separados por 3 espacios. Un nombre con 3 espacios seguidos sería ambiguo: no hay ninguno en los datos, pero lo comprobará el analizador.
+- Al leer el resultado, NOMBRE, TIPO y CINTA van separados por 3 espacios. Un nombre con 3 espacios seguidos sería ambiguo: no hay ninguno en los datos (ninguno tiene ni 2 espacios seguidos), y `legado.ParserPantalla` exige el formato exacto o da error.
+- Como "NO HAY NINGUN…" deja el último resultado en pantalla, para saber si ha llegado un resultado nuevo hay que comprobar que su Nº es mayor que el anterior (la búsqueda sigue desde N+1, `L7062`).
 
 ## Opción 8 — Acabar (`L8000-L8040`)
 

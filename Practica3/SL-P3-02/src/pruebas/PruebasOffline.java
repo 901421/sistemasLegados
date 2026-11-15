@@ -2,6 +2,8 @@ package pruebas;
 
 import legado.Juego;
 import legado.LectorPantalla;
+import legado.PantallaLegado;
+import legado.PantallaLegado.Marca;
 import legado.ParserPantalla;
 
 import javax.imageio.ImageIO;
@@ -70,6 +72,9 @@ public class PruebasOffline {
         System.out.println("== Aplicación legada intacta (R5)");
         aplicacionIntacta(app);
 
+        System.out.println("== Marcas de pantalla (PantallaLegado)");
+        marcas(pantallas);
+
         System.out.println("== Número de registros (F1)");
         numeroDeRegistros(pantallas);
 
@@ -97,8 +102,36 @@ public class PruebasOffline {
                 "contiene " + (enDatabase == null ? "nada" : Arrays.toString(enDatabase)));
     }
 
+    /**
+     * Cada marca de PantallaLegado debe aparecer en las capturas de su pantalla
+     * y en ninguna otra. ORDENAR, LISTAR_DESDE y BUSCAR_OTRO no tienen captura en
+     * pruebas/conjunto: se comprobaron con capturas-1 (primera sesión) y se
+     * vuelven a comprobar en la prueba real.
+     */
+    private static void marcas(Map<String, String[]> pantallas) {
+        marcaSoloEn("MENU", PantallaLegado.MENU, pantallas, n -> n.equals("menu"));
+        marcaSoloEn("INFO", PantallaLegado.INFO, pantallas, n -> n.equals("informacion"));
+        marcaSoloEn("BUSCAR_ES_ESTE", PantallaLegado.BUSCAR_ES_ESTE, pantallas,
+                n -> n.startsWith("buscar") && !n.equals("buscar-6-nohay"));
+        marcaSoloEn("BUSCAR_NO_HAY", PantallaLegado.BUSCAR_NO_HAY, pantallas, n -> n.endsWith("-nohay"));
+        marcaSoloEn("BUSCAR_NOMBRE", PantallaLegado.BUSCAR_NOMBRE, pantallas,
+                n -> n.equals("buscar-6-nohay"));
+        comprobar("BUSCAR_SABES_NUMERO en buscar-6-nohay", PantallaLegado.BUSCAR_SABES_NUMERO.en(pantallas.get("buscar-6-nohay")), "");
+        marcaSoloEn("LISTADO_CABECERA", PantallaLegado.LISTADO_CABECERA, pantallas, n -> n.startsWith("listado"));
+        marcaSoloEn("LISTADO_PIE", PantallaLegado.LISTADO_PIE, pantallas, n -> n.startsWith("listado"));
+    }
+
+    private static void marcaSoloEn(String nombre, Marca marca, Map<String, String[]> pantallas,
+                                    java.util.function.Predicate<String> debeEstar) {
+        List<String> mal = new ArrayList<>();
+        for (var e : pantallas.entrySet()) {
+            if (marca.en(e.getValue()) != debeEstar.test(e.getKey())) mal.add(e.getKey());
+        }
+        comprobar(nombre + " solo en sus pantallas", mal.isEmpty(), mal.isEmpty() ? "" : "falla en " + mal);
+    }
+
     /** F1: la pantalla de información da 763; otra pantalla no puede dar un número (debe ser un error). */
-    private static void numeroDeRegistros(Map<String, String[]> pantallas) {
+    private static void numeroDeRegistros(Map<String, String[]> pantallas) throws Exception {
         int total = ParserPantalla.extraerTotalRegistros(pantallas.get("informacion"));
         comprobar("pantalla de información → 763", total == 763, "leído " + total);
         debeFallar("pantalla del MENÚ → error, no un número",
@@ -110,13 +143,13 @@ public class PruebasOffline {
      * coincidir con el registro Nº de DATOS.DAT; una línea que no tiene ese formato
      * debe dar error, no un juego inventado.
      */
-    private static void busquedaPorNombre(Map<String, String[]> pantallas, List<String[]> datos) {
+    private static void busquedaPorNombre(Map<String, String[]> pantallas, List<String[]> datos) throws Exception {
         int bien = 0, total = 0;
         for (var e : pantallas.entrySet()) {
             String[] lineas = e.getValue();
             if (!e.getKey().startsWith("buscar") || !String.join("\n", lineas).contains("ES ESTE")) continue;
             total++;
-            Juego j = ParserPantalla.parsearLineaBusqueda(lineas[4]);
+            Juego j = ParserPantalla.parsearResultadoBusqueda(lineas);
             String[] esperado = registro(datos, j.getNumero());
             boolean ok = esperado != null && j.getNombre().equals(esperado[0])
                     && j.getTipo().equals(esperado[1]) && j.getCinta().equals(esperado[2]);
@@ -124,13 +157,17 @@ public class PruebasOffline {
             else System.out.println("    " + e.getKey() + ": leído " + j.toJson() + ", esperado " + Arrays.toString(esperado));
         }
         comprobar("resultados de búsqueda iguales a DATOS.DAT", total > 0 && bien == total, bien + "/" + total);
-        // Fila 7 del menú: "1 - INTRODUCIR DATOS" (tiene un guion, pero no es un resultado).
-        debeFallar("línea del MENÚ como resultado → error",
-                () -> ParserPantalla.parsearLineaBusqueda(pantallas.get("menu")[6]).toJson());
+        String[] dosEspacios = pantallas.get("buscar-1-res1").clone();
+        dosEspacios[4] = dosEspacios[4].replace("DEFENDER   ARCADE", "DEFENDER  ARCADE");
+        debeFallar("resultado con 2 espacios en vez de 3 → error",
+                () -> ParserPantalla.parsearResultadoBusqueda(dosEspacios).toJson());
+        // El MENÚ tiene líneas con guion ("1 - INTRODUCIR DATOS"), pero ninguna es un resultado.
+        debeFallar("pantalla del MENÚ como resultado → error",
+                () -> ParserPantalla.parsearResultadoBusqueda(pantallas.get("menu")).toJson());
     }
 
     /** F3: las 43 páginas del listado, en orden, deben dar los 763 registros exactos. */
-    private static List<Juego> listado(Map<String, String[]> pantallas, List<String[]> datos) {
+    private static List<Juego> listado(Map<String, String[]> pantallas, List<String[]> datos) throws Exception {
         List<Juego> todos = new ArrayList<>();
         for (int pagina = 1; pagina <= 43; pagina++) {
             todos.addAll(ParserPantalla.parsearTablaListado(pantallas.get(String.format("listado-pag%02d", pagina))));
@@ -149,6 +186,21 @@ public class PruebasOffline {
                 todos.size() + " filas leídas, " + distintos + " distintas");
         debeFallar("pantalla del MENÚ como página del listado → error",
                 () -> ParserPantalla.parsearTablaListado(pantallas.get("menu")).size() + " filas leídas");
+        boolean paginasBien = true;
+        for (int pagina = 1; pagina <= 43; pagina++) {
+            int filas = ParserPantalla.parsearTablaListado(pantallas.get(String.format("listado-pag%02d", pagina))).size();
+            if (filas != (pagina < 43 ? 18 : 7)) paginasBien = false;
+        }
+        comprobar("páginas 1-42 con 18 programas y la 43 con 7", paginasBien, "");
+
+        // Filas alteradas a propósito (en una copia en memoria de la página 1).
+        String[] hueco = pantallas.get("listado-pag01").clone();
+        hueco[6] = " ".repeat(80);
+        debeFallar("fila vacía en medio de una página → error",
+                () -> ParserPantalla.parsearTablaListado(hueco).size() + " filas leídas");
+        String[] letras = pantallas.get("listado-pag01").clone();
+        letras[4] = "      X1" + letras[4].substring(8);
+        debeFallar("Nº con letras → error", () -> ParserPantalla.parsearTablaListado(letras).size() + " filas leídas");
         return todos;
     }
 
