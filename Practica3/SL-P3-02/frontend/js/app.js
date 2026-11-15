@@ -8,6 +8,7 @@
  *   /api/registros        → {"totalRegistros": 763, "pantalla": [25 líneas]}
  *   /api/nombre?q=...     → {"juegos": [...], "pantalla": [...]}
  *   /api/cinta?id=...     → {"juegos": [...], "pantalla": [...]}
+ *   /api/pantalla         → {"pantalla": [...], "hace": 120, "operando": true} (en directo)
  *   si algo falla         → {"error": "mensaje", "tipo": "entrada" | "ocupado" | "legado" | "interno"}
  */
 
@@ -27,6 +28,8 @@ const botonActualizar = document.getElementById("actualizar-registros");
 
 const loadingSpinner = document.getElementById("loading-spinner");
 const pantalla = document.getElementById("pantalla");
+const pantallaPie = document.getElementById("pantalla-pie");
+const pantallaPanel = document.querySelector(".legacy-screen");
 
 let buscando = false;
 
@@ -190,6 +193,39 @@ function mostrarPantalla(lineas) {
     pantalla.textContent = lineas.map(l => l.replace(/\s+$/, "")).join("\n");
 }
 
+const PIE_ULTIMA = "La última pantalla que ha leído el wrapper en DOSBox para la consulta.";
+const PIE_DIRECTO = "En directo: lo que está mostrando ahora la aplicación en DOSBox mientras el wrapper la maneja.";
+const ESPERA_DIRECTO_MS = 300;
+let enDirecto = false;
+
+/**
+ * Mientras dura una consulta, pide cada poco la última captura que ha hecho el
+ * wrapper y la pinta: se ve la aplicación navegando por sus menús y pantallas
+ * (D9). No añade trabajo a DOSBox: son las capturas que el wrapper ya hace.
+ */
+async function seguirEnDirecto() {
+    enDirecto = true;
+    pantallaPanel.classList.add("legacy-screen--live");
+    pantallaPie.textContent = PIE_DIRECTO;
+    while (enDirecto) {
+        try {
+            const datos = await pedir("/api/pantalla");
+            if (enDirecto && datos.pantalla) mostrarPantalla(datos.pantalla);
+        } catch (e) {
+            // Si una petición falla, se sigue con la siguiente.
+        }
+        await new Promise(r => setTimeout(r, ESPERA_DIRECTO_MS));
+    }
+}
+
+/** Deja de seguir en directo y muestra la pantalla final de la consulta. */
+function pararDirecto(lineasFinales) {
+    enDirecto = false;
+    pantallaPanel.classList.remove("legacy-screen--live");
+    pantallaPie.textContent = PIE_ULTIMA;
+    mostrarPantalla(lineasFinales);
+}
+
 /* ---- F2 y F3 ---------------------------------------------------------------- */
 
 /** Comprueba el nombre como el servidor, para avisar antes de enviarlo. Devuelve el error o null. */
@@ -348,6 +384,8 @@ async function realizarBusqueda(tipo, valor) {
     resultados.replaceChildren();
     contadorResultados.textContent = "";
     mostrarEstado("");
+    seguirEnDirecto();
+    let final = null;
 
     try {
         const endpoint = tipo === "nombre"
@@ -356,13 +394,14 @@ async function realizarBusqueda(tipo, valor) {
         const datos = await pedir(endpoint);
         if (!Array.isArray(datos.juegos)) throw new ErrorConsulta("Respuesta inválida del servidor.", "interno");
         mostrarResultados(tipo, valor, datos.juegos);
-        mostrarPantalla(datos.pantalla);
+        final = datos.pantalla;
 
     } catch (error) {
         console.error("Error durante la búsqueda:", error);
         mostrarEstado(error.message, error.tipo === "ocupado" ? "warning-message" : "error-message");
 
     } finally {
+        pararDirecto(final);
         establecerCargando(false);
         // Después de cada consulta, el número de registros se vuelve a pedir (D4).
         cargarTotalRegistros();

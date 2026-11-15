@@ -44,6 +44,11 @@ public class Turno {
         }
     }
 
+    /** true si alguna operación tiene el turno ahora mismo. */
+    public boolean enUso() {
+        return candado.isLocked();
+    }
+
     /** Operaciones que esperan su turno ahora mismo (para el registro). */
     public int enEspera() {
         return candado.getQueueLength();

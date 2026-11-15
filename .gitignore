@@ -46,3 +46,4 @@ Practica3/**/Database-MSDOS/**/stderr.txt
 Thumbs.db
 # Práctica 3: número de proceso del DOSBox lanzado por el programa
 Practica3/**/dosbox/dosbox.pid
+Practica3/**/dosbox/ultimo-cierre.txt

@@ -62,6 +62,8 @@ public class ServicioLegado implements AplicacionLegada {
     private final LectorPantalla lector;
     private final Turno turno = new Turno(ESPERA_COLA);
     private volatile VentanaDosBox dosbox;
+    /** La última captura hecha (D9: la web la muestra en directo). */
+    private volatile Captura ultimaCaptura;
     private volatile Teclado teclado;
 
     /**
@@ -221,11 +223,22 @@ public class ServicioLegado implements AplicacionLegada {
             try {
                 avisarSiBloqMayus();
                 prepararMenu();
+                dosbox.empezarOperacion();
                 return operacion.hacer();
             } finally {
                 if (dosbox != null) dosbox.devolverFoco(anterior);
             }
         });
+    }
+
+    @Override
+    public Captura ultimaCaptura() {
+        return ultimaCaptura;
+    }
+
+    @Override
+    public boolean operando() {
+        return turno.enUso();
     }
 
     /** Operaciones esperando turno ahora mismo. */
@@ -266,9 +279,33 @@ public class ServicioLegado implements AplicacionLegada {
         return Espera.hasta(this::capturar, descripcion, condicion, ESPERA_PANTALLA);
     }
 
-    /** Una captura del área de cliente de DOSBox, leída con las plantillas. */
+    /** Una captura del área de cliente de DOSBox, leída con las plantillas; se guarda como la última. */
     private String[] capturar() throws Exception {
-        return lector.leer(dosbox.robot().createScreenCapture(dosbox.areaCliente()));
+        dosbox.asegurarDelante(); // con otra ventana delante, la captura vería esa ventana
+        java.awt.Rectangle area = dosbox.areaCliente();
+        comprobarTamano(area);
+        String[] lineas = lector.leer(dosbox.robot().createScreenCapture(area));
+        ultimaCaptura = new Captura(lineas, System.currentTimeMillis());
+        return lineas;
+    }
+
+    /**
+     * La ventana de DOSBox tiene que medir 640x400 (80x25 celdas de 8x16). Si mide
+     * otra cosa, casi siempre es porque alguien ha pulsado Alt+Enter (pantalla
+     * completa) o la ventana está escalada (C18): no se lee nada y se trata como
+     * una pantalla inesperada, así que la consulta da un error claro y la siguiente
+     * reinicia DOSBox, que vuelve a arrancar en su ventana de 640x400.
+     *
+     * @throws PantallaInesperada si el área de DOSBox no mide 640x400
+     */
+    public static void comprobarTamano(java.awt.Rectangle area) throws PantallaInesperada {
+        int ancho = LectorPantalla.COLUMNAS * LectorPantalla.ANCHO_CELDA;
+        int alto = LectorPantalla.FILAS * LectorPantalla.ALTO_CELDA;
+        if (area.width != ancho || area.height != alto) {
+            throw new PantallaInesperada("la ventana de DOSBox de " + ancho + "x" + alto
+                    + " (¿pantalla completa con Alt+Enter, o ventana escalada?)",
+                    "mide " + area.width + "x" + area.height);
+        }
     }
 
     /** Un resultado de búsqueda completo, esperando respuesta y posterior al anterior (público para PruebasOffline). */

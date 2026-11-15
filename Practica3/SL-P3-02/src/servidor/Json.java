@@ -51,6 +51,13 @@ public final class Json {
         return "{\"juegos\":" + juegos(r.datos()) + ",\"pantalla\":" + pantalla(r.pantalla()) + "}";
     }
 
+    /** La pantalla en directo: {"pantalla":[...],"hace":120,"operando":true}; sin captura todavía, pantalla null. */
+    public static String enDirecto(legado.Captura c, boolean operando) {
+        return "{\"pantalla\":" + (c == null ? "null" : pantalla(c.lineas()))
+                + ",\"hace\":" + (c == null ? "null" : String.valueOf(System.currentTimeMillis() - c.instante()))
+                + ",\"operando\":" + operando + "}";
+    }
+
     /** Las líneas de la pantalla de la aplicación, como lista de cadenas (o null si no hay). */
     public static String pantalla(String[] lineas) {
         if (lineas == null) return "null";

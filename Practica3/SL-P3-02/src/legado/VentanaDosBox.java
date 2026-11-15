@@ -1,7 +1,11 @@
 package legado;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HKL;
@@ -44,6 +48,65 @@ public class VentanaDosBox {
         int DwmSetWindowAttribute(HWND ventana, int atributo, IntByReference valor, int tamano);
     }
 
+    /**
+     * kernel32.dll: los "Job Objects" de Windows, que agrupan procesos. Un job con
+     * KILL_ON_JOB_CLOSE cierra sus procesos cuando se cierra el último handle del
+     * job; ese handle solo lo tiene este programa, así que, termine Java como
+     * termine (la X de la consola, Ctrl+C, el Administrador de tareas o un fallo),
+     * Windows cierra DOSBox (C11).
+     */
+    private interface Kernel32Extra extends StdCallLibrary {
+        Kernel32Extra INSTANCIA = Native.load("kernel32", Kernel32Extra.class);
+        HANDLE CreateJobObjectW(Pointer atributos, WString nombre);
+        boolean SetInformationJobObject(HANDLE job, int clase, Pointer informacion, int tamano);
+        boolean AssignProcessToJobObject(HANDLE job, HANDLE proceso);
+    }
+
+    private static final int JOB_OBJECT_EXTENDED_LIMIT_INFORMATION = 9;
+    /** sizeof(JOBOBJECT_EXTENDED_LIMIT_INFORMATION) en Windows de 64 bits. */
+    private static final int TAMANO_LIMITES_JOB = 144;
+    /** Posición de LimitFlags dentro de la estructura (tras dos LARGE_INTEGER). */
+    private static final int POSICION_LIMIT_FLAGS = 16;
+    private static final int JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000;
+    private static final int PROCESS_TERMINATE = 0x0001, PROCESS_SET_QUOTA = 0x0100;
+
+    /** El job de los DOSBox lanzados por el programa (se crea una vez y no se cierra nunca a mano). */
+    private static HANDLE job;
+
+    /**
+     * Mete el proceso de DOSBox en el job que lo cerrará al terminar Java. Si no se
+     * puede (Java de 32 bits o Windows lo rechaza), se avisa y se sigue: quedan el
+     * gancho de cierre y el fichero dosbox.pid para el siguiente arranque.
+     */
+    private static void cerrarConJava(long pid) {
+        try {
+            if (Native.POINTER_SIZE != 8) {
+                System.out.println("Aviso: Java de 32 bits; DOSBox no se cerrará solo si Java termina de golpe.");
+                return;
+            }
+            synchronized (VentanaDosBox.class) {
+                if (job == null) {
+                    HANDLE nuevo = Kernel32Extra.INSTANCIA.CreateJobObjectW(Pointer.NULL, null);
+                    Memory limites = new Memory(TAMANO_LIMITES_JOB);
+                    limites.clear();
+                    limites.setInt(POSICION_LIMIT_FLAGS, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE);
+                    if (nuevo == null || !Kernel32Extra.INSTANCIA.SetInformationJobObject(nuevo,
+                            JOB_OBJECT_EXTENDED_LIMIT_INFORMATION, limites, TAMANO_LIMITES_JOB)) {
+                        System.out.println("Aviso: Windows no deja crear el job (error " + Native.getLastError() + ").");
+                        return;
+                    }
+                    job = nuevo;
+                }
+            }
+            HANDLE proceso = Kernel32.INSTANCE.OpenProcess(PROCESS_TERMINATE | PROCESS_SET_QUOTA, false, (int) pid);
+            boolean ok = proceso != null && Kernel32Extra.INSTANCIA.AssignProcessToJobObject(job, proceso);
+            if (!ok) System.out.println("Aviso: DOSBox no se ha podido asociar al job (error " + Native.getLastError() + ").");
+            if (proceso != null) Kernel32.INSTANCE.CloseHandle(proceso);
+        } catch (UnsatisfiedLinkError e) {
+            System.out.println("Aviso: sin Job Objects (" + e.getMessage() + ").");
+        }
+    }
+
     private static final int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
     private static final int DWMWCP_DONOTROUND = 1;
     private static final int SW_RESTORE = 9;
@@ -52,6 +115,11 @@ public class VentanaDosBox {
     private final HWND ventana;
     private final Robot robot;
     private final File pid;
+
+    /** Veces que se puede recuperar el foco en una misma operación antes de abandonarla. */
+    public static final int MAX_RECUPERACIONES = 3;
+    /** Recuperaciones del foco en la operación en curso (ver asegurarDelante). */
+    private int recuperaciones;
 
     private VentanaDosBox(Process proceso, HWND ventana, Robot robot, File pid) {
         this.proceso = proceso;
@@ -121,6 +189,7 @@ public class VentanaDosBox {
                 "Database\\gwbasic.bat", "-noconsole", "-conf", conf.getAbsolutePath());
         pb.directory(carpetaApp);
         Process proceso = pb.start();
+        cerrarConJava(proceso.pid());
         java.nio.file.Files.writeString(pid.toPath(), String.valueOf(proceso.pid()));
 
         long limite = System.currentTimeMillis() + esperaMaxMs;
@@ -185,6 +254,32 @@ public class VentanaDosBox {
         } catch (UnsatisfiedLinkError e) {
             // Sin dwmapi.dll no hay esquinas redondeadas que quitar.
         }
+    }
+
+    /** Empieza la cuenta de recuperaciones del foco para una operación nueva. */
+    public void empezarOperacion() {
+        recuperaciones = 0;
+    }
+
+    /**
+     * Comprueba que DOSBox sigue delante y, si no, lo vuelve a poner delante. Pasa
+     * cuando alguien usa el equipo servidor durante una operación (por ejemplo, un
+     * clic en su navegador mientras otro cliente consulta): en lugar de abandonar la
+     * operación, se recupera el foco, como mucho MAX_RECUPERACIONES veces por
+     * operación, para no pelearse sin fin con quien está usando el equipo.
+     *
+     * @throws IllegalStateException si se ha superado el tope o Windows no deja ponerlo delante
+     */
+    public void asegurarDelante() {
+        if (estaDelante()) return;
+        String quien = tituloVentanaConFoco();
+        if (++recuperaciones > MAX_RECUPERACIONES) {
+            throw new IllegalStateException("DOSBox ha perdido el foco más de " + MAX_RECUPERACIONES
+                    + " veces en la misma operación (ahora lo tiene \"" + quien + "\")");
+        }
+        System.out.println("DOSBox ha perdido el foco (lo tiene \"" + quien + "\"): se vuelve a poner delante ("
+                + recuperaciones + "/" + MAX_RECUPERACIONES + ").");
+        traerAlFrente();
     }
 
     /** true si DOSBox es la ventana que tiene el foco (la que recibe el teclado). */

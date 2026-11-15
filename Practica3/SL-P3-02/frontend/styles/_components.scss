@@ -483,30 +483,57 @@
     }
 }
 
-// La ventana de Windows en la que corre DOSBox: barra de título clara y borde fino.
+// Indicador "En directo": solo mientras la web sigue la pantalla durante una consulta.
+.live-badge {
+    display: none;
+    margin-left: v.$spacing-sm;
+    padding: 1px 8px 1px 18px;
+    border-radius: 999px;
+    background-color: v.$color-tinta;
+    color: v.$color-contador;
+    font-size: v.$texto-pequeno;
+    font-weight: 700;
+    vertical-align: middle;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: 50%;
+        width: 6px;
+        height: 6px;
+        margin-top: -3px;
+        border-radius: 50%;
+        background-color: v.$color-contador;
+        animation: latir 1s ease-in-out infinite;
+    }
+
+    .legacy-screen--live & {
+        display: inline-block;
+    }
+}
+
+@keyframes latir {
+    50% {
+        opacity: 0.2;
+    }
+}
+
+// En directo, el marco de la pantalla se marca con el amarillo del contador.
+.legacy-screen--live .dosbox-window {
+    border-color: v.$color-contador;
+    box-shadow: 0 0 0 2px v.$color-contador, 0 10px 24px rgba(v.$color-tinta, 0.18);
+}
+
+// El marco de la pantalla de DOSBox: borde fino y sombra suave, sin barra de
+// título (unos botones de ventana que no hacen nada confundirían).
 .dosbox-window {
     border: 1px solid #8a8f9c;
-    border-radius: 8px 8px 2px 2px;
+    border-radius: v.$radio-objeto;
     overflow: hidden;
     box-shadow: 0 10px 24px rgba(v.$color-tinta, 0.18);
-
-    &__title {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: v.$spacing-md;
-        padding: 6px 10px 6px 12px;
-        background-color: #f3f3f3;
-        color: #1b1b1b;
-        font-family: "Segoe UI", system-ui, sans-serif;
-        font-size: 12px;
-        white-space: nowrap;
-    }
-
-    &__buttons {
-        letter-spacing: 1.1em;
-        color: #444444;
-    }
+    transition: border-color 0.2s;
 }
 
 @media (max-width: 1300px) {

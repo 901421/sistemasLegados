@@ -62,6 +62,7 @@ public final class ServidorWeb {
         server.createContext("/api/registros", api.registros());
         server.createContext("/api/nombre", api.nombre());
         server.createContext("/api/cinta", api.cinta());
+        server.createContext("/api/pantalla", api.pantalla());
 
         // Servir el frontend desde la carpeta frontend/
         server.createContext("/", new FicherosEstaticos(frontend));

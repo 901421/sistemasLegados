@@ -58,6 +58,15 @@ public class ApiLegado {
                 Validacion.nombre(peticion.parametro("q"), c -> legado.puedeEscribir((char) c)))));
     }
 
+    /**
+     * /api/pantalla: la última captura que ha hecho el wrapper, para verla en
+     * directo mientras dura una consulta (D9). No espera turno ni toca DOSBox, y
+     * no se registra en la consola (la web la pide varias veces por segundo).
+     */
+    public HttpHandler pantalla() {
+        return api(peticion -> Json.enDirecto(legado.ultimaCaptura(), legado.operando()), false);
+    }
+
     /** /api/cinta?id=A */
     public HttpHandler cinta() {
         return api(peticion -> Json.juegos(legado.listarPorCinta(Validacion.cinta(peticion.parametro("id")))));
@@ -81,6 +90,11 @@ public class ApiLegado {
 
     /** Envuelve una acción con lo común a toda la API: método, registro y errores. */
     private static HttpHandler api(Accion accion) {
+        return api(accion, true);
+    }
+
+    /** Como api(accion), indicando si cada petición se escribe en el registro de la consola. */
+    private static HttpHandler api(Accion accion, boolean registrar) {
         return exchange -> {
             long inicio = System.nanoTime();
             String direccion = exchange.getRequestURI().getRawPath()
@@ -123,7 +137,7 @@ public class ApiLegado {
                 }
             }
             responder(exchange, codigo, cuerpo);
-            System.out.printf("[%s] %s %s -> %d en %d ms%s%n", LocalTime.now().format(HORA),
+            if (registrar || codigo != 200) System.out.printf("[%s] %s %s -> %d en %d ms%s%n", LocalTime.now().format(HORA),
                     exchange.getRequestMethod(), direccion, codigo, (System.nanoTime() - inicio) / 1_000_000,
                     detalle.isEmpty() ? "" : " (" + detalle + ")");
         };

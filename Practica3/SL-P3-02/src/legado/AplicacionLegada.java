@@ -22,6 +22,16 @@ public interface AplicacionLegada {
     /** F3: programas de una cinta en el orden en que están grabados (opciones 3 y 6). */
     Resultado<List<Juego>> listarPorCinta(String idCinta) throws Exception;
 
+    /**
+     * La última captura de la pantalla que ha hecho el wrapper, para verla en
+     * directo durante una consulta (null si todavía no hay ninguna). No espera
+     * turno ni toca DOSBox: devuelve la que ya se hizo.
+     */
+    Captura ultimaCaptura();
+
+    /** true si ahora mismo hay una operación usando la aplicación. */
+    boolean operando();
+
     /** true si el carácter se puede escribir en la aplicación (con Robot, en el teclado de DOSBox). */
     boolean puedeEscribir(char c);
 }

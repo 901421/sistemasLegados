@@ -27,9 +27,22 @@ import java.nio.file.Path;
  * una ejecución anterior (VentanaDosBox.cerrarAnterior) y se lanza el nuevo.
  *
  * Al terminar (Ctrl+C, cerrar la ventana de la consola o un error al arrancar)
- * se deja de atender y se cierra DOSBox.
+ * se cierra DOSBox y se deja de atender. Si Java termina de golpe (sin pasar por
+ * aquí), Windows cierra DOSBox porque está en un job ligado a Java
+ * (VentanaDosBox.cerrarConJava).
  */
 public class Main {
+
+    /** Añade una línea con la hora a dosbox/ultimo-cierre.txt (fuera de Database). */
+    private static void dejarConstancia(String texto) {
+        try {
+            java.nio.file.Files.writeString(Path.of("dosbox", "ultimo-cierre.txt"),
+                    java.time.LocalDateTime.now().withNano(0) + " " + texto + System.lineSeparator(),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        } catch (java.io.IOException e) {
+            // Sin constancia: no impide cerrar.
+        }
+    }
 
     /** Puerto por defecto del servidor web. */
     public static final int PUERTO = 8080;
@@ -67,10 +80,16 @@ public class Main {
         }
 
         ServicioLegado[] servicio = new ServicioLegado[1];
-        // Se registra antes de lanzar DOSBox, por si algo falla al arrancar.
+        // Se registra antes de lanzar DOSBox, por si algo falla al arrancar. Primero
+        // se cierra DOSBox (lo importante, por si Windows corta a los pocos segundos)
+        // y se deja constancia en dosbox/ultimo-cierre.txt, porque al cerrar la ventana
+        // la consola ya no existe. Si Java termina sin llegar aquí, Windows cierra
+        // DOSBox igualmente (el job de VentanaDosBox).
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            servidor.parar();
             if (servicio[0] != null) servicio[0].cerrar();
+            dejarConstancia("gancho de cierre: DOSBox cerrado");
+            servidor.parar();
+            dejarConstancia("gancho de cierre: servidor parado");
             System.out.println("Servidor parado y DOSBox cerrado.");
         }, "cierre"));
 

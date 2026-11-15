@@ -18,8 +18,10 @@ import java.util.List;
  * mano, se pregunta a Windows (VkKeyScanEx) qué tecla y qué modificadores
  * producen cada carácter en la distribución de DOSBox.
  *
- * Antes de cada pulsación se comprueba que DOSBox sigue delante: si el usuario
- * cambia de ventana, se para con un error en lugar de escribir en otra ventana.
+ * Antes de cada pulsación se comprueba que DOSBox sigue delante. Si alguien ha
+ * puesto otra ventana delante, se recupera el foco (VentanaDosBox.asegurarDelante,
+ * con un tope por operación) y se vuelve a comprobar justo antes de pulsar: nunca
+ * se escribe en otra ventana.
  */
 public class Teclado {
 
@@ -115,6 +117,7 @@ public class Teclado {
      * pulsada en Windows.
      */
     private void pulsar(int teclaJava, List<Integer> modificadores, String descripcion) {
+        dosbox.asegurarDelante(); // si alguien le ha quitado el foco, se recupera (con tope)
         if (!dosbox.estaDelante()) {
             throw new IllegalStateException("DOSBox ha dejado de estar delante antes de pulsar " + descripcion
                     + "; el foco lo tiene \"" + VentanaDosBox.tituloVentanaConFoco()

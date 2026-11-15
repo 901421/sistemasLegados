@@ -109,16 +109,13 @@
             <details open>
                 <summary>
                     <span id="pantalla-titulo">Pantalla de la aplicación legada</span>
+                    <span class="live-badge">En directo</span>
                 </summary>
-                <p class="legacy-screen__caption" id="pantalla-pie">
+                <p class="legacy-screen__caption" id="pantalla-pie" aria-live="off">
                     La última pantalla que ha leído el wrapper en DOSBox para la consulta.
                 </p>
-                <!-- Una ventana de DOSBox como la del equipo servidor: título y área de 640x400 -->
+                <!-- El área de 640x400 de la ventana de DOSBox del equipo servidor -->
                 <div class="dosbox-window">
-                    <div class="dosbox-window__title" aria-hidden="true">
-                        <span>DOSBox 0.74, Program: GWBASIC</span>
-                        <span class="dosbox-window__buttons">&#x2013; &#x25A1; &#x2715;</span>
-                    </div>
                     <div class="legacy-screen__frame">
                         <pre id="pantalla" class="legacy-screen__text" aria-describedby="pantalla-pie"></pre>
                     </div>

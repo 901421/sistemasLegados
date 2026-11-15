@@ -424,27 +424,50 @@
   -webkit-font-smoothing: none;
 }
 
+.live-badge {
+  display: none;
+  margin-left: 8px;
+  padding: 1px 8px 1px 18px;
+  border-radius: 999px;
+  background-color: #18213a;
+  color: #f2c230;
+  font-size: 0.8rem;
+  font-weight: 700;
+  vertical-align: middle;
+  position: relative;
+}
+.live-badge::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background-color: #f2c230;
+  animation: latir 1s ease-in-out infinite;
+}
+.legacy-screen--live .live-badge {
+  display: inline-block;
+}
+
+@keyframes latir {
+  50% {
+    opacity: 0.2;
+  }
+}
+.legacy-screen--live .dosbox-window {
+  border-color: #f2c230;
+  box-shadow: 0 0 0 2px #f2c230, 0 10px 24px rgba(24, 33, 58, 0.18);
+}
+
 .dosbox-window {
   border: 1px solid #8a8f9c;
-  border-radius: 8px 8px 2px 2px;
+  border-radius: 2px;
   overflow: hidden;
   box-shadow: 0 10px 24px rgba(24, 33, 58, 0.18);
-}
-.dosbox-window__title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 6px 10px 6px 12px;
-  background-color: #f3f3f3;
-  color: #1b1b1b;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  font-size: 12px;
-  white-space: nowrap;
-}
-.dosbox-window__buttons {
-  letter-spacing: 1.1em;
-  color: #444444;
+  transition: border-color 0.2s;
 }
 
 @media (max-width: 1300px) {

@@ -341,6 +341,23 @@ public class PruebasOffline {
         }
         comprobar("F3: cada página empieza en su Nº (1, 19, 37…) y no en el de la anterior", paginas, "");
         comprobar("F3: el MENÚ no es una página", !ServicioLegado.paginaQueEmpiezaEn(menu, 1), "");
+
+        // C18: DOSBox a pantalla completa (Alt+Enter) o escalado → pantalla inesperada, no 500.
+        for (int[] t : new int[][]{{1920, 1080}, {640, 480}, {1280, 800}}) {
+            debeFallarCon("ventana de DOSBox de " + t[0] + "x" + t[1] + " → PantallaInesperada",
+                    legado.PantallaInesperada.class, () -> {
+                        ServicioLegado.comprobarTamano(new java.awt.Rectangle(0, 0, t[0], t[1]));
+                        return "aceptada";
+                    });
+        }
+        String r640;
+        try {
+            ServicioLegado.comprobarTamano(new java.awt.Rectangle(10, 20, 640, 400));
+            r640 = "aceptada";
+        } catch (Exception e) {
+            r640 = e.getMessage();
+        }
+        comprobar("ventana de DOSBox de 640x400 → aceptada", r640.equals("aceptada"), r640);
     }
 
     /**
@@ -641,6 +658,16 @@ public class PruebasOffline {
         public boolean puedeEscribir(char c) {
             return PROHIBIDOS.indexOf(c) < 0;
         }
+
+        @Override
+        public legado.Captura ultimaCaptura() {
+            return new legado.Captura(pantalla, System.currentTimeMillis() - 120);
+        }
+
+        @Override
+        public boolean operando() {
+            return tarda > 0;
+        }
     }
 
     /** Una respuesta HTTP: código, cabeceras y cuerpo. */
@@ -669,14 +696,14 @@ public class PruebasOffline {
         return new Respuesta(r.statusCode(), r.headers(), r.body());
     }
 
+    /** Pantalla del MENÚ, para que la aplicación falsa la devuelva con cada resultado. */
+    private static String[] PANTALLA_MENU;
+
     /**
      * El servidor web completo (rutas, API y ficheros) en un puerto libre, con la
      * aplicación falsa: códigos, formato JSON, que la entrada no válida no llega a
      * la aplicación, que no hay cabeceras CORS y que no se sale de frontend/.
      */
-    /** Pantalla del MENÚ, para que la aplicación falsa la devuelva con cada resultado. */
-    private static String[] PANTALLA_MENU;
-
     private static void api(List<Juego> listado) throws Exception {
         AplicacionFalsa falsa = new AplicacionFalsa(listado);
         falsa.pantalla = PANTALLA_MENU;
@@ -756,7 +783,14 @@ public class PruebasOffline {
             long t0 = System.nanoTime();
             Respuesta pagina = pedir(cliente, puerto, "GET", "/");
             long msPagina = (System.nanoTime() - t0) / 1_000_000;
+            long t1 = System.nanoTime();
+            Respuesta directo = pedir(cliente, puerto, "GET", "/api/pantalla");
+            long msDirecto = (System.nanoTime() - t1) / 1_000_000;
             int codigoEnCurso = enCurso.get().statusCode();
+            comprobar("con una operación en curso, /api/pantalla responde al momento con la última captura",
+                    directo.codigo == 200 && msDirecto < 300
+                            && Pattern.compile("\\{\"pantalla\":" + PANTALLA_JSON + ",\"hace\":\\d+,\"operando\":true\\}")
+                            .matcher(directo.cuerpo).matches(), directo.codigo + " en " + msDirecto + " ms");
             falsa.tarda = 0;
             comprobar("con una operación en curso (1,5 s), la página se sirve al momento",
                     pagina.codigo == 200 && msPagina < 300 && codigoEnCurso == 200, "página en " + msPagina + " ms");
