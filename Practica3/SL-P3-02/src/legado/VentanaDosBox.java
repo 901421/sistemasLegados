@@ -51,11 +51,57 @@ public class VentanaDosBox {
     private final Process proceso;
     private final HWND ventana;
     private final Robot robot;
+    private final File pid;
 
-    private VentanaDosBox(Process proceso, HWND ventana, Robot robot) {
+    private VentanaDosBox(Process proceso, HWND ventana, Robot robot, File pid) {
         this.proceso = proceso;
         this.ventana = ventana;
         this.robot = robot;
+        this.pid = pid;
+    }
+
+    /**
+     * Fichero con el número de proceso del DOSBox que lanzó el programa (junto a
+     * nuestro .conf, fuera de Database). Sirve para cerrarlo si el programa
+     * terminó sin poder hacerlo (por ejemplo, si se mató Java a la fuerza).
+     */
+    public static File ficheroPid(File conf) {
+        return new File(conf.getAbsoluteFile().getParentFile(), "dosbox.pid");
+    }
+
+    /**
+     * Cierra el DOSBox que dejó abierto una ejecución anterior del programa, si lo
+     * hay. Solo se cierra el proceso cuyo número está en el fichero y solo si es un
+     * DOSBox.exe: nunca otro programa ni otro DOSBox que tenga abierto el usuario.
+     *
+     * @return qué se ha hecho, para la consola, o null si no había nada que cerrar
+     */
+    public static String cerrarAnterior(File ficheroPid) {
+        if (!ficheroPid.isFile()) return null;
+        String texto;
+        try {
+            texto = java.nio.file.Files.readString(ficheroPid.toPath()).strip();
+        } catch (IOException e) {
+            texto = "";
+        }
+        ficheroPid.delete();
+        long numero;
+        try {
+            numero = Long.parseLong(texto);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        var proceso = ProcessHandle.of(numero);
+        if (proceso.isEmpty() || !proceso.get().isAlive()) return null;
+        String programa = proceso.get().info().command().orElse("");
+        if (!programa.toLowerCase().endsWith("dosbox.exe")) return null;
+        proceso.get().destroy();
+        try {
+            proceso.get().onExit().get(3, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (Exception e) {
+            proceso.get().destroyForcibly();
+        }
+        return "Cerrado el DOSBox que dejó abierto una ejecución anterior (proceso " + numero + ").";
     }
 
     /**
@@ -66,12 +112,16 @@ public class VentanaDosBox {
      */
     public static VentanaDosBox lanzar(File carpetaApp, File conf, long esperaMaxMs)
             throws IOException, InterruptedException {
+        File pid = ficheroPid(conf);
+        String anterior = cerrarAnterior(pid);
+        if (anterior != null) System.out.println(anterior);
         File dosbox = new File(carpetaApp, "DOSBox-0.74/DOSBox.exe");
         // Mismos argumentos que database.bat, más -conf con nuestra configuración.
         ProcessBuilder pb = new ProcessBuilder(dosbox.getAbsolutePath(),
                 "Database\\gwbasic.bat", "-noconsole", "-conf", conf.getAbsolutePath());
         pb.directory(carpetaApp);
         Process proceso = pb.start();
+        java.nio.file.Files.writeString(pid.toPath(), String.valueOf(proceso.pid()));
 
         long limite = System.currentTimeMillis() + esperaMaxMs;
         HWND encontrada = null;
@@ -88,13 +138,15 @@ public class VentanaDosBox {
         }
         if (encontrada == null) {
             proceso.destroy();
+            pid.delete();
             throw new IOException("No aparece la ventana de DOSBox con GWBASIC en " + esperaMaxMs + " ms");
         }
         quitarEsquinasRedondeadas(encontrada);
         try {
-            return new VentanaDosBox(proceso, encontrada, new Robot());
+            return new VentanaDosBox(proceso, encontrada, new Robot(), pid);
         } catch (java.awt.AWTException e) {
             proceso.destroy();
+            pid.delete();
             throw new IOException("No se puede crear java.awt.Robot", e);
         }
     }
@@ -225,5 +277,6 @@ public class VentanaDosBox {
     /** Cierra DOSBox. La aplicación no graba nada al cerrarse, así que Database no cambia. */
     public void cerrar() {
         proceso.destroy();
+        pid.delete();
     }
 }

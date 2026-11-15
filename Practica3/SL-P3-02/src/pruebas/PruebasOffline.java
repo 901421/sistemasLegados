@@ -92,6 +92,12 @@ public class PruebasOffline {
         System.out.println("== Esperas (Espera y condiciones de ServicioLegado)");
         esperas(pantallas, capturas);
 
+        System.out.println("== Turno de la aplicación (legado.Turno)");
+        turno();
+
+        System.out.println("== DOSBox de una ejecución anterior (VentanaDosBox.cerrarAnterior)");
+        dosboxAnterior();
+
         System.out.println("== Parámetros de la dirección (servidor.Parametros)");
         parametros();
 
@@ -334,6 +340,116 @@ public class PruebasOffline {
     }
 
     /**
+     * La cola de operaciones: de una en una, por orden de llegada, "ocupado" si el
+     * turno no llega a tiempo, y el turno se libera aunque la operación falle.
+     */
+    private static void turno() throws Exception {
+        legado.Turno turno = new legado.Turno(5_000);
+        List<String> sucesos = java.util.Collections.synchronizedList(new ArrayList<>());
+        List<Thread> hilos = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            final int n = i;
+            Thread h = new Thread(() -> {
+                try {
+                    turno.con(() -> {
+                        sucesos.add("empieza " + n);
+                        Thread.sleep(300);
+                        sucesos.add("acaba " + n);
+                        return null;
+                    });
+                } catch (Exception e) {
+                    sucesos.add("error " + n);
+                }
+            });
+            hilos.add(h);
+            h.start();
+            Thread.sleep(50); // llegan en orden 0, 1, 2
+        }
+        for (Thread h : hilos) h.join();
+        comprobar("3 operaciones a la vez → de una en una y por orden de llegada",
+                sucesos.equals(List.of("empieza 0", "acaba 0", "empieza 1", "acaba 1", "empieza 2", "acaba 2")),
+                sucesos.toString());
+
+        legado.Turno corto = new legado.Turno(500);
+        Thread larga = new Thread(() -> {
+            try {
+                corto.con(() -> {
+                    Thread.sleep(1_500);
+                    return null;
+                });
+            } catch (Exception ignorada) {
+                // no se espera ninguna
+            }
+        });
+        larga.start();
+        Thread.sleep(100);
+        long t0 = System.nanoTime();
+        String resultado;
+        try {
+            corto.con(() -> "entra");
+            resultado = "entra";
+        } catch (legado.AplicacionOcupada e) {
+            resultado = "ocupada";
+        }
+        long ms = (System.nanoTime() - t0) / 1_000_000;
+        comprobar("turno que no llega en 0,5 s → AplicacionOcupada a los 0,5 s",
+                resultado.equals("ocupada") && ms >= 480 && ms <= 650, resultado + " en " + ms + " ms");
+        larga.join();
+
+        try {
+            turno.con(() -> {
+                throw new IllegalStateException("falla a propósito");
+            });
+        } catch (IllegalStateException esperada) {
+            // el fallo sale hacia fuera, como debe
+        }
+        t0 = System.nanoTime();
+        turno.con(() -> null);
+        ms = (System.nanoTime() - t0) / 1_000_000;
+        comprobar("tras una operación que falla, el turno queda libre", ms < 50, ms + " ms");
+    }
+
+    /**
+     * cerrarAnterior solo cierra un DOSBox.exe: con el número de otro proceso vivo
+     * (aquí, uno que lanza la prueba) no lo toca; con un número que no existe o un
+     * fichero roto no hace nada. En todos los casos borra el fichero. Que sí
+     * cierra un DOSBox de verdad se comprueba en la prueba real.
+     */
+    private static void dosboxAnterior() throws Exception {
+        File carpeta = Files.createTempDirectory("p3-pid").toFile();
+        File pid = new File(carpeta, "dosbox.pid");
+        String java = ProcessHandle.current().info().command().orElse("java");
+        Process otro = new ProcessBuilder(java, "-version").redirectErrorStream(true)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
+        Process vivo = new ProcessBuilder(java, "-cp", System.getProperty("java.class.path"), "pruebas.PruebasOffline$Dormir")
+                .start();
+        otro.waitFor();
+        try {
+            Files.writeString(pid.toPath(), String.valueOf(vivo.pid()));
+            String r = legado.VentanaDosBox.cerrarAnterior(pid);
+            comprobar("número de un proceso vivo que no es DOSBox → no se toca", r == null && vivo.isAlive() && !pid.exists(),
+                    "vivo=" + vivo.isAlive());
+            Files.writeString(pid.toPath(), String.valueOf(otro.pid()));
+            comprobar("número de un proceso que ya no existe → nada", legado.VentanaDosBox.cerrarAnterior(pid) == null
+                    && !pid.exists(), "");
+            Files.writeString(pid.toPath(), "no es un número");
+            comprobar("fichero roto → nada", legado.VentanaDosBox.cerrarAnterior(pid) == null && !pid.exists(), "");
+            comprobar("sin fichero → nada", legado.VentanaDosBox.cerrarAnterior(pid) == null, "");
+        } finally {
+            vivo.destroyForcibly();
+            pid.delete();
+            carpeta.delete();
+        }
+    }
+
+    /** Un proceso que solo espera (para la prueba de cerrarAnterior). */
+    public static class Dormir {
+        public static void main(String[] args) throws InterruptedException {
+            Thread.sleep(60_000);
+        }
+    }
+
+    /**
      * Lectura de ?q= e ?id=: se parte en el primer "=", se decodifica, y una
      * codificación inválida o un parámetro repetido son un error de entrada (D3).
      */
@@ -445,11 +561,15 @@ public class PruebasOffline {
         final List<Juego> listado;
         Exception fallo;
 
+        /** Lo que tarda cada operación (para probar que el servidor sigue atendiendo mientras tanto). */
+        long tarda;
+
         AplicacionFalsa(List<Juego> listado) {
             this.listado = listado;
         }
 
         private void quizaFalla() throws Exception {
+            if (tarda > 0) Thread.sleep(tarda);
             if (fallo != null) {
                 Exception e = fallo;
                 fallo = null;
@@ -564,6 +684,7 @@ public class PruebasOffline {
             Object[][] fallos = {
                     {new legado.PantallaInesperada("el MENÚ en 5 s", "algo"), 503, "legado"},
                     {new IllegalStateException("DOSBox ha dejado de estar delante"), 503, "legado"},
+                    {new legado.AplicacionOcupada(30_000), 503, "ocupado"},
                     {new RuntimeException("fallo \"raro\"\ncon salto"), 500, "interno"}};
             for (Object[] f : fallos) {
                 falsa.fallo = (Exception) f[0];
@@ -582,6 +703,20 @@ public class PruebasOffline {
                 comprobar(metodo + " /api/registros → 405 sin tocar la aplicación", r.codigo == 405 && falsa.llamadas.isEmpty(),
                         r.codigo + " Allow: " + r.cabeceras.firstValue("Allow").orElse(""));
             }
+
+            // Mientras una operación tarda 1,5 s, la página se sirve al momento (varios hilos, D5).
+            falsa.tarda = 1500;
+            var enCurso = cliente.sendAsync(java.net.http.HttpRequest.newBuilder(
+                    java.net.URI.create("http://127.0.0.1:" + puerto + "/api/registros")).build(),
+                    java.net.http.HttpResponse.BodyHandlers.ofString());
+            Thread.sleep(200);
+            long t0 = System.nanoTime();
+            Respuesta pagina = pedir(cliente, puerto, "GET", "/");
+            long msPagina = (System.nanoTime() - t0) / 1_000_000;
+            int codigoEnCurso = enCurso.get().statusCode();
+            falsa.tarda = 0;
+            comprobar("con una operación en curso (1,5 s), la página se sirve al momento",
+                    pagina.codigo == 200 && msPagina < 300 && codigoEnCurso == 200, "página en " + msPagina + " ms");
 
             String[][] ficheros = {{"/", "200"}, {"/index.html", "200"}, {"/styles/main.css", "200"}, {"/js/app.js", "200"},
                     {"/styles/main.scss", "404"}, {"/../src/Main.java", "404"}, {"/%2e%2e/build.bat", "404"},

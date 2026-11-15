@@ -15,6 +15,10 @@ import java.nio.file.Path;
  *   <li>dosbox/p3-dosbox.conf: nuestra configuración de DOSBox (fuera de Database).</li>
  *   <li>frontend: la página web.</li>
  * </ul>
+ *
+ * Al terminar se cierra DOSBox. Si una ejecución anterior lo dejó abierto (por
+ * ejemplo, porque se mató Java a la fuerza), se cierra al arrancar
+ * (VentanaDosBox.cerrarAnterior).
  */
 public class Main {
 
@@ -25,15 +29,26 @@ public class Main {
 
             System.out.println("Arrancando DOSBox y cargando la aplicación legada...");
             ServicioLegado servicio = new ServicioLegado(carpetaApp, conf);
+            ServidorWeb[] servidor = new ServidorWeb[1];
+
+            // Al terminar (Ctrl+C, cerrar la ventana de la consola o fin normal) se
+            // deja de atender y se cierra DOSBox, para no dejarlo abierto (D5). Se
+            // registra ya, por si el servidor no llega a arrancar.
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (servidor[0] != null) servidor[0].parar();
+                servicio.cerrar();
+                System.out.println("Servidor parado y DOSBox cerrado.");
+            }, "cierre"));
 
             // Servidor nativo de Java en el puerto 8080
-            ServidorWeb servidor = new ServidorWeb(8080, servicio, Path.of("frontend"));
-            servidor.arrancar();
+            servidor[0] = new ServidorWeb(8080, servicio, Path.of("frontend"));
+            servidor[0].arrancar();
 
             System.out.println("¡Servidor listo y escuchando en http://localhost:8080!");
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.exit(1); // ejecuta el cierre: DOSBox no se queda abierto
         }
     }
 }

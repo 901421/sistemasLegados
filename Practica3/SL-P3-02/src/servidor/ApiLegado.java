@@ -3,6 +3,7 @@ package servidor;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import legado.AplicacionLegada;
+import legado.AplicacionOcupada;
 import legado.PantallaInesperada;
 
 import java.io.IOException;
@@ -26,6 +27,8 @@ import java.time.format.DateTimeFormatter;
  * cada error se convierte en su código HTTP con un mensaje para el usuario:
  * <ul>
  *   <li>400 "entrada": lo escrito no se puede enviar a la aplicación (EntradaNoValida).</li>
+ *   <li>503 "ocupado": la aplicación está atendiendo otras consultas y no ha
+ *       llegado el turno a tiempo (AplicacionOcupada); la web lo muestra como aviso.</li>
  *   <li>503 "legado": la aplicación no ha respondido como se esperaba
  *       (PantallaInesperada) o otra ventana ha tomado el foco del equipo.</li>
  *   <li>500 "interno": cualquier otro fallo; el detalle va solo a la consola.</li>
@@ -96,6 +99,10 @@ public class ApiLegado {
                 } catch (EntradaNoValida e) {
                     codigo = 400;
                     cuerpo = Json.error("entrada", e.getMessage());
+                    detalle = e.getMessage();
+                } catch (AplicacionOcupada e) {
+                    codigo = 503;
+                    cuerpo = Json.error("ocupado", e.getMessage());
                     detalle = e.getMessage();
                 } catch (PantallaInesperada e) {
                     codigo = 503;

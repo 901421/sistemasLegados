@@ -6,6 +6,8 @@ import legado.AplicacionLegada;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * El servidor web de la práctica, hecho con com.sun.net.httpserver.HttpServer,
@@ -15,10 +17,19 @@ import java.nio.file.Path;
  * desde otro ordenador o desde el móvil con http://IP-del-equipo:puerto (R7).
  * Cada dirección se asocia a quien la atiende: /api/... a ApiLegado y el resto
  * a FicherosEstaticos, que sirve la página.
+ *
+ * Atiende con varios hilos (D5): mientras una operación usa la aplicación legada
+ * (el listado completo tarda unos segundos), la página, el CSS y el JS se siguen
+ * sirviendo al momento. Las operaciones sobre la aplicación esperan su turno en
+ * el wrapper (Turno), de una en una.
  */
 public class ServidorWeb {
 
+    /** Hilos que atienden peticiones a la vez (la aplicación se usa de una en una igualmente). */
+    private static final int HILOS = 8;
+
     private final HttpServer server;
+    private final ExecutorService hilos = Executors.newFixedThreadPool(HILOS);
 
     /**
      * @param puerto   puerto TCP (8080; 0 = uno libre, para las pruebas)
@@ -36,7 +47,7 @@ public class ServidorWeb {
         // Servir el frontend desde la carpeta frontend/
         server.createContext("/", new FicherosEstaticos(frontend));
 
-        server.setExecutor(null);
+        server.setExecutor(hilos);
     }
 
     public void arrancar() {
@@ -46,6 +57,7 @@ public class ServidorWeb {
     /** Deja de atender peticiones. */
     public void parar() {
         server.stop(0);
+        hilos.shutdownNow();
     }
 
     /** Puerto en el que escucha (útil si se pidió el 0). */

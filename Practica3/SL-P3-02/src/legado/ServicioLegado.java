@@ -33,7 +33,8 @@ import static legado.PantallaLegado.*;
  *       (GRABAR), que nunca se pulsa (R5).</li>
  * </ul>
  *
- * Las operaciones son synchronized: nunca hay dos tecleando a la vez en DOSBox.
+ * Las operaciones esperan su turno (Turno): de una en una y por orden de
+ * llegada, como mucho ESPERA_COLA; nunca hay dos tecleando a la vez en DOSBox.
  */
 public class ServicioLegado implements AplicacionLegada {
 
@@ -49,6 +50,8 @@ public class ServicioLegado implements AplicacionLegada {
      * 1 s, algo ha fallado y se reinicia DOSBox (D2; revisable a 5 s en la prueba real).
      */
     public static final long ESPERA_MENU_INICIAL = 1_000;
+    /** Lo que una operación espera su turno como mucho antes de responder "ocupado" (D5). */
+    public static final long ESPERA_COLA = 30_000;
     /** Tope de resultados de una búsqueda: no puede haber más que registros (763, R5: no cambian). */
     public static final int MAX_RESULTADOS = 763;
     /** Tope de páginas del listado: 763 registros / 18 por página = 43. */
@@ -57,7 +60,8 @@ public class ServicioLegado implements AplicacionLegada {
     private final File carpetaApp;
     private final File conf;
     private final LectorPantalla lector;
-    private VentanaDosBox dosbox;
+    private final Turno turno = new Turno(ESPERA_COLA);
+    private volatile VentanaDosBox dosbox;
     private volatile Teclado teclado;
 
     /**
@@ -75,7 +79,7 @@ public class ServicioLegado implements AplicacionLegada {
 
     /** F1: número de registros, con la opción 4 (información). */
     @Override
-    public synchronized int obtenerTotalRegistros() throws Exception {
+    public int obtenerTotalRegistros() throws Exception {
         return operar(() -> {
             teclado.escribir("4");
             String[] info = esperar("la información (" + INFO + ")", p -> INFO.en(p) && INFO_PIE.en(p));
@@ -94,7 +98,7 @@ public class ServicioLegado implements AplicacionLegada {
      * @param nombre texto a buscar, ya validado (sin comas ni comillas y escribible)
      */
     @Override
-    public synchronized List<Juego> buscarPorNombre(String nombre) throws Exception {
+    public List<Juego> buscarPorNombre(String nombre) throws Exception {
         return operar(() -> {
             List<Juego> resultados = new ArrayList<>();
             teclado.escribir("7");
@@ -136,7 +140,7 @@ public class ServicioLegado implements AplicacionLegada {
      * @param idCinta una letra o un número, ya validado
      */
     @Override
-    public synchronized List<Juego> listarPorCinta(String idCinta) throws Exception {
+    public List<Juego> listarPorCinta(String idCinta) throws Exception {
         return operar(() -> {
             teclado.escribir("3");
             esperar(ORDENAR.toString(), ORDENAR::en);
@@ -181,7 +185,7 @@ public class ServicioLegado implements AplicacionLegada {
 
     /**
      * true si Robot puede escribir el carácter en DOSBox (Teclado.puedeEscribir).
-     * No es synchronized: la validación de la web no espera a que acabe otra
+     * No espera turno: la validación de la web no espera a que acabe otra
      * operación.
      */
     @Override
@@ -190,7 +194,7 @@ public class ServicioLegado implements AplicacionLegada {
     }
 
     /** Cierra DOSBox (al apagar el servidor). La aplicación no graba nada al cerrarse. */
-    public synchronized void cerrar() {
+    public void cerrar() {
         if (dosbox != null) dosbox.cerrar();
     }
 
@@ -203,18 +207,26 @@ public class ServicioLegado implements AplicacionLegada {
     }
 
     /**
-     * Prepara la aplicación (DOSBox delante y en el MENÚ, reiniciándola si hace
-     * falta), hace la operación y devuelve el foco a la ventana que lo tenía.
+     * Espera el turno, prepara la aplicación (DOSBox delante y en el MENÚ,
+     * reiniciándola si hace falta), hace la operación y devuelve el foco a la
+     * ventana que lo tenía.
      */
     private <T> T operar(Operacion<T> operacion) throws Exception {
-        HWND anterior = VentanaDosBox.ventanaConFoco();
-        try {
-            avisarSiBloqMayus();
-            prepararMenu();
-            return operacion.hacer();
-        } finally {
-            if (dosbox != null) dosbox.devolverFoco(anterior);
-        }
+        return turno.con(() -> {
+            HWND anterior = VentanaDosBox.ventanaConFoco();
+            try {
+                avisarSiBloqMayus();
+                prepararMenu();
+                return operacion.hacer();
+            } finally {
+                if (dosbox != null) dosbox.devolverFoco(anterior);
+            }
+        });
+    }
+
+    /** Operaciones esperando turno ahora mismo. */
+    public int enEspera() {
+        return turno.enEspera();
     }
 
     /** DOSBox delante y con el MENÚ visible; si no se consigue, DOSBox se lanza de nuevo. */
