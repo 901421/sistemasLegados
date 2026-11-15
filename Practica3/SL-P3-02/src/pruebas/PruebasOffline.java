@@ -98,6 +98,9 @@ public class PruebasOffline {
         System.out.println("== DOSBox de una ejecución anterior (VentanaDosBox.cerrarAnterior)");
         dosboxAnterior();
 
+        System.out.println("== Arranque con el puerto ocupado (Main, C16)");
+        puertoOcupado();
+
         System.out.println("== Parámetros de la dirección (servidor.Parametros)");
         parametros();
 
@@ -418,10 +421,10 @@ public class PruebasOffline {
     private static void dosboxAnterior() throws Exception {
         File carpeta = Files.createTempDirectory("p3-pid").toFile();
         File pid = new File(carpeta, "dosbox.pid");
-        String java = ProcessHandle.current().info().command().orElse("java");
-        Process otro = new ProcessBuilder(java, "-version").redirectErrorStream(true)
+        String ejecutable = ProcessHandle.current().info().command().orElse("java");
+        Process otro = new ProcessBuilder(ejecutable, "-version").redirectErrorStream(true)
                 .redirectOutput(ProcessBuilder.Redirect.DISCARD).start();
-        Process vivo = new ProcessBuilder(java, "-cp", System.getProperty("java.class.path"), "pruebas.PruebasOffline$Dormir")
+        Process vivo = new ProcessBuilder(ejecutable, "-cp", System.getProperty("java.class.path"), "pruebas.PruebasOffline$Dormir")
                 .start();
         otro.waitFor();
         try {
@@ -440,6 +443,34 @@ public class PruebasOffline {
             pid.delete();
             carpeta.delete();
         }
+    }
+
+    /**
+     * Con el puerto ocupado, Main avisa y termina sin llegar a DOSBox. Se arranca
+     * en una carpeta vacía: aunque fallara y siguiera, no encontraría DOSBox y no
+     * abriría nada en pantalla (desde WSL, Java puede lanzar programas de Windows).
+     */
+    private static void puertoOcupado() throws Exception {
+        // Main.SALIDA_PUERTO (Main está en el paquete por defecto: no se puede nombrar desde aquí).
+        final int salidaPuerto = 2;
+        File vacia = Files.createTempDirectory("p3-main").toFile();
+        String ejecutable = ProcessHandle.current().info().command().orElse("java");
+        String cp = new File("out").getAbsolutePath() + File.pathSeparator + new File("lib").getAbsolutePath() + "/*";
+        try (java.net.ServerSocket ocupado = new java.net.ServerSocket(0)) {
+            Process p = new ProcessBuilder(ejecutable, "-cp", cp, "Main", String.valueOf(ocupado.getLocalPort()))
+                    .directory(vacia).redirectErrorStream(true).start();
+            String salida = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            boolean termina = p.waitFor(20, java.util.concurrent.TimeUnit.SECONDS);
+            comprobar("puerto ocupado → aviso, código " + salidaPuerto + " y sin llegar a DOSBox",
+                    termina && p.exitValue() == salidaPuerto && salida.contains("ya está en uso")
+                            && !salida.contains("Arrancando DOSBox"), salida.strip().replace("\n", " / "));
+        }
+        Process p = new ProcessBuilder(ejecutable, "-cp", cp, "Main", "70000").directory(vacia).redirectErrorStream(true).start();
+        String salida = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        p.waitFor(20, java.util.concurrent.TimeUnit.SECONDS);
+        comprobar("puerto 70000 → aviso y código " + salidaPuerto, p.exitValue() == salidaPuerto
+                && !salida.contains("Arrancando DOSBox"), salida.strip());
+        vacia.delete();
     }
 
     /** Un proceso que solo espera (para la prueba de cerrarAnterior). */
