@@ -1,12 +1,16 @@
 package pruebas;
 
+import legado.Espera;
+import legado.FuentePantalla;
 import legado.Juego;
 import legado.LectorPantalla;
 import legado.PantallaLegado;
 import legado.PantallaLegado.Marca;
 import legado.ParserPantalla;
+import legado.ServicioLegado;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -84,6 +88,9 @@ public class PruebasOffline {
         System.out.println("== Listado y filtro por cinta (F3)");
         List<Juego> listado = listado(pantallas, datos);
         filtroPorCinta(listado, datos);
+
+        System.out.println("== Esperas (Espera y condiciones de ServicioLegado)");
+        esperas(pantallas, capturas);
 
         System.out.println();
         System.out.println(casos + " casos: " + (fallos == 0 ? "TODO BIEN" : fallos + " FALLOS"));
@@ -232,6 +239,68 @@ public class PruebasOffline {
         comprobar("cinta 1 no coge 10 ni 13-26", ParserPantalla.filtrarPorCinta(listado, "1").stream()
                 .allMatch(j -> Arrays.asList(j.getCinta().split("-")).contains("1")), "");
         comprobar("cinta 45 (no existe) → ninguno", ParserPantalla.filtrarPorCinta(listado, "45").isEmpty(), "");
+    }
+
+    /**
+     * Espera.hasta sin DOSBox, con pantallas guardadas: sigue en cuanto la
+     * pantalla cumple la condición, da error con lo que había al agotarse el
+     * tiempo, y una captura ilegible cuenta como "todavía no". También se prueban
+     * las condiciones con que ServicioLegado espera cada resultado y cada página.
+     */
+    private static void esperas(Map<String, String[]> pantallas, File capturas) throws Exception {
+        String[] menu = pantallas.get("menu"), info = pantallas.get("informacion");
+        java.util.function.Predicate<String[]> esInfo = PantallaLegado.INFO::en;
+
+        for (long max : new long[]{ServicioLegado.ESPERA_PANTALLA, ServicioLegado.ESPERA_ORDENAR}) {
+            long t0 = System.nanoTime();
+            String error = "";
+            try {
+                Espera.hasta(() -> menu, "la información", esInfo, max);
+            } catch (legado.PantallaInesperada e) {
+                error = e.getMessage();
+            }
+            long ms = (System.nanoTime() - t0) / 1_000_000;
+            comprobar("pantalla que no cambia → error a los " + max / 1000 + " s",
+                    Math.abs(ms - max) <= 100 && error.contains("M E N U"), ms + " ms; " + error);
+        }
+
+        long inicio = System.nanoTime();
+        FuentePantalla cambia = () -> System.nanoTime() - inicio < 200_000_000L ? menu : info;
+        Espera.hasta(cambia, "la información", esInfo, ServicioLegado.ESPERA_PANTALLA);
+        long ms = (System.nanoTime() - inicio) / 1_000_000;
+        comprobar("pantalla que cambia a los 200 ms → sigue a los ~200 ms", ms >= 200 && ms <= 300, ms + " ms");
+
+        // Tres capturas ilegibles (una casilla alterada en una copia en memoria) y luego el MENÚ.
+        LectorPantalla lector = LectorPantalla.cargar();
+        BufferedImage rota = ImageIO.read(new File(capturas, "menu.png"));
+        for (int y = 0; y < 16; y++) rota.setRGB(3, y, 0xAAAAAA);
+        int[] llamadas = {0};
+        FuentePantalla ilegible = () -> ++llamadas[0] <= 3 ? lector.leer(rota) : menu;
+        String[] r = Espera.hasta(ilegible, "el MENÚ", PantallaLegado.MENU::en, ServicioLegado.ESPERA_PANTALLA);
+        comprobar("captura ilegible → se vuelve a capturar", PantallaLegado.MENU.en(r) && llamadas[0] == 4,
+                llamadas[0] + " capturas");
+
+        // Condiciones de F2: resultado nuevo, el mismo resultado otra vez, "NO HAY".
+        comprobar("F2: primer resultado (Nº 50) es nuevo", ServicioLegado.resultadoNuevo(pantallas.get("buscar-1-res1"), 0), "");
+        comprobar("F2: segundo resultado (Nº 323) es nuevo tras el 50",
+                ServicioLegado.resultadoNuevo(pantallas.get("buscar-1-res2"), 50), "");
+        comprobar("F2: el mismo resultado otra vez no es nuevo",
+                !ServicioLegado.resultadoNuevo(pantallas.get("buscar-1-res1"), 50), "");
+        boolean ningunNoHay = true;
+        for (var e : pantallas.entrySet()) {
+            if (e.getKey().endsWith("-nohay") && ServicioLegado.resultadoNuevo(e.getValue(), 0)) ningunNoHay = false;
+        }
+        comprobar("F2: \"NO HAY\" (con el último resultado visible) nunca cuenta como resultado nuevo", ningunNoHay, "");
+
+        // Condiciones de F3: cada página empieza en 1, 19, 37...; el MENÚ no es una página.
+        boolean paginas = true;
+        for (int pagina = 1; pagina <= 43; pagina++) {
+            String[] p = pantallas.get(String.format("listado-pag%02d", pagina));
+            int primero = (pagina - 1) * 18 + 1;
+            if (!ServicioLegado.paginaQueEmpiezaEn(p, primero) || ServicioLegado.paginaQueEmpiezaEn(p, primero - 18)) paginas = false;
+        }
+        comprobar("F3: cada página empieza en su Nº (1, 19, 37…) y no en el de la anterior", paginas, "");
+        comprobar("F3: el MENÚ no es una página", !ServicioLegado.paginaQueEmpiezaEn(menu, 1), "");
     }
 
     // ---- Utilidades ----------------------------------------------------------

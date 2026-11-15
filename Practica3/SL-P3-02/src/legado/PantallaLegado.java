@@ -60,6 +60,8 @@ public final class PantallaLegado {
     /** Fila del número de registros: "CONTIENE  763  ARCHIVOS". */
     public static final int INFO_FILA_TOTAL = 5;
     public static final Marca INFO = new Marca(INFO_FILA_TOTAL, 1, "CONTIENE");
+    /** "PULSA ENTER           ?" en la fila 24: lo último que se dibuja; se pulsa Enter para volver. */
+    public static final Marca INFO_PIE = new Marca(24, 1, "PULSA ENTER");
 
     // ---- Opción 7: búsqueda (L7000-L7090) → F2 ------------------------------
 
@@ -71,6 +73,17 @@ public final class PantallaLegado {
     public static final int BUSCAR_FILA_RESULTADO = 5;
     /** "ES ESTE ? (S/N)" bajo cada resultado: se responde siempre N (S lleva a alterar los datos). */
     public static final Marca BUSCAR_ES_ESTE = new Marca(7, 1, "ES ESTE ?");
+    /**
+     * La fila 7 tal como queda cuando acaba de llegar un resultado y la aplicación
+     * espera la respuesta. Cuando ya se ha contestado, queda "... ?  N" (y así se ve
+     * también bajo "NO HAY NINGUN"). Comprobado en las 22 capturas de búsqueda.
+     */
+    public static final String BUSCAR_ES_ESTE_SIN_RESPONDER = "ES ESTE ? (S/N)  ?";
+
+    /** true si la fila 7 es "ES ESTE ? (S/N)  ?" sin responder: hay un resultado nuevo completo. */
+    public static boolean esperaRespuestaEsEste(String[] pantalla) {
+        return linea(pantalla, BUSCAR_ES_ESTE.fila()).stripTrailing().equals(BUSCAR_ES_ESTE_SIN_RESPONDER);
+    }
     /**
      * "NO HAY NINGUN PROGRAMA CON ESE NOMBRE; PULSA ENTER": no hay (más)
      * coincidencias. Ojo: la aplicación no borra la pantalla antes, así que siguen
