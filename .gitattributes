@@ -3,3 +3,6 @@
 
 # El LEEME de la entrega se abre en el Bloc de notas de Windows
 Practica2/SL-P2-02/LEEME.txt text eol=crlf
+
+# Práctica 3: la aplicación legada se guarda byte a byte (R5: no se cambia nada)
+Practica3/SL-P3-02/Database-MSDOS/** -text
