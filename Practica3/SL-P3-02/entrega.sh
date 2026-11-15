@@ -54,8 +54,9 @@ cp -r "$DESTINO_WSL" "$SALIDA/java"
 rm -rf "$DESTINO_WSL"
 
 echo "== 3. Aplicación legada, DOSBox, web y lanzador"
-cp -r "$PROYECTO/Database-MSDOS" "$SALIDA/Database-MSDOS"
-rm -f "$SALIDA/Database-MSDOS/stdout.txt" "$SALIDA/Database-MSDOS/stderr.txt"
+# Desde git, no desde el disco: así van exactamente los ficheros del .rar original
+# (DOSBox crea ficheros sueltos, como stdout.txt, al ejecutarse en la copia de trabajo).
+git -C "$PROYECTO" archive --format=tar HEAD Database-MSDOS | tar -x -C "$SALIDA"
 (cd "$SALIDA/Database-MSDOS" && sha256sum -c --quiet - <<'HASHES'
 393209f8a3dfe5dbdabe6b9126bde31d10d284ef39483f44a30d432cdd39f661  Database/DATABASE.BAS
 ca37fc1ccbbc62eccdd545bbdb7846e0c43d511300613d2b7e157f809fc52c11  Database/DATOS.DAT
