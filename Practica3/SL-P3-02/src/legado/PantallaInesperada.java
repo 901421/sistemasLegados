@@ -16,6 +16,12 @@ public class PantallaInesperada extends Exception {
     /** Lo que había en su lugar (la fila leída, sin espacios al final). */
     public final String encontrado;
 
+    /**
+     * Error con lo que se esperaba y lo que había.
+     *
+     * @param esperado   lo que se esperaba ver
+     * @param encontrado lo que había en su lugar
+     */
     public PantallaInesperada(String esperado, String encontrado) {
         super("Se esperaba " + esperado + " y hay: \"" + encontrado + "\"");
         this.esperado = esperado;

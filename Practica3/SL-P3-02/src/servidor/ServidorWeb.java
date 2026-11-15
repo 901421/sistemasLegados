@@ -68,6 +68,7 @@ public final class ServidorWeb {
         server.createContext("/", new FicherosEstaticos(frontend));
     }
 
+    /** Empieza a atender peticiones (después de publicar la web y la API). */
     public void arrancar() {
         server.start();
     }

@@ -9,7 +9,11 @@ public class AplicacionOcupada extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    /** @param esperaMs lo que se ha esperado el turno, en milisegundos */
+    /**
+     * Error de "ocupado" con el tiempo que se ha esperado.
+     *
+     * @param esperaMs lo que se ha esperado el turno, en milisegundos
+     */
     public AplicacionOcupada(long esperaMs) {
         super("La aplicación legada está atendiendo otras consultas (se ha esperado " + esperaMs / 1000
                 + " s); inténtalo de nuevo en unos segundos.");

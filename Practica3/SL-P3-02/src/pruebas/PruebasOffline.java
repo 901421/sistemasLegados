@@ -52,6 +52,9 @@ import java.util.regex.Pattern;
  */
 public class PruebasOffline {
 
+    private PruebasOffline() {
+    }
+
     /** SHA-256 de la aplicación legada tal como viene en Database-MSDOS.rar (docs/mapa-pantallas.md, "Comprobación"). */
     private static final Map<String, String> ORIGINAL = new LinkedHashMap<>();
     static {
@@ -66,6 +69,7 @@ public class PruebasOffline {
 
     private static int casos, fallos;
 
+    /** Ejecuta todas las pruebas; ver el uso en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File capturas = new File(args.length > 0 ? args[0] : "../pruebas/conjunto");
         File app = new File(args.length > 1 ? args[1] : "Database-MSDOS");
@@ -514,6 +518,10 @@ public class PruebasOffline {
 
     /** Un proceso que solo espera (para la prueba de cerrarAnterior). */
     public static class Dormir {
+        private Dormir() {
+        }
+
+        /** Espera un minuto sin hacer nada. */
         public static void main(String[] args) throws InterruptedException {
             Thread.sleep(60_000);
         }

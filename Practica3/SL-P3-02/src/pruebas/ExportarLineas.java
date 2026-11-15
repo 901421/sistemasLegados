@@ -20,6 +20,9 @@ import java.util.Map;
  */
 public class ExportarLineas {
 
+    private ExportarLineas() {
+    }
+
     static final int ESCALA = 2;
     private static final int MARGEN = 8;
 
@@ -30,6 +33,7 @@ public class ExportarLineas {
         return false;
     }
 
+    /** Ejecuta la herramienta: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File conjunto = new File(args[0]);
         Map<String, MedirOcr.Pantalla> esperadas = MedirOcr.esperadas(MedirOcr.leerDatos(new File(args[1])));

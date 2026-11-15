@@ -17,7 +17,11 @@ public class Turno {
     private final ReentrantLock candado = new ReentrantLock(true);
     private final long maxEsperaMs;
 
-    /** @param maxEsperaMs lo que una operación espera su turno como mucho */
+    /**
+     * Turno con un tiempo máximo de espera.
+     *
+     * @param maxEsperaMs lo que una operación espera su turno como mucho
+     */
     public Turno(long maxEsperaMs) {
         this.maxEsperaMs = maxEsperaMs;
     }
@@ -25,6 +29,7 @@ public class Turno {
     /** Lo que se hace con el turno. */
     @FunctionalInterface
     public interface Operacion<T> {
+        /** Hace la operación con el turno ya conseguido. */
         T hacer() throws Exception;
     }
 

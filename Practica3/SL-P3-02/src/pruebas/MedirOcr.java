@@ -33,6 +33,9 @@ import java.util.function.UnaryOperator;
  */
 public class MedirOcr {
 
+    private MedirOcr() {
+    }
+
     // ---------------------------------------------------------------- pantallas esperadas
 
     /** Pantalla de texto de 80x25, escrita como hace GW-BASIC con LOCATE y PRINT. */
@@ -308,6 +311,7 @@ public class MedirOcr {
 
     // ---------------------------------------------------------------- programa
 
+    /** Ejecuta la herramienta: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File conjunto = new File(args[0]);
         List<Registro> datos = leerDatos(new File(args[1]));

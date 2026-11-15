@@ -20,7 +20,11 @@ public class FicherosEstaticos implements HttpHandler {
 
     private final Path raiz;
 
-    /** @param carpeta carpeta de la web (frontend) */
+    /**
+     * Sirve los ficheros de esa carpeta.
+     *
+     * @param carpeta carpeta de la web (frontend)
+     */
     public FicherosEstaticos(Path carpeta) {
         this.raiz = carpeta.toAbsolutePath().normalize();
     }

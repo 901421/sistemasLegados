@@ -27,6 +27,10 @@ import java.util.TreeSet;
  */
 public class GenerarPlantillas {
 
+    private GenerarPlantillas() {
+    }
+
+    /** Ejecuta la herramienta: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File conjunto = new File(args[0]);
         var datos = MedirOcr.leerDatos(new File(args[1]));

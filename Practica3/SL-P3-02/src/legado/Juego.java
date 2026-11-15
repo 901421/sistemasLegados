@@ -18,6 +18,7 @@ public class Juego {
     private String cinta;
     private String registro;
 
+    /** Un programa con sus cinco campos; null cuenta como vacío y se quitan los espacios de los extremos. */
     public Juego(String numero, String nombre, String tipo, String cinta, String registro) {
         this.numero = numero != null ? numero.trim() : "";
         this.nombre = nombre != null ? nombre.trim() : "";
@@ -26,10 +27,15 @@ public class Juego {
         this.registro = registro != null ? registro.trim() : "";
     }
 
+    /** El Nº que muestra la aplicación (con el orden ANTIGUEDAD, igual al registro). */
     public String getNumero() { return numero; }
+    /** El nombre del programa, hasta 30 caracteres. */
     public String getNombre() { return nombre; }
+    /** El tipo (ARCADE, VIDEOAVENTURA…). */
     public String getTipo() { return tipo; }
+    /** La cinta o cintas, como "A" o "A-45". */
     public String getCinta() { return cinta; }
+    /** El registro, o vacío si la pantalla no lo muestra (la búsqueda). */
     public String getRegistro() { return registro; }
 
     /** Para los mensajes de error y las pruebas: "Nº 50: DEFENDER | ARCADE | cinta C". */

@@ -43,6 +43,11 @@ public class ApiLegado {
 
     private final AplicacionLegada legado;
 
+    /**
+     * La API sobre una aplicación legada.
+     *
+     * @param legado la aplicación legada (el wrapper, o una falsa en las pruebas)
+     */
     public ApiLegado(AplicacionLegada legado) {
         this.legado = legado;
     }

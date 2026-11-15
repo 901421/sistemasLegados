@@ -24,12 +24,21 @@ import java.util.Map;
  */
 public class LectorPantalla {
 
-    public static final int FILAS = 25, COLUMNAS = 80, ANCHO_CELDA = 8, ALTO_CELDA = 16;
+    /** Filas de la pantalla de texto. */
+    public static final int FILAS = 25;
+    /** Columnas de la pantalla de texto. */
+    public static final int COLUMNAS = 80;
+    /** Ancho de cada carácter en píxeles (fuente de 8x16 de DOSBox). */
+    public static final int ANCHO_CELDA = 8;
+    /** Alto de cada carácter en píxeles. */
+    public static final int ALTO_CELDA = 16;
 
     /** Una celda cuyo dibujo no está en la tabla de plantillas. */
     public static class CeldaDesconocida extends Exception {
         private static final long serialVersionUID = 1L;
+        /** Posición de la celda (desde 1, como en el mapa). */
         public final int fila, columna;
+        /** Los 16 bytes del dibujo de la celda, en hexadecimal. */
         public final String huella;
 
         CeldaDesconocida(int fila, int columna, String huella) {

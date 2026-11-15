@@ -19,6 +19,9 @@ import static legado.PantallaLegado.*;
  */
 public class ParserPantalla {
 
+    private ParserPantalla() {
+    }
+
     /** "CONTIENE  763  ARCHIVOS" (L4000-L4200; PRINT numérico, con sus espacios). */
     private static final Pattern TOTAL = Pattern.compile("CONTIENE +(\\d+) +ARCHIVOS");
 
@@ -95,7 +98,11 @@ public class ParserPantalla {
         return lista;
     }
 
-    /* Filtra la lista asegurando que la cinta coincida de verdad */
+    /**
+     * Los programas de la lista que están en esa cinta, en el mismo orden. Se
+     * compara cada parte del campo cinta: "A-45" está en la A y en la 45, y la 1
+     * no coge la 10 ni la 13-26 (R11, R12).
+     */
     public static List<Juego> filtrarPorCinta(List<Juego> juegos, String idCinta) {
         List<Juego> filtrados = new ArrayList<>();
         if (juegos == null || idCinta == null) return filtrados;

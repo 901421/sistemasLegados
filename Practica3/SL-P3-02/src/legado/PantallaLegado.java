@@ -59,6 +59,7 @@ public final class PantallaLegado {
 
     /** Fila del número de registros: "CONTIENE  763  ARCHIVOS". */
     public static final int INFO_FILA_TOTAL = 5;
+    /** La pantalla de información: "CONTIENE" al principio de la fila 5. */
     public static final Marca INFO = new Marca(INFO_FILA_TOTAL, 1, "CONTIENE");
     /** "PULSA ENTER           ?" en la fila 24: lo último que se dibuja; se pulsa Enter para volver. */
     public static final Marca INFO_PIE = new Marca(24, 1, "PULSA ENTER");
@@ -108,11 +109,16 @@ public final class PantallaLegado {
     public static final Marca LISTADO_PIE = new Marca(25, 1, "PULSA SPACE");
     /** Filas de los programas en cada página (18 por página; la última, la 43, tiene 7). */
     public static final int LISTADO_PRIMERA_FILA = 5, LISTADO_ULTIMA_FILA = 22;
+    /** 18 programas por página. */
     public static final int LISTADO_FILAS_POR_PAGINA = LISTADO_ULTIMA_FILA - LISTADO_PRIMERA_FILA + 1;
     /** Columnas de cada campo del listado (L6020): el Nº y el registro van alineados a la derecha. */
     public static final Columna LISTADO_NUMERO = new Columna(1, 8);
+    /** NOMBRE: empieza en la columna 13, hasta 30 caracteres. */
     public static final Columna LISTADO_NOMBRE = new Columna(13, 45);
+    /** TIPO: empieza en la columna 46, hasta 15 caracteres. */
     public static final Columna LISTADO_TIPO = new Columna(46, 65);
+    /** CINTA: empieza en la columna 66, hasta 5 caracteres (como "B-E" o "13-26"). */
     public static final Columna LISTADO_CINTA = new Columna(66, 70);
+    /** REGISTRO: alineado a la derecha, termina en la columna 77. */
     public static final Columna LISTADO_REGISTRO = new Columna(71, 80);
 }

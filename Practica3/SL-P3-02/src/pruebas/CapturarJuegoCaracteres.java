@@ -25,6 +25,9 @@ import java.nio.file.Files;
  */
 public class CapturarJuegoCaracteres {
 
+    private CapturarJuegoCaracteres() {
+    }
+
     static final String JUEGO;
 
     static {
@@ -34,6 +37,7 @@ public class CapturarJuegoCaracteres {
         JUEGO = sb.toString();
     }
 
+    /** Ejecuta la herramienta: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File app = new File(args[0]);
         File conf = new File(args[1]);

@@ -14,7 +14,7 @@ import java.util.List;
  * Robot no escribe caracteres sino que pulsa teclas (como un dedo sobre el
  * teclado): keyPress(VK_A) pulsa la tecla A. El carácter que sale de cada tecla
  * depende de la distribución del teclado: en el español, el apóstrofo está a la
- * derecha del 0 y "&" es Mayúsculas+6. Para no depender de una tabla escrita a
+ * derecha del 0 y "&amp;" es Mayúsculas+6. Para no depender de una tabla escrita a
  * mano, se pregunta a Windows (VkKeyScanEx) qué tecla y qué modificadores
  * producen cada carácter en la distribución de DOSBox.
  *
@@ -34,12 +34,14 @@ public class Teclado {
     /** Si es true, se escribe en la consola cada tecla que se pulsa (para diagnosticar). */
     private boolean traza;
 
+    /** Teclado sobre esa ventana de DOSBox, con la distribución de teclado que usa DOSBox. */
     public Teclado(VentanaDosBox dosbox) {
         this.dosbox = dosbox;
         this.robot = dosbox.robot();
         this.distribucion = dosbox.distribucionTeclado();
     }
 
+    /** Si es true, se escribe en la consola cada tecla que se pulsa (para diagnosticar). */
     public void setTraza(boolean traza) {
         this.traza = traza;
     }
@@ -57,10 +59,12 @@ public class Teclado {
         enter();
     }
 
+    /** Pulsa Enter (fin de la respuesta a un INPUT de BASIC). */
     public void enter() {
         pulsar(KeyEvent.VK_ENTER, List.of(), "Enter");
     }
 
+    /** Pulsa la barra espaciadora (página siguiente del listado). */
     public void espacio() {
         pulsar(KeyEvent.VK_SPACE, List.of(), "espacio");
     }

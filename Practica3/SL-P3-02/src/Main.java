@@ -33,6 +33,9 @@ import java.nio.file.Path;
  */
 public class Main {
 
+    private Main() {
+    }
+
     /** Añade una línea con la hora a dosbox/ultimo-cierre.txt (fuera de Database). */
     private static void dejarConstancia(String texto) {
         try {
@@ -50,6 +53,7 @@ public class Main {
     /** Código de salida si el puerto está ocupado o no es válido. */
     public static final int SALIDA_PUERTO = 2;
 
+    /** Arranca el programa; el único argumento opcional es el puerto (8080 si no se indica). */
     public static void main(String[] args) {
         int puerto = PUERTO;
         if (args.length > 0) {

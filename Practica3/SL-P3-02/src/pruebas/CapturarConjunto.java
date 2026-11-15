@@ -23,6 +23,9 @@ import java.util.List;
  */
 public class CapturarConjunto {
 
+    private CapturarConjunto() {
+    }
+
     /** Textos de búsqueda: varias coincidencias, una sola, minúsculas y ninguna. */
     static final List<String> BUSQUEDAS = List.of(
             "DEFENDER", "KNIGHT", "SPY", "WORLD", "BARRY McGUIGAN'S", "friday");
@@ -31,6 +34,7 @@ public class CapturarConjunto {
     private static File salida;
     private static int guardadas;
 
+    /** Ejecuta la herramienta: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File app = new File(args[0]);
         File conf = new File(args[1]);

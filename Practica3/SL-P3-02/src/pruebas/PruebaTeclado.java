@@ -12,7 +12,7 @@ import java.util.List;
  * Prueba real del apartado 3 (generación de la entrada): lanza DOSBox, entra
  * en la opción 7 (BUSCAR DATOS) y escribe con Robot nombres reales que, juntos,
  * tienen todos los caracteres que aparecen en los datos (letras, minúsculas,
- * dígitos, espacio y ' & ! - .). Si un carácter saliera mal, la aplicación no
+ * dígitos, espacio y ' &amp; ! - .). Si un carácter saliera mal, la aplicación no
  * encontraría el programa y diría "NO HAY NINGUN PROGRAMA".
  *
  * Para saber en qué pantalla está, compara celdas de la pantalla con las
@@ -26,6 +26,9 @@ import java.util.List;
  *        CARPETA_APP CONF CARPETA_PANTALLAS CARPETA_SALIDA
  */
 public class PruebaTeclado {
+
+    private PruebaTeclado() {
+    }
 
     /** Nombre a buscar y registro que debe encontrar (calculado con los datos originales). */
     private record Caso(String nombre, int registro) {}
@@ -43,6 +46,7 @@ public class PruebaTeclado {
     private static File salida;
     private static BufferedImage refMenu, refBuscar, refResultado, refNoHay;
 
+    /** Ejecuta la prueba real: ver el uso en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File app = new File(args[0]);
         File conf = new File(args[1]);

@@ -17,6 +17,10 @@ import java.util.Map;
  */
 public class VerificarPlantillas {
 
+    private VerificarPlantillas() {
+    }
+
+    /** Ejecuta la comprobación: el uso está en la descripción de la clase. */
     public static void main(String[] args) throws Exception {
         File conjunto = new File(args[0]);
         Map<String, MedirOcr.Pantalla> esperadas = MedirOcr.esperadas(MedirOcr.leerDatos(new File(args[1])));

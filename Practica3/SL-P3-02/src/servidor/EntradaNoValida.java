@@ -10,7 +10,11 @@ public class EntradaNoValida extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    /** @param mensaje explicación para el usuario de la web */
+    /**
+     * Error de entrada con su explicación.
+     *
+     * @param mensaje explicación para el usuario de la web
+     */
     public EntradaNoValida(String mensaje) {
         super(mensaje);
     }

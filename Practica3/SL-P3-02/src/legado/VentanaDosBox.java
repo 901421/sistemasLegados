@@ -361,10 +361,12 @@ public class VentanaDosBox {
         return User32.INSTANCE.GetKeyboardLayout(hilo);
     }
 
+    /** El Robot con el que se pulsan las teclas y se captura la pantalla. */
     public Robot robot() {
         return robot;
     }
 
+    /** true si el proceso de DOSBox sigue en marcha. */
     public boolean sigueAbierta() {
         return proceso.isAlive();
     }
