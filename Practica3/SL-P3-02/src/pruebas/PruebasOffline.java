@@ -101,6 +101,9 @@ public class PruebasOffline {
         System.out.println("== Arranque con el puerto ocupado (Main, C16)");
         puertoOcupado();
 
+        System.out.println("== Direcciones para otros equipos (ServidorWeb.direccionUtil, C17)");
+        direcciones();
+
         System.out.println("== Parámetros de la dirección (servidor.Parametros)");
         parametros();
 
@@ -489,6 +492,24 @@ public class PruebasOffline {
         comprobar("puerto 70000 → aviso y código " + salidaPuerto, p.exitValue() == salidaPuerto
                 && !salida.contains("Arrancando DOSBox"), salida.strip());
         vacia.delete();
+    }
+
+    /** Los adaptadores reales del equipo de Imad (Get-NetAdapter, 2026-11-15): solo vale la Wi-Fi. */
+    private static void direcciones() throws Exception {
+        Object[][] casos = {
+                {"MediaTek Wi-Fi 6E MT7922 (RZ616) 160MHz PCIe Adapter wlan0", "192.168.1.205", true},
+                {"Hyper-V Virtual Ethernet Adapter #2 eth3", "172.21.64.1", false},
+                {"Hyper-V Virtual Ethernet Adapter eth4", "172.17.208.1", false},
+                {"VirtualBox Host-Only Ethernet Adapter eth2", "169.254.239.93", false},
+                {"Realtek Gaming GbE Family Controller eth0", "169.254.14.97", false},
+                {"Realtek Gaming GbE Family Controller eth0", "10.1.2.3", true},
+                {"Software Loopback Interface 1 lo", "127.0.0.1", false}};
+        for (Object[] c : casos) {
+            boolean util = servidor.ServidorWeb.direccionUtil((String) c[0],
+                    java.net.InetAddress.getByName((String) c[1]));
+            comprobar(c[1] + " (" + ((String) c[0]).split(" ")[0] + "…) → " + (((boolean) c[2]) ? "se muestra" : "no se muestra"),
+                    util == (boolean) c[2], "");
+        }
     }
 
     /** Un proceso que solo espera (para la prueba de cerrarAnterior). */

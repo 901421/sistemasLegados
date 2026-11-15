@@ -2,8 +2,6 @@ package legado;
 
 import com.sun.jna.platform.win32.WinDef.HWND;
 
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -221,7 +219,6 @@ public class ServicioLegado implements AplicacionLegada {
         return turno.con(() -> {
             HWND anterior = VentanaDosBox.ventanaConFoco();
             try {
-                avisarSiBloqMayus();
                 prepararMenu();
                 dosbox.empezarOperacion();
                 return operacion.hacer();
@@ -322,20 +319,5 @@ public class ServicioLegado implements AplicacionLegada {
     public static boolean paginaQueEmpiezaEn(String[] pantalla, int primero) {
         return LISTADO_CABECERA.en(pantalla) && LISTADO_PIE.en(pantalla)
                 && LISTADO_NUMERO.de(linea(pantalla, LISTADO_PRIMERA_FILA)).equals(String.valueOf(primero));
-    }
-
-    /**
-     * Robot escribe las mayúsculas con Mayúsculas + letra; con Bloq Mayús activado
-     * podrían salir al revés (D6). Por ahora solo se avisa en la consola: la prueba
-     * real dirá si DOSBox se ve afectado.
-     */
-    private static void avisarSiBloqMayus() {
-        try {
-            if (Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK)) {
-                System.out.println("Aviso: Bloq Mayús está activado en este equipo.");
-            }
-        } catch (UnsupportedOperationException e) {
-            // El sistema no deja consultarlo: no se avisa.
-        }
     }
 }

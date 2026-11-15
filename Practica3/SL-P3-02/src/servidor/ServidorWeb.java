@@ -80,7 +80,7 @@ public final class ServidorWeb {
 
     /**
      * Las direcciones con las que se puede entrar desde otro equipo de la red
-     * (las IPv4 de las interfaces activas), para mostrarlas al arrancar (R7).
+     * (las IPv4 útiles de las interfaces activas), para mostrarlas al arrancar (R7).
      */
     public java.util.List<String> direcciones() {
         java.util.List<String> lista = new java.util.ArrayList<>();
@@ -88,13 +88,34 @@ public final class ServidorWeb {
             for (var red : java.util.Collections.list(java.net.NetworkInterface.getNetworkInterfaces())) {
                 if (!red.isUp() || red.isLoopback()) continue;
                 for (var ip : java.util.Collections.list(red.getInetAddresses())) {
-                    if (ip instanceof java.net.Inet4Address) lista.add("http://" + ip.getHostAddress() + ":" + puerto());
+                    if (direccionUtil(red.getDisplayName() + " " + red.getName(), ip)) {
+                        lista.add("http://" + ip.getHostAddress() + ":" + puerto());
+                    }
                 }
             }
         } catch (java.net.SocketException e) {
             // Sin acceso a las interfaces: solo se muestra localhost.
         }
         return lista;
+    }
+
+    /** Palabras que indican un adaptador virtual (de WSL, Hyper-V o máquinas virtuales). */
+    private static final String[] VIRTUALES = {"virtual", "hyper-v", "vethernet", "wsl", "vmware", "virtualbox"};
+
+    /**
+     * true si por esa dirección puede entrar otro equipo de la red: IPv4, no de
+     * autoconfiguración (169.254.x.x, que Windows pone a los adaptadores sin red) y
+     * de un adaptador que no es virtual (C17).
+     *
+     * @param adaptador nombre y descripción del adaptador de red
+     */
+    public static boolean direccionUtil(String adaptador, java.net.InetAddress ip) {
+        if (!(ip instanceof java.net.Inet4Address) || ip.isLinkLocalAddress() || ip.isLoopbackAddress()) return false;
+        String nombre = adaptador.toLowerCase();
+        for (String v : VIRTUALES) {
+            if (nombre.contains(v)) return false;
+        }
+        return true;
     }
 
     /** Puerto en el que escucha (útil si se pidió el 0). */
