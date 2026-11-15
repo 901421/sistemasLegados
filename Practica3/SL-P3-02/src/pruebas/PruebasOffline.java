@@ -270,6 +270,27 @@ public class PruebasOffline {
         long ms = (System.nanoTime() - inicio) / 1_000_000;
         comprobar("pantalla que cambia a los 200 ms → sigue a los ~200 ms", ms >= 200 && ms <= 300, ms + " ms");
 
+        // Página a medio dibujar, como en la prueba real del 2026-11-15: el pie ya está y la
+        // fila 19 se va escribiendo (crece cada 10 ms); a los 100 ms está la página entera.
+        // Supone que, mientras la aplicación escribe, la pantalla cambia en menos de
+        // Espera.ESTABLE_MS: lo confirma la prueba real (F3 repetido).
+        String[] entera = pantallas.get("listado-pag01");
+        String[][] estados = new String[10][];
+        for (int j = 0; j < 10; j++) {
+            estados[j] = entera.clone();
+            estados[j][18] = (entera[18].substring(0, 10 + j * 7) + " ".repeat(80)).substring(0, 80);
+            for (int f = 19; f <= 21; f++) estados[j][f] = " ".repeat(80);
+        }
+        long t1 = System.nanoTime();
+        FuentePantalla dibujando = () -> {
+            int j = (int) ((System.nanoTime() - t1) / 10_000_000L);
+            return j < 10 ? estados[j] : entera;
+        };
+        String[] leida = Espera.hasta(dibujando, "la página 1", p -> ServicioLegado.paginaQueEmpiezaEn(p, 1),
+                ServicioLegado.ESPERA_PANTALLA);
+        comprobar("página a medio dibujar → se espera a la página entera", Arrays.equals(leida, entera),
+                "fila 19 leída: \"" + leida[18].strip() + "\"");
+
         // Tres capturas ilegibles (una casilla alterada en una copia en memoria) y luego el MENÚ.
         LectorPantalla lector = LectorPantalla.cargar();
         BufferedImage rota = ImageIO.read(new File(capturas, "menu.png"));
@@ -277,8 +298,8 @@ public class PruebasOffline {
         int[] llamadas = {0};
         FuentePantalla ilegible = () -> ++llamadas[0] <= 3 ? lector.leer(rota) : menu;
         String[] r = Espera.hasta(ilegible, "el MENÚ", PantallaLegado.MENU::en, ServicioLegado.ESPERA_PANTALLA);
-        comprobar("captura ilegible → se vuelve a capturar", PantallaLegado.MENU.en(r) && llamadas[0] == 4,
-                llamadas[0] + " capturas");
+        comprobar("captura ilegible → se vuelve a capturar", PantallaLegado.MENU.en(r) && llamadas[0] > 3,
+                llamadas[0] + " capturas (3 ilegibles y las del MENÚ quieto)");
 
         // Condiciones de F2: resultado nuevo, el mismo resultado otra vez, "NO HAY".
         comprobar("F2: primer resultado (Nº 50) es nuevo", ServicioLegado.resultadoNuevo(pantallas.get("buscar-1-res1"), 0), "");
