@@ -79,14 +79,14 @@ public class ServicioLegado implements AplicacionLegada {
 
     /** F1: número de registros, con la opción 4 (información). */
     @Override
-    public int obtenerTotalRegistros() throws Exception {
+    public Resultado<Integer> obtenerTotalRegistros() throws Exception {
         return operar(() -> {
             teclado.escribir("4");
             String[] info = esperar("la información (" + INFO + ")", p -> INFO.en(p) && INFO_PIE.en(p));
             int total = ParserPantalla.extraerTotalRegistros(info);
             teclado.enter();
             esperarMenu(ESPERA_PANTALLA);
-            return total;
+            return new Resultado<>(total, info);
         });
     }
 
@@ -98,7 +98,7 @@ public class ServicioLegado implements AplicacionLegada {
      * @param nombre texto a buscar, ya validado (sin comas ni comillas y escribible)
      */
     @Override
-    public List<Juego> buscarPorNombre(String nombre) throws Exception {
+    public Resultado<List<Juego>> buscarPorNombre(String nombre) throws Exception {
         return operar(() -> {
             List<Juego> resultados = new ArrayList<>();
             teclado.escribir("7");
@@ -108,12 +108,14 @@ public class ServicioLegado implements AplicacionLegada {
             teclado.responder(nombre);
 
             int ultimo = 0;
+            String[] ultimaPantalla;
             while (true) {
                 final int anterior = ultimo;
                 // Un resultado nuevo (fila 7 sin responder y Nº mayor que el anterior) o
                 // "NO HAY NINGUN": esta pantalla deja visible el último resultado.
                 String[] p = esperar("un resultado con Nº mayor que " + anterior + " o " + BUSCAR_NO_HAY,
                         q -> BUSCAR_NO_HAY.en(q) || resultadoNuevo(q, anterior));
+                ultimaPantalla = p;
                 if (BUSCAR_NO_HAY.en(p)) break;
                 Juego juego = ParserPantalla.parsearResultadoBusqueda(p);
                 resultados.add(juego);
@@ -127,7 +129,7 @@ public class ServicioLegado implements AplicacionLegada {
             esperar(BUSCAR_OTRO.toString(), BUSCAR_OTRO::en);
             teclado.responder("N");
             esperarMenu(ESPERA_PANTALLA);
-            return resultados;
+            return new Resultado<>(resultados, ultimaPantalla);
         });
     }
 
@@ -140,7 +142,7 @@ public class ServicioLegado implements AplicacionLegada {
      * @param idCinta una letra o un número, ya validado
      */
     @Override
-    public List<Juego> listarPorCinta(String idCinta) throws Exception {
+    public Resultado<List<Juego>> listarPorCinta(String idCinta) throws Exception {
         return operar(() -> {
             teclado.escribir("3");
             esperar(ORDENAR.toString(), ORDENAR::en);
@@ -153,6 +155,7 @@ public class ServicioLegado implements AplicacionLegada {
 
             List<Juego> todos = new ArrayList<>();
             int filasUltimaPagina = 0;
+            String[] ultimaPagina = null;
             for (int pagina = 1; ; pagina++) {
                 final int primero = todos.size() + 1;
                 String[] p = esperar("la página " + pagina + " del listado (empieza en el Nº " + primero + ") o el MENÚ",
@@ -177,9 +180,10 @@ public class ServicioLegado implements AplicacionLegada {
                 }
                 todos.addAll(filas);
                 filasUltimaPagina = filas.size();
+                ultimaPagina = p;
                 teclado.espacio(); // en la última página, vuelve al MENÚ
             }
-            return ParserPantalla.filtrarPorCinta(todos, idCinta);
+            return new Resultado<>(ParserPantalla.filtrarPorCinta(todos, idCinta), ultimaPagina);
         });
     }
 

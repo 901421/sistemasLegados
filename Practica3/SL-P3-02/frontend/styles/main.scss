@@ -1,9 +1,28 @@
 @use "variables" as v;
 @use "components";
 
+/* Fuentes incluidas en la entrega (el equipo puede no tener internet). */
+@font-face {
+    font-family: "Atkinson Hyperlegible Next";
+    src: url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2");
+    font-weight: 200 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "IBM VGA 8x16";
+    src: url("../fonts/ibm-vga-8x16.woff") format("woff");
+    font-display: block;
+}
+
 /* Reset básico */
 * {
     box-sizing: border-box;
+}
+
+// Lo oculto se queda oculto aunque un componente le dé otro display (grid, flex).
+[hidden] {
+    display: none !important;
 }
 
 html {
@@ -17,14 +36,31 @@ body {
     display: flex;
     flex-direction: column;
 
-    font-family: v.$font-family;
-    color: v.$color-text;
-    background-color: v.$color-background;
+    font-family: v.$font-texto;
+    line-height: 1.5;
+    color: v.$color-tinta;
+    background-color: v.$color-papel;
 }
 
 button,
 input {
     font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+a {
+    color: v.$color-azul;
+}
+
+:focus-visible {
+    outline: 3px solid v.$color-azul;
+    outline-offset: 2px;
 }
 
 /* Contenedor general */
@@ -35,82 +71,100 @@ input {
 
 /* Cabecera */
 .site-header {
-    background-color: v.$color-surface;
-    border-bottom: 1px solid v.$color-border;
+    border-bottom: 1px solid v.$color-linea;
+    padding-block: v.$spacing-md;
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
     gap: v.$spacing-lg;
-
-    padding-block: v.$spacing-lg;
 }
 
 .brand {
+    max-width: 38rem;
+
     h1 {
-        margin: 0;
-        font-size: 1.6rem;
-        font-weight: 700;
+        font-size: v.$texto-grande;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
     }
 
     p {
-        margin: v.$spacing-xs 0 0;
-        color: v.$color-text-secondary;
-        font-size: 0.9rem;
+        margin-top: v.$spacing-xs;
+        font-size: v.$texto-pequeno;
+        color: v.$color-tinta-suave;
     }
 }
 
-/* Contenido principal */
+/* Contenido principal: la consulta a la izquierda y la pantalla legada a la derecha */
 .main-content {
     flex: 1;
-    padding-block: 48px;
-
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
     gap: v.$spacing-xl;
+    padding-block: v.$spacing-lg v.$spacing-xl;
 }
 
-.section-heading {
-    margin-bottom: v.$spacing-lg;
+.consulta {
+    display: grid;
+    gap: v.$spacing-lg;
+    min-width: 0;
+}
 
-    h2 {
-        margin: 0 0 v.$spacing-sm;
-        font-size: 1.5rem;
-    }
+/* Pie */
+.site-footer {
+    border-top: 1px solid v.$color-linea;
+    padding-block: v.$spacing-lg;
+    font-size: v.$texto-pequeno;
+    color: v.$color-tinta-suave;
+}
+
+.footer-content {
+    display: grid;
+    gap: v.$spacing-sm;
 
     p {
-        margin: 0;
-        color: v.$color-text-secondary;
-        line-height: 1.5;
+        max-width: 75ch;
     }
 }
 
-/* Pie de página */
-.site-footer {
-    border-top: 1px solid v.$color-border;
-    text-align: center;
+.footer-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: v.$spacing-lg;
+    align-items: center;
+    margin-bottom: v.$spacing-sm;
 
-    padding-block: v.$spacing-lg;
-
-    color: v.$color-text-secondary;
-    font-size: 0.85rem;
+    img {
+        height: 40px;
+        width: auto;
+    }
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    .header-content {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: v.$spacing-md;
-    }
-
+/* Diseño adaptable: por debajo de 1300 px, una sola columna (la pantalla mide 640 px) */
+@media (max-width: 1300px) {
     .main-content {
-        padding-block: v.$spacing-lg;
+        grid-template-columns: minmax(0, 1fr);
     }
+}
 
+@media (max-width: 600px) {
     .brand h1 {
-        font-size: 1.3rem;
+        font-size: v.$texto-medio;
+    }
+}
+
+/* Movimiento reducido si el sistema lo pide */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
     }
 }

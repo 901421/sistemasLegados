@@ -41,14 +41,30 @@ public final class Json {
         return sb.append('"').toString();
     }
 
-    /** Respuesta de F1: {"totalRegistros":763}. */
-    public static String registros(int total) {
-        return "{\"totalRegistros\":" + total + "}";
+    /** Respuesta de F1: {"totalRegistros":763,"pantalla":[...]}. */
+    public static String registros(legado.Resultado<Integer> r) {
+        return "{\"totalRegistros\":" + r.datos() + ",\"pantalla\":" + pantalla(r.pantalla()) + "}";
+    }
+
+    /** Respuesta de F2 y F3: {"juegos":[...],"pantalla":[...]}. */
+    public static String juegos(legado.Resultado<List<Juego>> r) {
+        return "{\"juegos\":" + juegos(r.datos()) + ",\"pantalla\":" + pantalla(r.pantalla()) + "}";
+    }
+
+    /** Las líneas de la pantalla de la aplicación, como lista de cadenas (o null si no hay). */
+    public static String pantalla(String[] lineas) {
+        if (lineas == null) return "null";
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < lineas.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(texto(lineas[i]));
+        }
+        return sb.append("]").toString();
     }
 
     /**
-     * Respuesta de F2 y F3: la lista de programas. El registro solo se incluye si
-     * la aplicación lo ha mostrado (en la búsqueda no aparece).
+     * La lista de programas. El registro solo se incluye si la aplicación lo ha
+     * mostrado (en la búsqueda no aparece).
      */
     public static String juegos(List<Juego> juegos) {
         StringBuilder json = new StringBuilder("[");

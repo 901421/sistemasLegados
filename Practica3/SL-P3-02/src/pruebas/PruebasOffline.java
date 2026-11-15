@@ -108,6 +108,7 @@ public class PruebasOffline {
         jsonYValidacion();
 
         System.out.println("== API y ficheros de la web, con una aplicación falsa (servidor.ServidorWeb)");
+        PANTALLA_MENU = pantallas.get("menu");
         api(listado);
 
         System.out.println();
@@ -505,12 +506,15 @@ public class PruebasOffline {
     }
 
     /** Cadena JSON válida (comillas, escapes permitidos y ningún carácter de control suelto). */
-    private static final String CADENA_JSON = "\"(?:[^\"\\\\\\x00-\\x1f]|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})*\"";
+    private static final String CADENA_JSON = "\"(?:[^\"\\\\\\x00-\\x1f]++|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})*+\"";
     private static final Pattern ERROR_JSON = Pattern.compile(
             "\\{\"error\":(" + CADENA_JSON + "),\"tipo\":\"(entrada|ocupado|legado|interno)\"\\}");
     private static final String JUEGO_JSON = "\\{\"numero\":" + CADENA_JSON + ",\"nombre\":" + CADENA_JSON
             + ",\"tipo\":" + CADENA_JSON + ",\"cinta\":" + CADENA_JSON + "(?:,\"registro\":" + CADENA_JSON + ")?\\}";
-    private static final Pattern LISTA_JSON = Pattern.compile("\\[(?:" + JUEGO_JSON + "(?:," + JUEGO_JSON + ")*)?\\]");
+    private static final String PANTALLA_JSON = "\\[" + CADENA_JSON + "(?:," + CADENA_JSON + "){24}\\]";
+    private static final Pattern LISTA_JSON = Pattern.compile("\\{\"juegos\":\\[(?:" + JUEGO_JSON + "(?:," + JUEGO_JSON
+            + ")*)?\\],\"pantalla\":" + PANTALLA_JSON + "\\}");
+    private static final Pattern REGISTROS_JSON = Pattern.compile("\\{\"totalRegistros\":763,\"pantalla\":" + PANTALLA_JSON + "\\}");
 
     /** Lee una cadena JSON (con sus escapes) y devuelve el texto original. */
     private static String leerCadena(String json) {
@@ -608,25 +612,29 @@ public class PruebasOffline {
             }
         }
 
+        /** La pantalla que acompaña a cada resultado (cualquiera vale para estas pruebas). */
+        String[] pantalla = new String[25];
+
         @Override
-        public int obtenerTotalRegistros() throws Exception {
+        public legado.Resultado<Integer> obtenerTotalRegistros() throws Exception {
             llamadas.add("registros");
             quizaFalla();
-            return 763;
+            return new legado.Resultado<>(763, pantalla);
         }
 
         @Override
-        public List<Juego> buscarPorNombre(String nombre) throws Exception {
+        public legado.Resultado<List<Juego>> buscarPorNombre(String nombre) throws Exception {
             llamadas.add("nombre:" + nombre);
             quizaFalla();
-            return List.of(new Juego("50", "DEFENDER", "ARCADE", "C", ""), new Juego("323", "DEFENDER", "ARCADE", "V", ""));
+            return new legado.Resultado<>(List.of(new Juego("50", "DEFENDER", "ARCADE", "C", ""),
+                    new Juego("323", "DEFENDER", "ARCADE", "V", "")), pantalla);
         }
 
         @Override
-        public List<Juego> listarPorCinta(String idCinta) throws Exception {
+        public legado.Resultado<List<Juego>> listarPorCinta(String idCinta) throws Exception {
             llamadas.add("cinta:" + idCinta);
             quizaFalla();
-            return ParserPantalla.filtrarPorCinta(listado, idCinta);
+            return new legado.Resultado<>(ParserPantalla.filtrarPorCinta(listado, idCinta), pantalla);
         }
 
         @Override
@@ -666,8 +674,12 @@ public class PruebasOffline {
      * aplicación falsa: códigos, formato JSON, que la entrada no válida no llega a
      * la aplicación, que no hay cabeceras CORS y que no se sale de frontend/.
      */
+    /** Pantalla del MENÚ, para que la aplicación falsa la devuelva con cada resultado. */
+    private static String[] PANTALLA_MENU;
+
     private static void api(List<Juego> listado) throws Exception {
         AplicacionFalsa falsa = new AplicacionFalsa(listado);
+        falsa.pantalla = PANTALLA_MENU;
         servidor.ServidorWeb web = new servidor.ServidorWeb(0, falsa, java.nio.file.Path.of("frontend"));
         web.arrancar();
         var cliente = java.net.http.HttpClient.newHttpClient();
@@ -675,8 +687,8 @@ public class PruebasOffline {
         java.io.PrintStream consola = System.out;
         try {
             Respuesta r = pedir(cliente, puerto, "GET", "/api/registros");
-            comprobar("GET /api/registros → 200 {\"totalRegistros\":763}", r.codigo == 200
-                    && r.cuerpo.equals("{\"totalRegistros\":763}")
+            comprobar("GET /api/registros → 200 {\"totalRegistros\":763, \"pantalla\": 25 líneas}", r.codigo == 200
+                    && REGISTROS_JSON.matcher(r.cuerpo).matches() && r.cuerpo.contains("M E N U")
                     && r.cabeceras.firstValue("Content-Type").orElse("").startsWith("application/json"), r.codigo + " " + r.cuerpo);
             comprobar("sin cabeceras CORS", r.cabeceras.firstValue("Access-Control-Allow-Origin").isEmpty(), "");
 
@@ -751,7 +763,10 @@ public class PruebasOffline {
 
             String[][] ficheros = {{"/", "200"}, {"/index.html", "200"}, {"/styles/main.css", "200"}, {"/js/app.js", "200"},
                     {"/styles/main.scss", "404"}, {"/../src/Main.java", "404"}, {"/%2e%2e/build.bat", "404"},
-                    {"/..%2fbuild.bat", "404"}, {"/favicon.ico", "404"}};
+                    {"/..%2fbuild.bat", "404"}, {"/favicon.ico", "404"},
+                    {"/fonts/atkinson-hyperlegible-next.woff2", "200"}, {"/fonts/ibm-vga-8x16.woff", "200"},
+                    {"/img/LogoUZ.png", "200"}, {"/img/LogoEina.png", "200"}, {"/fonts/OFL-atkinson-hyperlegible-next.txt", "404"}};
+            // Más los ficheros que tenga la web (fuentes e imágenes incluidas): todos con su tipo.
             for (String[] f : ficheros) {
                 var peticion = java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://127.0.0.1:" + puerto + f[0])).build();
                 int codigo = cliente.send(peticion, java.net.http.HttpResponse.BodyHandlers.discarding()).statusCode();

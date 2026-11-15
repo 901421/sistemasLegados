@@ -1,33 +1,46 @@
+/*
+ * Valores de diseño de la web (D9, "carátula y pantalla"): una página clara,
+ * como el papel impreso de la carátula de un casete, con un único elemento
+ * oscuro, la pantalla de la aplicación legada con sus colores reales de DOSBox.
+ */
+
 /* Colores */
-$color-primary: #635bdb;
-$color-primary-hover: #5148c5;
-
-$color-background: #f7f8fc;
-$color-surface: #ffffff;
-
-$color-text: #202338;
-$color-text-secondary: #697386;
-
-$color-border: #e4e7ef;
-$color-error: #d92d20;
+$color-papel: #e9ecf1;          // fondo: gris frío de carátula impresa
+$color-papel-claro: #f6f7fa;    // superficies sobre el papel (formularios, carátula)
+$color-tinta: #18213a;          // texto
+$color-tinta-suave: #4a5372;    // texto secundario (contraste 6,4:1 sobre el papel)
+$color-linea: #c9cedb;          // reglas y bordes finos
+$color-azul: #2340c8;           // acciones (botones, pestaña activa, enlaces)
+$color-azul-oscuro: #1a2f97;
+$color-contador: #f2c230;       // cifras del contador de cinta
+$color-dos-fondo: #000000;      // pantalla de DOSBox: fondo (0,0,0)
+$color-dos-texto: #aaaaaa;      // pantalla de DOSBox: texto (170,170,170)
+$color-error: #b3261e;
+$color-aviso-texto: #6b4700;
+$color-aviso-fondo: #fff4d6;
 
 /* Tipografía */
-$font-family: "Segoe UI", Arial, sans-serif;
+$font-texto: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+$font-dos: "IBM VGA 8x16", "Courier New", monospace;
 
-/* Bordes */
-$radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 16px;
+// Escala (razón 1,25 sobre 16 px)
+$texto-pequeno: 0.8rem;
+$texto-normal: 1rem;
+$texto-medio: 1.25rem;
+$texto-grande: 1.563rem;
+$texto-titulo: 2.441rem;
+
+/* Bordes: solo dos radios, según la jerarquía */
+$radio-control: 6px;            // botones y campos
+$radio-objeto: 2px;             // carátula y marco de la pantalla (objetos físicos)
 
 /* Espaciados */
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
 $spacing-lg: 24px;
-$spacing-xl: 32px;
+$spacing-xl: 40px;
 
 /* Tamaños */
-$container-width: 1100px;
-
-/* Sombras */
-$shadow-card: 0 4px 20px rgba(20, 25, 50, 0.05);
+$container-width: 1360px;
+$pantalla-tamano-letra: 16px;   // tamaño nativo de la fuente: 8x16 px por carácter, 80 columnas = 640 px, como DOSBox

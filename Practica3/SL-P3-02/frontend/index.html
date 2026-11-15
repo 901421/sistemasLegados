@@ -3,159 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>ZX Spectrum Archive</title>
-
+    <title>Programas de ZX Spectrum (Sistemas Legados, práctica 3)</title>
+    <meta name="description" content="Consulta de la base de datos GW-BASIC de programas de ZX Spectrum a través de su propia pantalla.">
+    <link rel="preload" href="fonts/atkinson-hyperlegible-next.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles/main.css">
     <script src="js/app.js" defer></script>
 </head>
-
 <body>
-    <!-- Cabecera -->
+
     <header class="site-header">
         <div class="container header-content">
             <div class="brand">
-                <h1>ZX Spectrum Archive</h1>
-                <p>Archivo de programas MS-DOS</p>
+                <h1>Programas de ZX Spectrum</h1>
+                <p>Base de datos GW-BASIC en MS-DOS, consultada a través de su propia pantalla</p>
             </div>
 
-            <div class="record-counter">
-                <span>Total de registros</span>
-                <strong id="total-registros">—</strong>
-            </div>
+            <!-- F1: número de registros, siempre visible (R9) -->
+            <section class="record-counter" aria-labelledby="contador-titulo">
+                <h2 id="contador-titulo" class="record-counter__label">Programas en la base de datos</h2>
+                <div class="tape-counter" aria-live="polite">
+                    <strong id="total-registros" class="tape-counter__digits">—</strong>
+                </div>
+                <p class="record-counter__meta">
+                    <span id="hora-registros">Leyendo la aplicación…</span>
+                    <button type="button" id="actualizar-registros" class="button-link">Actualizar</button>
+                </p>
+            </section>
         </div>
     </header>
 
     <main class="container main-content">
 
-        <!-- Buscador -->
-        <section class="search-section"
-                 aria-labelledby="search-title">
+        <div class="consulta">
+            <!-- Buscador -->
+            <section class="search-section" aria-labelledby="search-title">
+                <h2 id="search-title">Buscar programas</h2>
 
-            <div class="section-heading">
-                <h2 id="search-title">Explorar programas</h2>
-                <p>
-                    Consulta los programas almacenados
-                    en el sistema legado.
-                </p>
-            </div>
-
-            <!-- Selector de búsqueda -->
-            <div class="search-tabs"
-                 role="group"
-                 aria-label="Tipo de búsqueda">
-
-                <button
-                    type="button"
-                    id="tab-nombre"
-                    class="tab active"
-                    aria-pressed="true">
-                    Por nombre
-                </button>
-
-                <button
-                    type="button"
-                    id="tab-cinta"
-                    class="tab"
-                    aria-pressed="false">
-                    Por cinta
-                </button>
-            </div>
-
-            
-            <!-- Búsqueda por nombre -->
-            <form id="form-nombre" class="search-form">
-                <label for="nombre">
-                    Nombre del programa
-                </label>
-
-                <div class="search-input-group">
-                    <input
-                        type="text"
-                        id="nombre"
-                        name="nombre"
-                        placeholder="Ej. DEFENDER"
-                        autocomplete="off"
-                        aria-describedby="nombre-ayuda"
-                        required
-                    >
-
-                    <button type="submit">
-                        Consultar
-                    </button>
+                <div class="tabs" role="group" aria-label="Tipo de búsqueda">
+                    <button type="button" id="tab-nombre" class="tab active" aria-pressed="true">Por nombre</button>
+                    <button type="button" id="tab-cinta" class="tab" aria-pressed="false">Por cinta</button>
                 </div>
 
-                <p id="nombre-ayuda" class="input-help">
-                    La búsqueda distingue mayúsculas y minúsculas.
-                </p>
-            </form>
+                <!-- F2: búsqueda por nombre -->
+                <form id="form-nombre" class="search-form" novalidate>
+                    <label for="nombre">Nombre del programa, o parte de él</label>
+                    <div class="search-input-group">
+                        <input type="text" id="nombre" name="nombre" placeholder="DEFENDER" maxlength="30"
+                               autocomplete="off" spellcheck="false" aria-describedby="nombre-ayuda" required>
+                        <button type="submit">Buscar</button>
+                    </div>
+                    <p id="nombre-ayuda" class="input-help">
+                        Distingue mayúsculas y minúsculas, como la aplicación. Se ignoran los espacios del principio y del final.
+                    </p>
+                </form>
 
+                <!-- F3: programas de una cinta -->
+                <form id="form-cinta" class="search-form" novalidate hidden>
+                    <label for="cinta">Identificador de la cinta</label>
+                    <div class="search-input-group">
+                        <input type="text" id="cinta" name="cinta" placeholder="A" maxlength="3"
+                               autocomplete="off" spellcheck="false" aria-describedby="cinta-ayuda" required>
+                        <button type="submit">Ver la cinta</button>
+                    </div>
+                    <p id="cinta-ayuda" class="input-help">
+                        Una letra (A-Z) o un número. Un programa grabado en varias cintas, como «A-45», sale en cada una de ellas.
+                    </p>
+                </form>
 
-            <!-- Búsqueda por cinta -->
-            <form id="form-cinta"
-                  class="search-form"
-                  hidden>
-
-                <label for="cinta">
-                    Identificador de cinta
-                </label>
-
-                <div class="search-input-group">
-                    <input
-                        type="text"
-                        id="cinta"
-                        name="cinta"
-                        placeholder="Ej. A o 1"
-                        autocomplete="off"
-                        pattern="[A-Za-z]|[0-9]+"
-                        title="Introduce una letra de la A a la Z o un número."
-                        required
-                    >
-
-                    <button type="submit">
-                        Consultar
-                    </button>
+                <div class="examples" role="group" aria-labelledby="ejemplos-titulo">
+                    <span id="ejemplos-titulo">Ejemplos:</span>
+                    <button type="button" class="example" data-tipo="nombre" data-valor="DEFENDER">DEFENDER</button>
+                    <button type="button" class="example" data-tipo="nombre" data-valor="KNIGHT">KNIGHT</button>
+                    <button type="button" class="example" data-tipo="cinta" data-valor="A">Cinta A</button>
+                    <button type="button" class="example" data-tipo="cinta" data-valor="E">Cinta E</button>
                 </div>
-            </form>
 
-        </section>
-
-        <!-- Resultados compartidos -->
-        <section class="results-section"
-                 aria-labelledby="results-title">
-
-            <div class="results-header">
-                <h2 id="results-title">Resultados</h2>
-
-                <span id="results-count"></span>
-            </div>
-
-            <div class="status-container">
-                <span
-                    id="loading-spinner"
-                    class="loading-spinner"
-                    aria-hidden="true"
-                    hidden>
-                </span>
-
-                <p id="estado"
-                role="status"
-                aria-live="polite">
-                    Realiza una búsqueda para consultar los programas.
+                <p class="focus-note">
+                    Mientras dura una consulta, la ventana de la aplicación legada se pone delante en el equipo servidor:
+                    no uses su teclado ni su ratón hasta que termine.
                 </p>
-            </div>
+            </section>
 
-            <div id="resultados" class="table-container">
-                <!-- Tabla generada desde JavaScript -->
-            </div>
+            <!-- Resultados -->
+            <section class="results-section" aria-labelledby="results-title">
+                <div class="results-header">
+                    <h2 id="results-title">Resultados</h2>
+                    <span id="results-count"></span>
+                </div>
 
-        </section>
+                <p id="loading-spinner" class="loading" hidden>
+                    <span class="loading__bar" aria-hidden="true"></span>
+                    Consultando la aplicación legada…
+                </p>
+
+                <p id="estado" class="status-message" role="status" aria-live="polite">
+                    Busca un programa por su nombre o mira qué contiene una cinta.
+                </p>
+
+                <div id="resultados"></div>
+            </section>
+        </div>
+
+        <!-- Lo que ha leído el wrapper (D9) -->
+        <aside class="legacy-screen" aria-labelledby="pantalla-titulo">
+            <details open>
+                <summary>
+                    <span id="pantalla-titulo">Pantalla de la aplicación legada</span>
+                </summary>
+                <p class="legacy-screen__caption" id="pantalla-pie">
+                    La última pantalla que ha leído el wrapper en DOSBox para la consulta.
+                </p>
+                <!-- Una ventana de DOSBox como la del equipo servidor: título y área de 640x400 -->
+                <div class="dosbox-window">
+                    <div class="dosbox-window__title" aria-hidden="true">
+                        <span>DOSBox 0.74, Program: GWBASIC</span>
+                        <span class="dosbox-window__buttons">&#x2013; &#x25A1; &#x2715;</span>
+                    </div>
+                    <div class="legacy-screen__frame">
+                        <pre id="pantalla" class="legacy-screen__text" aria-describedby="pantalla-pie"></pre>
+                    </div>
+                </div>
+            </details>
+        </aside>
+
     </main>
 
     <footer class="site-footer">
-        <div class="container">
-            <p>Sistemas Legados · Práctica 3 · Grupo 02</p>
+        <div class="container footer-content">
+            <div class="footer-logos">
+                <img src="img/LogoUZ.png" alt="Universidad de Zaragoza" height="40">
+                <img src="img/LogoEina.png" alt="Escuela de Ingeniería y Arquitectura" height="40">
+            </div>
+            <p>
+                Sistemas Legados, práctica 3, grupo 02. La aplicación GW-BASIC se usa tal cual, sin cambios:
+                cada consulta la maneja con el teclado y lee su pantalla.
+            </p>
+            <p class="footer-credits">
+                Fuentes: Atkinson Hyperlegible Next (SIL Open Font License 1.1) e IBM VGA 8x16 de VileR,
+                <a href="https://int10h.org/oldschool-pc-fonts/">int10h.org</a> (CC BY-SA 4.0).
+            </p>
         </div>
     </footer>
+
 </body>
 </html>

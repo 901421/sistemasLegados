@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Sirve los ficheros de la página web (HTML, CSS y JavaScript) desde la carpeta
+ * Sirve los ficheros de la página web (HTML, CSS, JavaScript, fuentes e imágenes) desde la carpeta
  * frontend/, para que el navegador cargue la página desde el mismo servidor
  * que responde a la API.
  *
@@ -64,6 +64,14 @@ public class FicherosEstaticos implements HttpHandler {
             contentType = "text/css; charset=UTF-8";
         } else if (ruta.endsWith(".js")) {
             contentType = "application/javascript; charset=UTF-8";
+        } else if (ruta.endsWith(".woff2")) {
+            contentType = "font/woff2";
+        } else if (ruta.endsWith(".woff")) {
+            contentType = "font/woff";
+        } else if (ruta.endsWith(".png")) {
+            contentType = "image/png";
+        } else if (ruta.endsWith(".svg")) {
+            contentType = "image/svg+xml";
         } else {
             exchange.sendResponseHeaders(404, -1);
             exchange.close();
