@@ -51,7 +51,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
   - Si no llega al 100 %: reconocimiento exacto por plantillas de la fuente 8x16 de DOSBox (celdas de 80x25), con plantillas sacadas de capturas reales. Documentar ambos.
   - Analizador de pantallas (texto 80x25 → datos) con tests offline sobre capturas guardadas.
 - **Verificación:** tabla de resultados del OCR por configuración; 100 % de aciertos del método final sobre todas las pantallas de prueba (tests offline y prueba real).
-- **Estado:** Casi hecho (2026-10-19): OCR medido y entrenado (máx. 39 % de registros), método final por plantillas con 100 % en 68 pantallas. Pendiente de decidir: Tess4J como lector alternativo en el wrapper.
+- **Estado:** Hecho (2026-11-15): OCR medido y entrenado (máx. 39 % de registros), método final por plantillas con 100 % en 68 pantallas. Tess4J queda solo en `pruebas.MedirOcr` (medición para la memoria, R24); no se integra en el wrapper. El 100 % de punta a punta se verifica en la prueba real del apartado 2.
 
 ## 5. Documentación
 
