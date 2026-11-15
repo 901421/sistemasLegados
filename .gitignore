@@ -47,3 +47,6 @@ Thumbs.db
 # Práctica 3: número de proceso del DOSBox lanzado por el programa
 Practica3/**/dosbox/dosbox.pid
 Practica3/**/dosbox/ultimo-cierre.txt
+
+# Práctica 3: carpeta y zip de la entrega generados por entrega.sh
+Practica3/entrega/

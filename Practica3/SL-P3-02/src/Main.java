@@ -13,7 +13,7 @@ import java.nio.file.Path;
  * Uso: java -cp "out;lib/*" Main [PUERTO]   (8080 si no se indica)
  *
  * Las rutas son relativas a la carpeta del programa (SL-P3-02), desde la que lo
- * lanzan iniciar.bat y build.sh:
+ * lanzan lanzar.bat y build.sh:
  * <ul>
  *   <li>Database-MSDOS: la aplicación legada, intacta (R5).</li>
  *   <li>dosbox/p3-dosbox.conf: nuestra configuración de DOSBox (fuera de Database).</li>

@@ -1,0 +1,78 @@
+PRÁCTICA 3 DE SISTEMAS LEGADOS (2026-27), GRUPO 02
+Imad, Paula y Ainhoa
+
+Página web que consulta la base de datos de programas de ZX Spectrum de la
+aplicación GW-BASIC de MS-DOS (Database-MSDOS), sin cambiarla: un wrapper la
+maneja en DOSBox pulsando teclas y leyendo su pantalla.
+
+
+CÓMO SE ARRANCA (Windows 10 u 11)
+---------------------------------
+1. Descomprime el zip entero en una carpeta (no lo abras desde dentro del zip).
+2. Haz doble clic en lanzar.bat.
+   - Se abre la ventana del servidor y, a los pocos segundos, DOSBox con la
+     aplicación legada.
+   - Cuando el servidor responde, se abre la web en el navegador:
+     http://localhost:8080
+3. La primera vez, Windows puede preguntar si permite el acceso de Java a la
+   red: pulsa "Permitir" (hace falta para entrar desde otro equipo).
+4. Si Windows avisa de que lanzar.bat viene de Internet ("Windows protegió su
+   PC"), pulsa "Más información" y "Ejecutar de todas formas".
+
+No hace falta instalar nada: la carpeta java contiene un Java reducido para
+ejecutar el programa, y DOSBox 0.74 va dentro de Database-MSDOS.
+
+
+CÓMO SE USA
+-----------
+- Arriba a la derecha se ve el número de programas de la base de datos, leído
+  de la aplicación (opción 4). Se vuelve a leer tras cada consulta y con
+  "Actualizar".
+- "Por nombre": programas cuyo nombre contiene el texto (como la opción 7 de la
+  aplicación). Distingue mayúsculas y minúsculas.
+- "Por cinta": programas de una cinta (una letra A-Z o un número), en el orden
+  en que están grabados. Un programa grabado en varias cintas (por ejemplo,
+  "A-45") sale en cada una.
+- A la derecha se ve en directo la pantalla de la aplicación mientras el
+  wrapper la maneja.
+
+Mientras dura una consulta, DOSBox se pone delante en el equipo servidor: no
+uses su teclado ni su ratón hasta que termine. Al acabar, el foco vuelve al
+navegador. Tampoco hay que pulsar teclas dentro de DOSBox (por ejemplo,
+Alt+Enter lo pone a pantalla completa; si pasa, la consulta siguiente lo
+reinicia).
+
+
+DESDE OTRO EQUIPO O EL MÓVIL
+----------------------------
+En la ventana del servidor aparecen las direcciones para entrar desde otro
+equipo de la misma red, por ejemplo http://192.168.1.20:8080. Varias personas
+pueden consultar a la vez: las consultas se atienden de una en una, por orden
+de llegada.
+
+
+CÓMO SE APAGA
+-------------
+Cierra la ventana del servidor (o pulsa Ctrl+C en ella). DOSBox se cierra solo.
+
+
+SI ALGO FALLA
+-------------
+- "El puerto 8080 ya está en uso": el servidor ya está en marcha en otra
+  ventana. Ábrelo en http://localhost:8080, o arranca con otro puerto
+  escribiendo en una consola: lanzar.bat 9090
+- La aplicación necesita su ventana de 640x400 sin escalar. Si la web avisa de
+  que la ventana de DOSBox mide otra cosa, comprueba que DOSBox no está a
+  pantalla completa (Alt+Enter dentro de DOSBox para volver).
+
+
+CONTENIDO
+---------
+lanzar.bat          arranca todo (doble clic)
+programa\           el programa (SL-P3-02.jar) y la librería JNA
+java\               Java reducido para Windows (jlink)
+Database-MSDOS\     la aplicación legada y DOSBox 0.74, sin ningún cambio
+dosbox\             nuestra configuración de DOSBox (fuera de Database-MSDOS)
+frontend\           la página web
+fuente\             el código fuente, las pruebas y la documentación
+memoria-SL-P3-02.pdf
