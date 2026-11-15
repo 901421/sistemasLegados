@@ -92,6 +92,15 @@ public class PruebasOffline {
         System.out.println("== Esperas (Espera y condiciones de ServicioLegado)");
         esperas(pantallas, capturas);
 
+        System.out.println("== Parámetros de la dirección (servidor.Parametros)");
+        parametros();
+
+        System.out.println("== JSON y validación (servidor.Json, servidor.Validacion)");
+        jsonYValidacion();
+
+        System.out.println("== API y ficheros de la web, con una aplicación falsa (servidor.ServidorWeb)");
+        api(listado);
+
         System.out.println();
         System.out.println(casos + " casos: " + (fallos == 0 ? "TODO BIEN" : fallos + " FALLOS"));
         if (fallos > 0) System.exit(1);
@@ -161,16 +170,16 @@ public class PruebasOffline {
             boolean ok = esperado != null && j.getNombre().equals(esperado[0])
                     && j.getTipo().equals(esperado[1]) && j.getCinta().equals(esperado[2]);
             if (ok) bien++;
-            else System.out.println("    " + e.getKey() + ": leído " + j.toJson() + ", esperado " + Arrays.toString(esperado));
+            else System.out.println("    " + e.getKey() + ": leído " + j.toString() + ", esperado " + Arrays.toString(esperado));
         }
         comprobar("resultados de búsqueda iguales a DATOS.DAT", total > 0 && bien == total, bien + "/" + total);
         String[] dosEspacios = pantallas.get("buscar-1-res1").clone();
         dosEspacios[4] = dosEspacios[4].replace("DEFENDER   ARCADE", "DEFENDER  ARCADE");
         debeFallar("resultado con 2 espacios en vez de 3 → error",
-                () -> ParserPantalla.parsearResultadoBusqueda(dosEspacios).toJson());
+                () -> ParserPantalla.parsearResultadoBusqueda(dosEspacios).toString());
         // El MENÚ tiene líneas con guion ("1 - INTRODUCIR DATOS"), pero ninguna es un resultado.
         debeFallar("pantalla del MENÚ como resultado → error",
-                () -> ParserPantalla.parsearResultadoBusqueda(pantallas.get("menu")).toJson());
+                () -> ParserPantalla.parsearResultadoBusqueda(pantallas.get("menu")).toString());
     }
 
     /** F3: las 43 páginas del listado, en orden, deben dar los 763 registros exactos. */
@@ -186,7 +195,7 @@ public class PruebasOffline {
             String n = String.valueOf(i + 1);
             if (!(j.getNumero().equals(n) && j.getRegistro().equals(n) && j.getNombre().equals(e[0])
                     && j.getTipo().equals(e[1]) && j.getCinta().equals(e[2]))) {
-                if (distintos++ < 5) System.out.println("    fila " + n + ": leído " + j.toJson() + ", esperado " + Arrays.toString(e));
+                if (distintos++ < 5) System.out.println("    fila " + n + ": leído " + j.toString() + ", esperado " + Arrays.toString(e));
             }
         }
         comprobar("listado completo = DATOS.DAT", todos.size() == datos.size() && distintos == 0,
@@ -322,6 +331,279 @@ public class PruebasOffline {
         }
         comprobar("F3: cada página empieza en su Nº (1, 19, 37…) y no en el de la anterior", paginas, "");
         comprobar("F3: el MENÚ no es una página", !ServicioLegado.paginaQueEmpiezaEn(menu, 1), "");
+    }
+
+    /**
+     * Lectura de ?q= e ?id=: se parte en el primer "=", se decodifica, y una
+     * codificación inválida o un parámetro repetido son un error de entrada (D3).
+     */
+    private static void parametros() {
+        String[][] bien = {
+                {"q=DEFENDER", "DEFENDER"}, {"x=1&q=BC%27S", "BC'S"}, {"q=A=B", "A=B"}, {"q=a+b", "a b"},
+                {"q=", null}, {null, null}, {"x=1", null}};
+        for (String[] c : bien) {
+            String obtenido;
+            try {
+                obtenido = servidor.Parametros.obtener(c[0], "q");
+            } catch (Exception e) {
+                obtenido = "lanza " + e.getClass().getSimpleName();
+            }
+            comprobar("q de \"" + c[0] + "\" → " + (c[1] == null ? "ninguno" : "\"" + c[1] + "\""),
+                    java.util.Objects.equals(obtenido, c[1]), "obtenido " + obtenido);
+        }
+        for (String q : new String[]{"q=%", "q=%G1", "q=A&q=B"}) {
+            debeFallarCon("q de \"" + q + "\" → error de entrada", servidor.EntradaNoValida.class,
+                    () -> servidor.Parametros.obtener(q, "q"));
+        }
+    }
+
+    /** Cadena JSON válida (comillas, escapes permitidos y ningún carácter de control suelto). */
+    private static final String CADENA_JSON = "\"(?:[^\"\\\\\\x00-\\x1f]|\\\\[\"\\\\/bfnrt]|\\\\u[0-9a-fA-F]{4})*\"";
+    private static final Pattern ERROR_JSON = Pattern.compile(
+            "\\{\"error\":(" + CADENA_JSON + "),\"tipo\":\"(entrada|ocupado|legado|interno)\"\\}");
+    private static final String JUEGO_JSON = "\\{\"numero\":" + CADENA_JSON + ",\"nombre\":" + CADENA_JSON
+            + ",\"tipo\":" + CADENA_JSON + ",\"cinta\":" + CADENA_JSON + "(?:,\"registro\":" + CADENA_JSON + ")?\\}";
+    private static final Pattern LISTA_JSON = Pattern.compile("\\[(?:" + JUEGO_JSON + "(?:," + JUEGO_JSON + ")*)?\\]");
+
+    /** Lee una cadena JSON (con sus escapes) y devuelve el texto original. */
+    private static String leerCadena(String json) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < json.length() - 1; i++) {
+            char c = json.charAt(i);
+            if (c != '\\') {
+                sb.append(c);
+                continue;
+            }
+            char e = json.charAt(++i);
+            switch (e) {
+                case 'n' -> sb.append('\n');
+                case 'r' -> sb.append('\r');
+                case 't' -> sb.append('\t');
+                case 'b' -> sb.append('\b');
+                case 'f' -> sb.append('\f');
+                case 'u' -> {
+                    sb.append((char) Integer.parseInt(json.substring(i + 1, i + 5), 16));
+                    i += 4;
+                }
+                default -> sb.append(e);
+            }
+        }
+        return sb.toString();
+    }
+
+    /** Json.texto escapa todo lo necesario (se comprueba volviendo a leerlo) y la validación aplica las reglas de D3. */
+    private static void jsonYValidacion() {
+        String raro = "BC'S \"Q\" \\ barra\nsalto\ttab\u0001 ñ";
+        String json = servidor.Json.texto(raro);
+        comprobar("Json.texto: comillas, barra, salto, tabulador y control → cadena JSON válida e igual al leerla",
+                json.matches(CADENA_JSON) && leerCadena(json).equals(raro), json);
+        comprobar("Json.texto(null) → null", servidor.Json.texto(null).equals("null"), "");
+        comprobar("Json.error → objeto válido", ERROR_JSON.matcher(servidor.Json.error("legado", raro)).matches(),
+                servidor.Json.error("legado", raro));
+
+        java.util.function.IntPredicate escribible = c -> PROHIBIDOS.indexOf(c) < 0;
+        String[][] nombres = {{"DEFENDER", "DEFENDER"}, {"  DEFENDER  ", "DEFENDER"}, {"friday", "friday"},
+                {"BC'S Q-?", "BC'S Q-?"}, {"A=B", "A=B"}, {"X".repeat(30), "X".repeat(30)}};
+        for (String[] c : nombres) {
+            String obtenido;
+            try {
+                obtenido = servidor.Validacion.nombre(c[0], escribible);
+            } catch (Exception e) {
+                obtenido = "error: " + e.getMessage();
+            }
+            comprobar("nombre \"" + c[0] + "\" → \"" + c[1] + "\"", c[1].equals(obtenido), obtenido);
+        }
+        for (String n : new String[]{null, "", "   ", "X".repeat(31), "A,B", "A\"B", "ESPAÑA", "#1", "a@b"}) {
+            debeFallarCon("nombre " + (n == null ? "null" : "\"" + n + "\"") + " → error de entrada",
+                    servidor.EntradaNoValida.class, () -> servidor.Validacion.nombre(n, escribible));
+        }
+        for (String[] c : new String[][]{{"A", "A"}, {" a ", "A"}, {"12", "12"}, {"0", "0"}}) {
+            String obtenido;
+            try {
+                obtenido = servidor.Validacion.cinta(c[0]);
+            } catch (Exception e) {
+                obtenido = "error: " + e.getMessage();
+            }
+            comprobar("cinta \"" + c[0] + "\" → \"" + c[1] + "\"", c[1].equals(obtenido), obtenido);
+        }
+        for (String id : new String[]{null, "", "A-45", "AB", "1A", "Ñ", "-"}) {
+            debeFallarCon("cinta " + (id == null ? "null" : "\"" + id + "\"") + " → error de entrada",
+                    servidor.EntradaNoValida.class, () -> servidor.Validacion.cinta(id));
+        }
+    }
+
+    /**
+     * Caracteres que Robot no puede escribir en DOSBox con el teclado español,
+     * según pruebas.CapturarJuegoCaracteres (apartado 4). La aplicación falsa los
+     * usa en lugar de Teclado.puedeEscribir, que necesita DOSBox abierto.
+     */
+    private static final String PROHIBIDOS = "[\\^`{}ñÑºªç#@]|~";
+
+    /** Una aplicación legada falsa: respuestas fijas y registro de lo que se le pide. */
+    private static class AplicacionFalsa implements legado.AplicacionLegada {
+        final List<String> llamadas = new ArrayList<>();
+        final List<Juego> listado;
+        Exception fallo;
+
+        AplicacionFalsa(List<Juego> listado) {
+            this.listado = listado;
+        }
+
+        private void quizaFalla() throws Exception {
+            if (fallo != null) {
+                Exception e = fallo;
+                fallo = null;
+                throw e;
+            }
+        }
+
+        @Override
+        public int obtenerTotalRegistros() throws Exception {
+            llamadas.add("registros");
+            quizaFalla();
+            return 763;
+        }
+
+        @Override
+        public List<Juego> buscarPorNombre(String nombre) throws Exception {
+            llamadas.add("nombre:" + nombre);
+            quizaFalla();
+            return List.of(new Juego("50", "DEFENDER", "ARCADE", "C", ""), new Juego("323", "DEFENDER", "ARCADE", "V", ""));
+        }
+
+        @Override
+        public List<Juego> listarPorCinta(String idCinta) throws Exception {
+            llamadas.add("cinta:" + idCinta);
+            quizaFalla();
+            return ParserPantalla.filtrarPorCinta(listado, idCinta);
+        }
+
+        @Override
+        public boolean puedeEscribir(char c) {
+            return PROHIBIDOS.indexOf(c) < 0;
+        }
+    }
+
+    /** Una respuesta HTTP: código, cabeceras y cuerpo. */
+    private record Respuesta(int codigo, java.net.http.HttpHeaders cabeceras, String cuerpo) {
+    }
+
+    /**
+     * Petición HTTP escrita a mano por un socket, para poder enviar direcciones mal
+     * formadas (como ?q=%) que el cliente HTTP de Java se niega a enviar.
+     */
+    private static Respuesta pedirCrudo(int puerto, String ruta) throws Exception {
+        try (java.net.Socket socket = new java.net.Socket("127.0.0.1", puerto)) {
+            socket.getOutputStream().write(("GET " + ruta + " HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n")
+                    .getBytes(StandardCharsets.US_ASCII));
+            String todo = new String(socket.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            int codigo = Integer.parseInt(todo.substring(9, 12));
+            int fin = todo.indexOf("\r\n\r\n");
+            return new Respuesta(codigo, null, fin < 0 ? "" : todo.substring(fin + 4));
+        }
+    }
+
+    private static Respuesta pedir(java.net.http.HttpClient cliente, int puerto, String metodo, String ruta) throws Exception {
+        var peticion = java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://127.0.0.1:" + puerto + ruta))
+                .method(metodo, java.net.http.HttpRequest.BodyPublishers.noBody()).build();
+        var r = cliente.send(peticion, java.net.http.HttpResponse.BodyHandlers.ofString());
+        return new Respuesta(r.statusCode(), r.headers(), r.body());
+    }
+
+    /**
+     * El servidor web completo (rutas, API y ficheros) en un puerto libre, con la
+     * aplicación falsa: códigos, formato JSON, que la entrada no válida no llega a
+     * la aplicación, que no hay cabeceras CORS y que no se sale de frontend/.
+     */
+    private static void api(List<Juego> listado) throws Exception {
+        AplicacionFalsa falsa = new AplicacionFalsa(listado);
+        servidor.ServidorWeb web = new servidor.ServidorWeb(0, falsa, java.nio.file.Path.of("frontend"));
+        web.arrancar();
+        var cliente = java.net.http.HttpClient.newHttpClient();
+        int puerto = web.puerto();
+        java.io.PrintStream consola = System.out;
+        try {
+            Respuesta r = pedir(cliente, puerto, "GET", "/api/registros");
+            comprobar("GET /api/registros → 200 {\"totalRegistros\":763}", r.codigo == 200
+                    && r.cuerpo.equals("{\"totalRegistros\":763}")
+                    && r.cabeceras.firstValue("Content-Type").orElse("").startsWith("application/json"), r.codigo + " " + r.cuerpo);
+            comprobar("sin cabeceras CORS", r.cabeceras.firstValue("Access-Control-Allow-Origin").isEmpty(), "");
+
+            falsa.llamadas.clear();
+            r = pedir(cliente, puerto, "GET", "/api/nombre?q=%20DEFENDER%20");
+            comprobar("GET /api/nombre?q=%20DEFENDER%20 → 200, lista válida, la aplicación recibe \"DEFENDER\"",
+                    r.codigo == 200 && LISTA_JSON.matcher(r.cuerpo).matches() && falsa.llamadas.equals(List.of("nombre:DEFENDER"))
+                            && !r.cuerpo.contains("registro"), r.codigo + " " + r.cuerpo + " " + falsa.llamadas);
+
+            r = pedir(cliente, puerto, "GET", "/api/cinta?id=a");
+            comprobar("GET /api/cinta?id=a → 200, 18 programas con registro, la aplicación recibe \"A\"",
+                    r.codigo == 200 && LISTA_JSON.matcher(r.cuerpo).matches() && r.cuerpo.split("\"numero\"").length == 19
+                            && r.cuerpo.contains("\"registro\":\"1\"") && falsa.llamadas.getLast().equals("cinta:A"),
+                    r.codigo + " " + falsa.llamadas.getLast());
+
+            // Dirección mal formada: la rechaza con 400 el propio HttpServer del JDK, antes de
+            // llegar a la API (con su página HTML, no con nuestro JSON). El navegador nunca la
+            // envía: la web codifica el "%" como %25.
+            falsa.llamadas.clear();
+            r = pedirCrudo(puerto, "/api/nombre?q=%");
+            comprobar("GET /api/nombre?q=% (mal formada) → 400 del JDK sin tocar la aplicación",
+                    r.codigo == 400 && falsa.llamadas.isEmpty(), r.codigo + " " + r.cuerpo);
+
+            String[] malas = {"/api/nombre", "/api/nombre?q=", "/api/nombre?q=A%2CB", "/api/nombre?q=A%22B",
+                    "/api/nombre?q=ESPA%C3%91A", "/api/nombre?q=%23", "/api/nombre?q=A&q=B",
+                    "/api/nombre?q=" + "X".repeat(31), "/api/cinta", "/api/cinta?id=A-45", "/api/cinta?id=AB"};
+            for (String ruta : malas) {
+                falsa.llamadas.clear();
+                r = pedirCrudo(puerto, ruta);
+                Matcher m = ERROR_JSON.matcher(r.cuerpo);
+                comprobar("GET " + ruta + " → 400 \"entrada\" sin tocar la aplicación", r.codigo == 400 && m.matches()
+                        && m.group(2).equals("entrada") && falsa.llamadas.isEmpty(),
+                        r.codigo + " " + (m.matches() ? leerCadena(m.group(1)) : r.cuerpo));
+            }
+
+            Object[][] fallos = {
+                    {new legado.PantallaInesperada("el MENÚ en 5 s", "algo"), 503, "legado"},
+                    {new IllegalStateException("DOSBox ha dejado de estar delante"), 503, "legado"},
+                    {new RuntimeException("fallo \"raro\"\ncon salto"), 500, "interno"}};
+            for (Object[] f : fallos) {
+                falsa.fallo = (Exception) f[0];
+                System.setOut(new java.io.PrintStream(java.io.OutputStream.nullOutputStream())); // la traza del 500
+                r = pedir(cliente, puerto, "GET", "/api/registros");
+                System.setOut(consola);
+                Matcher m = ERROR_JSON.matcher(r.cuerpo);
+                comprobar("la aplicación lanza " + f[0].getClass().getSimpleName() + " → " + f[1] + " \"" + f[2] + "\"",
+                        r.codigo == (int) f[1] && m.matches() && m.group(2).equals(f[2]),
+                        r.codigo + " " + (m.matches() ? leerCadena(m.group(1)) : r.cuerpo));
+            }
+
+            for (String metodo : new String[]{"POST", "OPTIONS"}) {
+                falsa.llamadas.clear();
+                r = pedir(cliente, puerto, metodo, "/api/registros");
+                comprobar(metodo + " /api/registros → 405 sin tocar la aplicación", r.codigo == 405 && falsa.llamadas.isEmpty(),
+                        r.codigo + " Allow: " + r.cabeceras.firstValue("Allow").orElse(""));
+            }
+
+            String[][] ficheros = {{"/", "200"}, {"/index.html", "200"}, {"/styles/main.css", "200"}, {"/js/app.js", "200"},
+                    {"/styles/main.scss", "404"}, {"/../src/Main.java", "404"}, {"/%2e%2e/build.bat", "404"},
+                    {"/..%2fbuild.bat", "404"}, {"/favicon.ico", "404"}};
+            for (String[] f : ficheros) {
+                var peticion = java.net.http.HttpRequest.newBuilder(java.net.URI.create("http://127.0.0.1:" + puerto + f[0])).build();
+                int codigo = cliente.send(peticion, java.net.http.HttpResponse.BodyHandlers.discarding()).statusCode();
+                comprobar("fichero " + f[0] + " → " + f[1], String.valueOf(codigo).equals(f[1]), String.valueOf(codigo));
+            }
+        } finally {
+            System.setOut(consola);
+            web.parar();
+        }
+    }
+
+    /** Como debeFallar, pero la excepción tiene que ser de ese tipo. */
+    private static void debeFallarCon(String caso, Class<? extends Exception> tipo, java.util.concurrent.Callable<String> accion) {
+        try {
+            comprobar(caso, false, "no da error: " + accion.call());
+        } catch (Exception e) {
+            comprobar(caso, tipo.isInstance(e), e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
 
     // ---- Utilidades ----------------------------------------------------------

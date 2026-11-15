@@ -1,5 +1,16 @@
 package legado;
 
+/**
+ * Un programa de la base de datos tal como lo muestra la aplicación legada:
+ * número, nombre, tipo, cinta y registro.
+ *
+ * La búsqueda por nombre (opción 7) no muestra el registro, así que ahí queda
+ * vacío; en el listado (opción 6) sí está. Los textos se guardan tal cual salen
+ * de la pantalla, sin los espacios de relleno.
+ *
+ * La conversión a JSON la hace el servidor web (servidor.Json): el wrapper no
+ * sabe nada de HTTP.
+ */
 public class Juego {
     private String numero;
     private String nombre;
@@ -21,15 +32,10 @@ public class Juego {
     public String getCinta() { return cinta; }
     public String getRegistro() { return registro; }
 
-    /** Convierte el objeto a formato JSON manual para el servidor nativo de Java */
-    public String toJson() {
-        return String.format(
-                "{\"numero\":\"%s\",\"nombre\":\"%s\",\"tipo\":\"%s\",\"cinta\":\"%s\",\"registro\":\"%s\"}",
-                escapeJson(numero), escapeJson(nombre), escapeJson(tipo), escapeJson(cinta), escapeJson(registro)
-        );
-    }
-
-    private String escapeJson(String texto) {
-        return texto.replace("\\", "\\\\").replace("\"", "\\\"");
+    /** Para los mensajes de error y las pruebas: "Nº 50: DEFENDER | ARCADE | cinta C". */
+    @Override
+    public String toString() {
+        return "Nº " + numero + ": " + nombre + " | " + tipo + " | cinta " + cinta
+                + (registro.isEmpty() ? "" : " | registro " + registro);
     }
 }

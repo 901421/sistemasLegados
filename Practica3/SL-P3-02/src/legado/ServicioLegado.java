@@ -35,7 +35,7 @@ import static legado.PantallaLegado.*;
  *
  * Las operaciones son synchronized: nunca hay dos tecleando a la vez en DOSBox.
  */
-public class ServicioLegado {
+public class ServicioLegado implements AplicacionLegada {
 
     /** Tras pulsar una tecla, hasta que aparece la pantalla siguiente. */
     public static final long ESPERA_PANTALLA = 5_000;
@@ -58,7 +58,7 @@ public class ServicioLegado {
     private final File conf;
     private final LectorPantalla lector;
     private VentanaDosBox dosbox;
-    private Teclado teclado;
+    private volatile Teclado teclado;
 
     /**
      * Lanza DOSBox con la aplicación legada y espera a ver el MENÚ.
@@ -74,6 +74,7 @@ public class ServicioLegado {
     }
 
     /** F1: número de registros, con la opción 4 (información). */
+    @Override
     public synchronized int obtenerTotalRegistros() throws Exception {
         return operar(() -> {
             teclado.escribir("4");
@@ -92,6 +93,7 @@ public class ServicioLegado {
      *
      * @param nombre texto a buscar, ya validado (sin comas ni comillas y escribible)
      */
+    @Override
     public synchronized List<Juego> buscarPorNombre(String nombre) throws Exception {
         return operar(() -> {
             List<Juego> resultados = new ArrayList<>();
@@ -112,7 +114,7 @@ public class ServicioLegado {
                 Juego juego = ParserPantalla.parsearResultadoBusqueda(p);
                 resultados.add(juego);
                 if (resultados.size() > MAX_RESULTADOS) {
-                    throw new PantallaInesperada("como mucho " + MAX_RESULTADOS + " resultados", juego.toJson());
+                    throw new PantallaInesperada("como mucho " + MAX_RESULTADOS + " resultados", juego.toString());
                 }
                 ultimo = Integer.parseInt(juego.getNumero());
                 teclado.responder("N"); // nunca S: llevaría a "QUIERES ALTERAR SUS DATOS?" (R5)
@@ -133,6 +135,7 @@ public class ServicioLegado {
      *
      * @param idCinta una letra o un número, ya validado
      */
+    @Override
     public synchronized List<Juego> listarPorCinta(String idCinta) throws Exception {
         return operar(() -> {
             teclado.escribir("3");
@@ -165,7 +168,7 @@ public class ServicioLegado {
                 for (int i = 0; i < filas.size(); i++) {
                     String esperado = String.valueOf(primero + i);
                     if (!filas.get(i).getNumero().equals(esperado)) {
-                        throw new PantallaInesperada("el Nº " + esperado + " en la página " + pagina, filas.get(i).toJson());
+                        throw new PantallaInesperada("el Nº " + esperado + " en la página " + pagina, filas.get(i).toString());
                     }
                 }
                 todos.addAll(filas);
@@ -174,6 +177,16 @@ public class ServicioLegado {
             }
             return ParserPantalla.filtrarPorCinta(todos, idCinta);
         });
+    }
+
+    /**
+     * true si Robot puede escribir el carácter en DOSBox (Teclado.puedeEscribir).
+     * No es synchronized: la validación de la web no espera a que acabe otra
+     * operación.
+     */
+    @Override
+    public boolean puedeEscribir(char c) {
+        return teclado.puedeEscribir(c);
     }
 
     /** Cierra DOSBox (al apagar el servidor). La aplicación no graba nada al cerrarse. */
