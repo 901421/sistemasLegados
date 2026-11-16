@@ -17,12 +17,13 @@ Quién hizo cada tarea, cuándo y cuánto tiempo llevó (R26, R27). Las fechas v
 | 2026-11-11 a 2026-11-14 | Pruebas del servidor y de la web en varios navegadores y en el móvil | 2. Objetivo (funcionalidades) | Paula y Ainhoa | 2 cada una | — |
 | 2026-11-12 a 2026-11-15 | Revisión y corrección del servidor y la web (reorganización, esperas por pantalla, validación, cola de consultas, cierre de DOSBox, pantalla en directo), pruebas automáticas sin DOSBox y prueba final en Windows | 2. Objetivo (funcionalidades) | Imad | 9 | `DECISIONES.md` D1-D9, `pruebas/PruebasOffline`, `docs/requisitos.md` R6-R14 |
 | 2026-11-15 y 2026-11-16 | Lanzador de doble clic con Java reducido, LEEME, montaje de la entrega, memoria y su revisión | 5. Documentación | Imad; Paula; Ainhoa | 4; 2; 2 | `lanzar.bat`, `LEEME.txt`, `entrega.sh`, `docs/memoria-SL-P3-02.pdf` |
+| 2026-11-16 | Vídeo de demostración: grabación del arranque, narración, grabación de la web y montaje | 5. Documentación | Imad | 3 | `docs/video-SL-P3-02.mp4` |
 
 ## Totales
 
 | Persona | Tareas principales | Tiempo (h) |
 |---|---|---|
-| Imad | Análisis del guion, mapa de pantallas, entrada, captura y OCR, estudio de Java, revisión y pruebas del código, prueba final, entrega y memoria | 30 |
+| Imad | Análisis del guion, mapa de pantallas, entrada, captura y OCR, estudio de Java, revisión y pruebas del código, prueba final, entrega, memoria y vídeo | 33 |
 | Paula | Análisis del guion, mapa de pantallas, servidor web, API y operaciones F1-F3, pruebas, entrega y memoria | 20 |
 | Ainhoa | Análisis del guion, página web, servidor de ficheros y arranque en Windows, pruebas, entrega y memoria | 18 |
-| **Total** | | **68** |
+| **Total** | | **71** |
