@@ -19,7 +19,7 @@ JDK_WINDOWS="${JDK_WINDOWS:-/mnt/c/Users/imadx/.jdks/openjdk-27}"
 # Módulos que usa el programa (medidos con jdeps sobre el código y JNA).
 MODULOS="java.base,java.desktop,java.logging,jdk.httpserver"
 MEMORIA="${MEMORIA:-$PROYECTO/../docs/memoria-SL-P3-02.pdf}"
-VIDEO="${VIDEO:-$PROYECTO/../docs/video-SL-P3-02.webm}"
+VIDEO="${VIDEO:-$PROYECTO/../docs/video-SL-P3-02.mp4}"
 
 # El zip lleva el código de un commit: con cambios sin commit, el programa no
 # coincidiría con él. SIN_COMPROBAR_GIT=1 lo salta (solo para pruebas).
