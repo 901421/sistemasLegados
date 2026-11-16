@@ -8,7 +8,7 @@ Calcado al guion: mismos apartados, mismo orden, mismos nombres. Requisitos en `
 - **Requisitos:** R1, R2, R3.
 - **Tareas:** montar `SL-P3-02.zip` desde un commit (`git archive` + runtime jlink + DOSBox + app intacta + memoria); probarlo en una carpeta limpia de Windows; subirlo a Drive y enviar el correo.
 - **Verificación:** el zip descomprimido en limpio arranca con doble clic y responde a F1-F3 desde otro equipo; el correo está enviado antes de la fecha.
-- **Estado:** Pendiente.
+- **Estado:** Hecho (2026-11-16): `SL-P3-02.zip` enviado por correo con enlace de Drive; copia descargada probada (13/13). R1-R3 cumplidos.
 
 ## 1. Descripción de sistema legado
 
